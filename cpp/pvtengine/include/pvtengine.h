@@ -10,13 +10,25 @@
 #define PVTENGINE_API __declspec(dllimport)
 #endif
 
-// This class is exported from the dll
-class PVTENGINE_API Cpvtengine {
-public:
-	Cpvtengine(void);
-	// TODO: add your methods here.
+#include <Eigen/Dense>
+using MatrixX2d = Eigen::Matrix<double, Eigen::Dynamic, 2, Eigen::RowMajor>;
+using MatrixX4d = Eigen::Matrix<double, Eigen::Dynamic, 4, Eigen::RowMajor>;
+using Vector2d = Eigen::Vector<double, 2>;
+using VectorXd = Eigen::Vector<double, Eigen::Dynamic>;
+
+struct PVT {
+	MatrixX2d P;  /*!< Positions*/
+	MatrixX2d V;  /*!< Velocities*/
+	VectorXd T;   /*!< Times*/
 };
 
-extern PVTENGINE_API int npvtengine;
-
-PVTENGINE_API int fnpvtengine(void);
+//// This class is exported from the dll
+//class PVTENGINE_API Cpvtengine {
+//public:
+//	Cpvtengine(void);
+//	// TODO: add your methods here.
+//};
+//
+//extern PVTENGINE_API int npvtengine;
+//
+//PVTENGINE_API int fnpvtengine(void);
