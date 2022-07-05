@@ -19,10 +19,10 @@ public:
 
 	//! Construct the Scheduler with Positions and Times
 	/*!
-	* \param P the N-by-2 Positions
+	* \param P the N-by-1 Positions
 	* \param T the N-by-1 Times
 	*/
-	Scheduler(const MatrixX2d& P, const VectorXd& T);
+	Scheduler(const VectorXd& P, const VectorXd& T);
 	virtual ~Scheduler();
 
 	//! Calculate PVT using a set of new `v0`, `vt`, `a0`, `at`.
@@ -31,14 +31,35 @@ public:
 	* `amax`, `P` and `T` have already been input to the `Scheduler`.
 	* \return the PVT struct
 	*/
-	PVT operator () (
-		const Vector2d& v0,  /*!< [in] Initial velocity*/
-		const Vector2d& vt,  /*!< [in] End velocity*/
-		const Vector2d& a0,  /*!< [in] Initial acceleration*/
-		const Vector2d& at   /*!< [in] End acceleration*/
+	PVT1D operator () (
+		const VectorXd & P,      /*!< [in] Positions*/
+		const VectorXd & T,      /*!< [in] Times*/
+		const double& vmax,      /*!< [in] max.speed*/
+		const double& amax,      /*1< [in] max.acceleration*/
+		const double& v0 = 0.0,  /*!< [in] Initial velocity*/
+		const double& vt = 0.0,  /*!< [in] End velocity*/
+		const double& a0 = 0.0,  /*!< [in] Initial acceleration*/
+		const double& at = 0.0   /*!< [in] End acceleration*/
+		);
+
+	//! Calculate PVT using a set of new `v0`, `vt`, `a0`, `at`.
+	/*!
+	* This callable assumes that the other parameters, i.e., `vmax`,
+	* `amax`, `P` and `T` have already been input to the `Scheduler`.
+	* \return the PVT struct
+	*/
+	PVT1D operator () (
+		const double& v0 = 0.0,  /*!< [in] Initial velocity*/
+		const double& vt = 0.0,  /*!< [in] End velocity*/
+		const double& a0 = 0.0,  /*!< [in] Initial acceleration*/
+		const double& at = 0.0   /*!< [in] End acceleration*/
 		);
 
 private:
+	VectorXd m_P;          /*!< Positions*/
+	VectorXd m_T;          /*!< Times*/
+	double m_amax = 0.0;   /*!< Max. absolute accelerations*/
+	double m_vmax = 0.0;   /*!< Max. absolute speed*/
 	//Vector2d m_v0;  /*!< The initial velocity at the starting of a tool path.*/
 	//Vector2d m_vt;  /*!< The end velocity at the ending of a tool path.*/
 	//Vector2d m_a0;  /*!< The initial acceleration.*/

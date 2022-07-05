@@ -5,7 +5,9 @@ Scheduler::Scheduler()
 {
 }
 
-Scheduler::Scheduler(const MatrixX2d& P, const VectorXd& T)
+Scheduler::Scheduler(const VectorXd& P, const VectorXd& T)
+	: m_P(P)
+	, m_T(T)
 {
 }
 
@@ -13,7 +15,16 @@ Scheduler::~Scheduler()
 {
 }
 
-PVT Scheduler::operator()(const Vector2d& v0, const Vector2d& vt, const Vector2d& a0, const Vector2d& at)
+PVT1D Scheduler::operator()(const VectorXd& P, const VectorXd& T, const double& vmax, const double& amax, const double& v0, const double& vt, const double& a0, const double& at)
 {
-	return PVT();
+	return PVT1D();
 }
+
+
+
+PVT1D Scheduler::operator()(const double& v0, const double& vt, const double& a0, const double& at)
+{
+	return PVT1D();
+}
+
+

@@ -16,10 +16,16 @@ using MatrixX4d = Eigen::Matrix<double, Eigen::Dynamic, 4, Eigen::RowMajor>;
 using Vector2d = Eigen::Vector<double, 2>;
 using VectorXd = Eigen::Vector<double, Eigen::Dynamic>;
 
-struct PVT {
-	MatrixX2d P;  /*!< Positions*/
-	MatrixX2d V;  /*!< Velocities*/
-	VectorXd T;   /*!< Times*/
+struct PVT1D {
+	VectorXd P;  /*!< Positions*/
+	VectorXd V;  /*!< Velocities*/
+	VectorXd T;  /*!< Times*/
+};
+
+struct PVT2D {
+	MatrixX2d P;  /*!< Positions, N-by-2*/
+	MatrixX2d V;  /*!< Velocities, N-by-2*/
+	VectorXd T;  /*!< Times*/
 };
 
 //// This class is exported from the dll
