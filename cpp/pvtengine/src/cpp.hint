@@ -1,0 +1,2 @@
+#define PVTENGINE_API __declspec(dllexport)
+#define PVTENGINE_API __declspec(dllimport)
