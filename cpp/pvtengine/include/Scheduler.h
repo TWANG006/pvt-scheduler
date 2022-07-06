@@ -53,7 +53,7 @@ public:
 		const double& vt = 0.0,/*!< [in] End velocity*/
 		const double& a0 = 0.0,/*!< [in] Initial acceleration*/
 		const double& at = 0.0 /*!< [in] End acceleration*/
-		);
+	);
 
 	//! Calculate PVT using a set of new `v0`, `vt`, `a0`, `at`.
 	/*!
@@ -66,7 +66,7 @@ public:
 		const double& vt = 0.0,  /*!< [in] End velocity*/
 		const double& a0 = 0.0,  /*!< [in] Initial acceleration*/
 		const double& at = 0.0   /*!< [in] End acceleration*/
-		);
+	);
 
 private:
 	//! Build the objective for the QP
@@ -76,14 +76,14 @@ private:
 	void build_Cd(MatrixXXd& C, VectorXd& d);
 
 private:
-	VectorXd m_P;       /*!< Positions*/
-	VectorXd m_T;       /*!< Times*/
+	VectorXd m_P;        /*!< Positions*/
+	VectorXd m_T;        /*!< Times*/
 	double m_amax = -1.0;/*!< Max. absolute accelerations*/
 	double m_vmax = -1.0;/*!< Max. absolute speed*/
-	double m_v0 = 0.0;  /*!< The initial velocity at the starting of a tool path.*/
-	double m_vt = 0.0;  /*!< The end velocity at the ending of a tool path.*/
-	double m_a0 = 0.0;  /*!< The initial acceleration.*/
-	double m_at = 0.0;  /*!< The end acceleration.*/
+	double m_v0 = 0.0;   /*!< The initial velocity at the starting of a tool path.*/
+	double m_vt = 0.0;   /*!< The end velocity at the ending of a tool path.*/
+	double m_a0 = 0.0;   /*!< The initial acceleration.*/
+	double m_at = 0.0;   /*!< The end acceleration.*/
 };
 
 
