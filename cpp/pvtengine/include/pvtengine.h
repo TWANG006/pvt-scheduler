@@ -17,26 +17,29 @@ using MatrixXXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::R
 using MatrixX2d = Eigen::Matrix<double, Eigen::Dynamic, 2, Eigen::RowMajor>;
 using MatrixX4d = Eigen::Matrix<double, Eigen::Dynamic, 4, Eigen::RowMajor>;
 using Vector2d = Eigen::Vector<double, 2>;
+using Vector4d = Eigen::Vector<double, 4>;
 using VectorXd = Eigen::Vector<double, Eigen::Dynamic>;
 using Eigen::seq;
 using Eigen::seqN;
 using Eigen::all;
 using Eigen::last;
+using Eigen::lastN;
 
 
-//! 1D PVT struct
-struct PVT1D {
-	VectorXd P;  /*!< Positions*/
-	VectorXd V;  /*!< Velocities*/
-	VectorXd T;  /*!< Times*/
+//! PVT struct
+struct PVT {
+	VectorXd  P;     /*!< Positions*/
+	VectorXd  V;     /*!< Velocities*/
+	VectorXd  T;     /*!< Times*/
+	MatrixX4d Coeffs;/*!< Coefficients*/
 };
 
-//! 2D PVT struct
-struct PVT2D {
-	MatrixX2d P;  /*!< Positions, N-by-2*/
-	MatrixX2d V;  /*!< Velocities, N-by-2*/
-	VectorXd T;  /*!< Times*/
-};
+////! 2D PVT struct
+//struct PVT2D {
+//	MatrixX2d P;  /*!< Positions, N-by-2*/
+//	MatrixX2d V;  /*!< Velocities, N-by-2*/
+//	VectorXd T;  /*!< Times*/
+//};
 
 //// This class is exported from the dll
 //class PVTENGINE_API Cpvtengine {

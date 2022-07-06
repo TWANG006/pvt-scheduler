@@ -44,7 +44,7 @@ public:
 	* `amax`, `P` and `T` have already been input to the `Scheduler`.
 	* \return the PVT struct
 	*/
-	PVT1D operator () (
+	PVT operator () (
 		const VectorXd& P,     /*!< [in] Positions*/
 		const VectorXd& T,     /*!< [in] Times*/
 		const double& vmax,    /*!< [in] max.speed*/
@@ -61,7 +61,7 @@ public:
 	* `amax`, `P` and `T` have already been input to the Scheduler.
 	* \return the PVT struct
 	*/
-	PVT1D operator () (
+	PVT operator () (
 		const double& v0 = 0.0,  /*!< [in] Initial velocity*/
 		const double& vt = 0.0,  /*!< [in] End velocity*/
 		const double& a0 = 0.0,  /*!< [in] Initial acceleration*/
@@ -69,6 +69,7 @@ public:
 	);
 
 private:
+	void clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs);
 	//! Build the objective for the QP
 	/*!
 	* Build the 1/2||C^Tx - d||^2 for the QP
