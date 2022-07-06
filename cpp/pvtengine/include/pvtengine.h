@@ -1,16 +1,16 @@
-// The following ifdef block is the standard way of creating macros which make exporting
-// from a DLL simpler. All files within this DLL are compiled with the PVTENGINE_EXPORTS
-// symbol defined on the command line. This symbol should not be defined on any project
-// that uses this DLL. This way any other project whose source files include this file see
-// PVTENGINE_API functions as being imported from a DLL, whereas this DLL sees symbols
-// defined with this macro as being exported.
+#ifndef PVTENGINE_H
+#define PVTENGINE_H
+
+
 #ifdef PVTENGINE_EXPORTS
 #define PVTENGINE_API __declspec(dllexport)
 #else
 #define PVTENGINE_API __declspec(dllimport)
 #endif
 
+
 #include <Eigen/Dense>
+
 
 // Eigen API aliases
 using MatrixXXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
@@ -34,20 +34,5 @@ struct PVT {
 	MatrixX4d Coeffs;/*!< Coefficients*/
 };
 
-////! 2D PVT struct
-//struct PVT2D {
-//	MatrixX2d P;  /*!< Positions, N-by-2*/
-//	MatrixX2d V;  /*!< Velocities, N-by-2*/
-//	VectorXd T;  /*!< Times*/
-//};
+#endif // !PVTENGINE_H
 
-//// This class is exported from the dll
-//class PVTENGINE_API Cpvtengine {
-//public:
-//	Cpvtengine(void);
-//	// TODO: add your methods here.
-//};
-//
-//extern PVTENGINE_API int npvtengine;
-//
-//PVTENGINE_API int fnpvtengine(void);
