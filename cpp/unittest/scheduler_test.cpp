@@ -7,6 +7,6 @@ TEST(Scheduler, build_QP) {
 	VectorXd t(5);
 	t << 0, 0.1, 0.12, 0.23, 0.3;
 
-	Scheduler s(px, t, 1, 250e-3);
+	Scheduler s(px, t, 250e-3, 2);
 	s();
 }

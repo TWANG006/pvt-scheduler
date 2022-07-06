@@ -69,18 +69,20 @@ public:
 	);
 
 private:
+	//! Solve the V and Coeffs using the qpOASES lib
 	void clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs);
-	//! Build the objective for the QP
-	/*!
-	* Build the 1/2||C^Tx - d||^2 for the QP
-	*/
+	
+	//!  Build the 1/2||C^Tx - d||^2 for the QP
 	void build_Cd(MatrixXXd& C, VectorXd& d);
+
+	//! Build lb <= x <= ub; for the QP
+	void build_lbub(VectorXd& lb, VectorXd& ub);
 
 private:
 	VectorXd m_P;        /*!< Positions*/
 	VectorXd m_T;        /*!< Times*/
-	double m_amax = -1.0;/*!< Max. absolute accelerations*/
 	double m_vmax = -1.0;/*!< Max. absolute speed*/
+	double m_amax = -1.0;/*!< Max. absolute accelerations*/
 	double m_v0 = 0.0;   /*!< The initial velocity at the starting of a tool path.*/
 	double m_vt = 0.0;   /*!< The end velocity at the ending of a tool path.*/
 	double m_a0 = 0.0;   /*!< The initial acceleration.*/

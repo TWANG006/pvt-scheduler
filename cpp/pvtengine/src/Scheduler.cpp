@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Scheduler.h"
+#include <qpOASES.hpp>
 
 Scheduler::Scheduler(const VectorXd& P, const VectorXd& T, const double& vmax, const double& amax, const double& v0, const double& vt, const double& a0, const double& at)
 	: m_P(P)
@@ -65,9 +66,19 @@ void Scheduler::clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs)
 	MatrixXXd H(C.transpose() * C);
 	VectorXd g(-1 * C.transpose() * d);
 
-	std::cout << C << std::endl;
-	std::cout << C.rows() << ", " << C.cols() << std::endl;
-	std::cout << H.rows() << ", " << H.cols() << std::endl;
+	// FOR DEBUG
+	/*std::cout << C.rows() << ", " << C.cols() << std::endl;
+	std::cout << H.rows() << ", " << H.cols() << std::endl;*/
+
+	// 2. build the lb and ub
+	VectorXd lb, ub;
+	build_lbub(lb, ub);
+
+	// FOR DUBUG
+	/*std::cout << lb.transpose() << std::endl;
+	std::cout << ub.transpose() << std::endl;
+	std::cout << lb.size() << std::endl;
+	std::cout << ub.size() << std::endl;*/
 }
 
 void Scheduler::build_Cd(MatrixXXd& C, VectorXd& d)
@@ -135,6 +146,22 @@ void Scheduler::build_Cd(MatrixXXd& C, VectorXd& d)
 	C(6 * num_v + 1, 5            ) = 1;
 	C(6 * num_v + 2, 6 * num_v - 2) = 1;
 	C(6 * num_v + 3, 6 * num_v - 1) = 1;
+}
+
+void Scheduler::build_lbub(VectorXd& lb, VectorXd& ub)
+{
+	// number of velocities to be calculated
+	auto num_v = m_T.size() - 1;
+
+	// build the lb
+	lb = VectorXd::Constant(6 * num_v, -qpOASES::INFTY);
+	lb(seq(4, last, 6)).setConstant(-m_vmax);
+	lb(seq(5, last, 6)).setConstant(-m_amax);
+
+	// build the ub
+	ub = VectorXd::Constant(6 * num_v, qpOASES::INFTY);
+	ub(seq(4, last, 6)).setConstant(m_vmax);
+	ub(seq(5, last, 6)).setConstant(m_amax);
 }
 
 
