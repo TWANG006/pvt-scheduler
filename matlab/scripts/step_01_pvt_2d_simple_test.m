@@ -1,7 +1,7 @@
 clear;
 close all;
 clc;
-
+addpath(genpath('../functions'));
 
 %% generate a very simple 5-point 2d path
 px = [1e-3, 2e-3, 3.5e-3, 5e-3, 1e-3];
