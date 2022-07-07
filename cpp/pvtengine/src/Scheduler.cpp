@@ -40,8 +40,6 @@ PVT Scheduler::operator()(const VectorXd& P, const VectorXd& T, const double& vm
 	}
 }
 
-
-
 PVT Scheduler::operator()(const double& v0, const double& vt, const double& a0, const double& at, bool isVsmooth)
 {
 	// update the member variables
