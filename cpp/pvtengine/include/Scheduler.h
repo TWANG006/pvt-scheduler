@@ -52,7 +52,8 @@ public:
 		const double& v0 = 0.0,/*!< [in] Initial velocity*/
 		const double& vt = 0.0,/*!< [in] End velocity*/
 		const double& a0 = 0.0,/*!< [in] Initial acceleration*/
-		const double& at = 0.0 /*!< [in] End acceleration*/
+		const double& at = 0.0,/*!< [in] End acceleration*/
+		bool isVsmooth = false /*!< [in] if V are C1 smooth*/
 	);
 
 	//! Calculate PVT using a set of new `v0`, `vt`, `a0`, `at`.
@@ -62,21 +63,38 @@ public:
 	* \return the PVT struct
 	*/
 	PVT operator () (
-		const double& v0 = 0.0,  /*!< [in] Initial velocity*/
-		const double& vt = 0.0,  /*!< [in] End velocity*/
-		const double& a0 = 0.0,  /*!< [in] Initial acceleration*/
-		const double& at = 0.0   /*!< [in] End acceleration*/
+		const double& v0 = 0.0,/*!< [in] Initial velocity*/
+		const double& vt = 0.0,/*!< [in] End velocity*/
+		const double& a0 = 0.0,/*!< [in] Initial acceleration*/
+		const double& at = 0.0,/*!< [in] End acceleration*/
+		bool isVsmooth = false /*!< [in] if V are C1 smooth*/
 	);
 
 private:
 	//! Solve the V and Coeffs using the qpOASES lib
-	void clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs);
+	bool clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth = false);
 	
 	//!  Build the 1/2||C^Tx - d||^2 for the QP
 	void build_Cd(MatrixXXd& C, VectorXd& d);
 
 	//! Build lb <= x <= ub; for the QP
 	void build_lbub(VectorXd& lb, VectorXd& ub);
+
+	//! Build lbA<= Ax <= ubA for the QP
+	void build_lbAubA(MatrixXXd& A, VectorXd& lbA, VectorXd& ubA);
+
+	//! Solve the QP
+	bool solve_qp(
+		VectorXd& qpSol,      /*!< [out] QP solution*/
+		MatrixXXd& H,         /*!< [in] Obj. matrix*/
+		VectorXd& g,          /*!< [in] Obj. vector*/
+		MatrixXXd& A,         /*!< [in] Con. matrix*/
+		VectorXd& lbA,        /*!< [in] Con. lower bound*/
+		VectorXd& ubA,        /*!< [in] Con. upper bound*/
+		VectorXd& lb,         /*!< [in] lower bound*/
+		VectorXd& ub,         /*!< [in] upper bound*/
+		bool isVsmooth = false/*!< [in]if V are C1 smooth*/
+	);
 
 private:
 	VectorXd m_P;        /*!< Positions*/
