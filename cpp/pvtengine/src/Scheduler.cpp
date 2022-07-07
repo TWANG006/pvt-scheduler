@@ -74,6 +74,7 @@ void Scheduler::clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs)
 	VectorXd lb, ub;
 	build_lbub(lb, ub);
 
+
 	// FOR DUBUG
 	/*std::cout << lb.transpose() << std::endl;
 	std::cout << ub.transpose() << std::endl;
