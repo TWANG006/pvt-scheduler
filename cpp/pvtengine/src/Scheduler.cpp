@@ -195,6 +195,21 @@ void Scheduler::build_lbub(VectorXd& lb, VectorXd& ub)
 
 void Scheduler::build_lbAubA(MatrixXXd& A, VectorXd& lbA, VectorXd& ubA)
 {
+	int num_v = (int)m_T.size();// number of V to calculate
+	A = MatrixXXd::Zero(num_v - 2, 6 * num_v);
+	lbA = VectorXd::Zero(num_v - 2);
+	ubA = Vector2d::Zero(num_v - 2);
+
+#pragma omp parallel for
+	for (int j = 1; j < num_v - 1; j++) {
+		int i = j + 1;
+		int id = j * 6;
+
+		A(j - 1, id - 6) = 6 * m_T(i - 1);
+		A(j - 1, id    ) = -6 * m_T(i - 1);
+		A(j - 1, id - 5) = 2;
+		A(j - 1, id + 1) = -2;
+	}
 }
 
 bool Scheduler::solve_qp(VectorXd& qpSol, MatrixXXd& H, VectorXd& g, MatrixXXd& A, VectorXd& lbA, VectorXd& ubA, VectorXd& lb, VectorXd& ub, bool isVsmooth)
