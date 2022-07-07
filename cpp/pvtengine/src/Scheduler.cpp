@@ -225,7 +225,7 @@ bool Scheduler::solve_qp(VectorXd& qpSol, MatrixXXd& H, VectorXd& g, MatrixXXd& 
 	else { // if not using the smoothness constraints
 		qpOASES::QProblemB qp(nV);            // initialize the bounded problem
 		qpOASES::Options options;             // default options
-		options.printLevel = qpOASES::PL_NONE;// no output
+		options.printLevel = qpOASES::PL_LOW;// no output
 		qp.setOptions(options);
 
 		if (qpOASES::SUCCESSFUL_RETURN != qp.init(H.data(), g.data(), lb.data(), ub.data(), nWSR, NULL, NULL)) {
