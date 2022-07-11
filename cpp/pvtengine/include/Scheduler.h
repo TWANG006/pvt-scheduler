@@ -108,4 +108,12 @@ private:
 };
 
 
+//! Solve the PVT coefficients from the P, V, and T
+PVTENGINE_API Vector4d pvt_coefficients(
+	const double& p0, const double& p1,
+	const double& v0, const double& v1,
+	const double& t0, const double& t1
+);
+
+
 #endif // !SCHEDULER_H

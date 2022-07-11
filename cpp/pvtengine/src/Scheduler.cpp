@@ -52,7 +52,7 @@ PVT Scheduler::operator()(const double& v0, const double& vt, const double& a0, 
 	VectorXd  V;
 	MatrixX4d Coeffs;
 	if (true == clls_with_qpOASES(V, Coeffs, isVsmooth)) {
-		std::cout << V << std::endl;
+		std::cout << Coeffs << std::endl;
 		return PVT{ m_P, V, m_T, Coeffs };
 	}
 	else {
@@ -62,6 +62,8 @@ PVT Scheduler::operator()(const double& v0, const double& vt, const double& a0, 
 
 bool Scheduler::clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth)
 {
+	auto num_v = m_T.size() - 1;
+
 	// 0. build the CLLS objective
 	MatrixXXd C;
 	VectorXd  d;
@@ -107,6 +109,18 @@ bool Scheduler::clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth
 		V << m_v0, qpSol(seq(4, last, 6));
 	}
 
+	// 7 recalculate the coeffs
+	Coeffs = MatrixX4d::Zero(num_v, 4);
+
+	#pragma omp parallel for
+	for (Eigen::Index i = 0; i < V.size() - 1; i++) {
+		Coeffs.row(i) = pvt_coefficients(
+			m_P(i), m_P(i + 1),
+			V(i), V(i + 1),
+			m_T(i), m_T(i + 1)
+		);
+	}
+
 	return isSuccessful;
 }
 
@@ -120,7 +134,7 @@ void Scheduler::build_Cd(MatrixXXd& C, VectorXd& d)
 	C = MatrixXXd::Zero(6 * num_v + 4, 6 * num_v);
 	d = VectorXd::Zero(6 * num_v + 4);
 
-#pragma omp parallel for
+	#pragma omp parallel for
 	for (Eigen::Index j = 0; j < num_v; j++)
 	{
 		auto i = j + 1;  // end id of the jth segment
@@ -200,7 +214,7 @@ void Scheduler::build_lbAubA(MatrixXXd& A, VectorXd& lbA, VectorXd& ubA)
 	lbA = VectorXd::Zero(3 * (num_v - 2));
 	ubA = VectorXd::Zero(3 * (num_v - 2));
 
-#pragma omp parallel for
+    #pragma omp parallel for
 	for (Eigen::Index j = 1; j < num_v - 1; j++) {
 		auto i = j + 1;
 		auto id = j * 6;
@@ -271,9 +285,22 @@ bool Scheduler::solve_qp(VectorXd& qpSol, MatrixXXd& H, VectorXd& g, MatrixXXd& 
 				std::cout << "qpOASES solution failed." << std::endl;
 				return false;
 			}
-		}		
+		}
 	}
 	return true;
 }
 
+PVTENGINE_API Vector4d pvt_coefficients(const double& p0, const double& p1, const double& v0, const double& v1, const double& t0, const double& t1)
+{
+	Matrix4d A{
+		{t0 * t0 * t0, t0 * t0, t0, 1},
+		{t1 * t1 * t1, t1 * t1, t1, 1},
+		{3 * t0 * t0 , 2 * t0 , 1 , 0},
+		{3 * t1 * t1 , 2 * t1 , 1 , 0},
+	};
+	Vector4d b{
+		{p0, p1, v0, v1}
+	};
 
+	return A.colPivHouseholderQr().solve(b);
+}
