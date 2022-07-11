@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Scheduler.h"
 #include <qpOASES.hpp>
+#include "Calculator.h"
 
 
 Scheduler::Scheduler(const VectorXd& P, const VectorXd& T, const double& vmax, const double& amax, const double& v0, const double& vt, const double& a0, const double& at)
@@ -287,19 +288,4 @@ bool Scheduler::solve_qp(VectorXd& qpSol, MatrixXXd& H, VectorXd& g, MatrixXXd& 
 		}
 	}
 	return true;
-}
-
-PVTENGINE_API Vector4d pvt_coefficients(const double& p0, const double& p1, const double& v0, const double& v1, const double& t0, const double& t1)
-{
-	Matrix4d A{
-		{t0 * t0 * t0, t0 * t0, t0, 1},
-		{t1 * t1 * t1, t1 * t1, t1, 1},
-		{3 * t0 * t0 , 2 * t0 , 1 , 0},
-		{3 * t1 * t1 , 2 * t1 , 1 , 0},
-	};
-	Vector4d b{
-		{p0, p1, v0, v1}
-	};
-
-	return A.colPivHouseholderQr().solve(b);
 }

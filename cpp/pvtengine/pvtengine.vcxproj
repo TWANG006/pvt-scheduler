@@ -103,12 +103,14 @@
     <None Include="src\cpp.hint" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Calculator.h" />
     <ClInclude Include="include\framework.h" />
     <ClInclude Include="include\pch.h" />
     <ClInclude Include="include\pvtengine.h" />
     <ClInclude Include="include\Scheduler.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Calculator.cpp" />
     <ClCompile Include="src\Scheduler.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\pch.cpp">
