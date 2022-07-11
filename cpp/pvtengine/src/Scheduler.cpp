@@ -121,7 +121,7 @@ void Scheduler::build_Cd(MatrixXXd& C, VectorXd& d)
 	d = VectorXd::Zero(6 * num_v + 4);
 
 #pragma omp parallel for
-	for (long long j = 0; j < num_v; j++)
+	for (Eigen::Index j = 0; j < num_v; j++)
 	{
 		auto i = j + 1;  // end id of the jth segment
 		auto id = j * 6; // starting id of the j-th 6-by-6 block
@@ -195,15 +195,15 @@ void Scheduler::build_lbub(VectorXd& lb, VectorXd& ub)
 
 void Scheduler::build_lbAubA(MatrixXXd& A, VectorXd& lbA, VectorXd& ubA)
 {
-	int num_v = (int)m_T.size() - 1;// number of V to calculate
+	auto num_v = m_T.size() - 1;// number of V to calculate
 	A = MatrixXXd::Zero(3 * (num_v - 2), 6 * num_v);
 	lbA = VectorXd::Zero(3 * (num_v - 2));
 	ubA = VectorXd::Zero(3 * (num_v - 2));
 
 #pragma omp parallel for
-	for (int j = 1; j < num_v - 1; j++) {
-		int i = j + 1;
-		int id = j * 6;
+	for (Eigen::Index j = 1; j < num_v - 1; j++) {
+		auto i = j + 1;
+		auto id = j * 6;
 
 		// equal a at the intermediate points
 		A(j - 1, id - 6) = 6 * m_T(i - 1);
