@@ -52,7 +52,6 @@ PVT Scheduler::operator()(const double& v0, const double& vt, const double& a0, 
 	VectorXd  V;
 	MatrixX4d Coeffs;
 	if (true == clls_with_qpOASES(V, Coeffs, isVsmooth)) {
-		std::cout << Coeffs << std::endl;
 		return PVT{ m_P, V, m_T, Coeffs };
 	}
 	else {
