@@ -28,5 +28,5 @@ TEST(Scheduler, build_QP) {
 	t << 0, 0.1, 0.12, 0.23, 0.3;
 
 	Scheduler s(px, t, 250e-3, 2);
-	s();
+	s(0.0, 0.0, 0.0, 0.0, true);
 }

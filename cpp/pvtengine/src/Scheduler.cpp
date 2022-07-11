@@ -195,20 +195,39 @@ void Scheduler::build_lbub(VectorXd& lb, VectorXd& ub)
 
 void Scheduler::build_lbAubA(MatrixXXd& A, VectorXd& lbA, VectorXd& ubA)
 {
-	int num_v = (int)m_T.size();// number of V to calculate
-	A = MatrixXXd::Zero(num_v - 2, 6 * num_v);
-	lbA = VectorXd::Zero(num_v - 2);
-	ubA = Vector2d::Zero(num_v - 2);
+	int num_v = (int)m_T.size() - 1;// number of V to calculate
+	A = MatrixXXd::Zero(3 * (num_v - 2), 6 * num_v);
+	lbA = VectorXd::Zero(3 * (num_v - 2));
+	ubA = VectorXd::Zero(3 * (num_v - 2));
 
 #pragma omp parallel for
 	for (int j = 1; j < num_v - 1; j++) {
 		int i = j + 1;
 		int id = j * 6;
 
+		// equal a at the intermediate points
 		A(j - 1, id - 6) = 6 * m_T(i - 1);
 		A(j - 1, id    ) = -6 * m_T(i - 1);
 		A(j - 1, id - 5) = 2;
 		A(j - 1, id + 1) = -2;
+
+		// equal v at the intermediate points
+		A(j,     id - 6) = 3 * m_T(i - 1) * m_T(i - 1);
+		A(j,     id    ) = -3 * m_T(i - 1) * m_T(i - 1);
+		A(j,     id - 5) = 2 * m_T(i - 1);
+		A(j,     id + 1) = -2 * m_T(i - 1);
+		A(j,     id - 4) = 1;
+		A(j,     id + 2) = -1;
+
+		// eqaul p at the intermediate points
+		A(j + 1, id - 6) = m_T(i - 1) * m_T(i - 1) * m_T(i - 1);
+		A(j + 1, id    ) = -m_T(i - 1) * m_T(i - 1) * m_T(i - 1);
+		A(j + 1, id - 5) = m_T(i - 1) * m_T(i - 1);
+		A(j + 1, id + 1) = -m_T(i - 1) * m_T(i - 1);
+		A(j + 1, id - 4) = m_T(i - 1);
+		A(j + 1, id + 2) = -m_T(i - 1);
+		A(j + 1, id - 3) = 1;
+		A(j + 1, id + 3) = -1;
 	}
 }
 
@@ -226,7 +245,7 @@ bool Scheduler::solve_qp(VectorXd& qpSol, MatrixXXd& H, VectorXd& g, MatrixXXd& 
 		qp.setOptions(options);
 
 		// initialization
-		if (qpOASES::SUCCESSFUL_RETURN != qp.init(H.data(), g.data(), A.data(), lbA.data(), ubA.data(), lb.data(), ub.data(), nWSR, NULL, NULL)) {
+		if (qpOASES::SUCCESSFUL_RETURN != qp.init(H.data(), g.data(), A.data(), lb.data(), ub.data(), lbA.data(), ubA.data(), nWSR, NULL, NULL)) {
 			std::cout << "qpOASES initialization failed." << std::endl;
 			return false;
 		}
