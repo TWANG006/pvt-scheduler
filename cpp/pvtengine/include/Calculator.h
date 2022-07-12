@@ -5,14 +5,15 @@
 
 class PVTENGINE_API Calculator {
 public:
-	// Default constructor
+	//! Default constructor
 	Calculator() = default;
 	virtual ~Calculator();
 
-	// Disable copyping
+	//! Disable copyping
 	Calculator(const Calculator&) = delete;
 	Calculator& operator=(const Calculator&) = delete;
 
+	//! Choose which (P, V, A) to be computed
 	enum PVA
 	{
 		P,
