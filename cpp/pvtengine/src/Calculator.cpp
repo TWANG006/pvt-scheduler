@@ -19,22 +19,22 @@ PVTENGINE_API Vector4d pvt_coefficients(const double& p0, const double& p1, cons
 
 PVTENGINE_API VectorXd calculate_pvt_p(const VectorXd& t, const Vector4d& c)
 {
-	return (c(1) * t.array().cube() + c(2) * t.array().square() + c(3) * t.array() + c(4)).matrix();
+	return (c(0) * t.array().cube() + c(1) * t.array().square() + c(2) * t.array() + c(3)).matrix();
 }
 
 PVTENGINE_API VectorXd calculate_pvt_v(const VectorXd& t, const Vector4d& c)
 {
-	return (3 * c(1) + t.array().square() + 2 * c(2) * t.array() + c(3)).matrix();
+	return (3 * c(0) * t.array().square() + 2 * c(1) * t.array() + c(2)).matrix();
 }
 
 PVTENGINE_API VectorXd calculate_pvt_a(const VectorXd& t, const Vector4d& c)
 {
-	return (6 * c(1) * t.array() + c(2)).matrix();
+	return (6 * c(0) * t.array() + 2 * c(1)).matrix();
 }
 
 PVTENGINE_API void calculate_pvt(VectorXd& p, VectorXd& v, VectorXd& a, const VectorXd& t, const Vector4d& c)
 {
-	p = (c(1) * t.array().cube() + c(2) * t.array().square() + c(3) * t.array() + c(4)).matrix();
-	v = (3 * c(1) + t.array().square() + 2 * c(2) * t.array() + c(3)).matrix();
-	a = (6 * c(1) * t.array() + c(2)).matrix();
+	p = (c(0) * t.array().cube() + c(1) * t.array().square() + c(2) * t.array() + c(3)).matrix();
+	v = (3 * c(0) * t.array().square() + 2 * c(1) * t.array() + c(2)).matrix();
+	a = (6 * c(0) * t.array() + 2 * c(1)).matrix();
 }

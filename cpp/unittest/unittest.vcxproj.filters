@@ -7,6 +7,9 @@
     <ClCompile Include="scheduler_test.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="calculator_test.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">
