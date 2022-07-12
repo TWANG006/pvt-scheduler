@@ -14,16 +14,18 @@ TEST(PVT, Calculator)
 		{0, 0.02, 0.04, 0.06, 0.08, 0.1},
 	};
 
-	VectorXd ps = calculate_pvt_p(t02t1, C.row(0));
+	Calculator calc;
+
+	auto ps = calc(t02t1, C.row(0), Calculator::P);
 	std::cout << ps << std::endl;
 
-	VectorXd vs = calculate_pvt_v(t02t1, C.row(0));
+	auto vs = calc(t02t1, C.row(0), Calculator::V);
 	std::cout << vs << std::endl;
 
-	VectorXd as = calculate_pvt_a(t02t1, C.row(0));
+	auto as = calc(t02t1, C.row(0), Calculator::A);
 	std::cout << as << std::endl;
 
-	calculate_pvt(ps, vs, as, t02t1, C.row(0));
+	calc(ps, vs, as, t02t1, C.row(0));
 	std::cout << ps.transpose() << std::endl;
 	std::cout << vs.transpose() << std::endl;
 	std::cout << as.transpose() << std::endl;
