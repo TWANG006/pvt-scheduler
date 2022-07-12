@@ -21,7 +21,6 @@ public:
 		A
 	};
 
-
 public:
 	//! Overloaded () to calculate the coefficients
 	Vector4d operator()(
@@ -87,7 +86,6 @@ PVTENGINE_API Vector4d pvt_coefficients(
 	const double& v0, const double& v1,
 	const double& t0, const double& t1
 );
-
 
 PVTENGINE_API VectorXd calculate_pvt_p(
 	const VectorXd& t,

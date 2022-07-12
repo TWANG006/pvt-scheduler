@@ -108,8 +108,10 @@
     <ClInclude Include="include\pch.h" />
     <ClInclude Include="include\pvtengine.h" />
     <ClInclude Include="include\Scheduler.h" />
+    <ClInclude Include="include\Sampler.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Sampler.cpp" />
     <ClCompile Include="src\Calculator.cpp" />
     <ClCompile Include="src\Scheduler.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
