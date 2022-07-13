@@ -32,6 +32,7 @@ struct PVT {
 	VectorXd  P;     /*!< Positions*/
 	VectorXd  V;     /*!< Velocities*/
 	VectorXd  T;     /*!< Times*/
+	VectorXd  A;     /*!< Accelerations*/
 	MatrixX4d Coeffs;/*!< Coefficients*/
 };
 

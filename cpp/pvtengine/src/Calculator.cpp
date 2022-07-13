@@ -66,7 +66,6 @@ void Calculator::calculate_pvt(VectorXd& p, VectorXd& v, VectorXd& a, const Vect
 	p = (c(0) * t.array().cube() + c(1) * t.array().square() + c(2) * t.array() + c(3)).matrix();
 	v = (3 * c(0) * t.array().square() + 2 * c(1) * t.array() + c(2)).matrix();
 	a = (6 * c(0) * t.array() + 2 * c(1)).matrix();
-
 }
 
 PVTENGINE_API Vector4d pvt_coefficients(const double& p0, const double& p1, const double& v0, const double& v1, const double& t0, const double& t1)

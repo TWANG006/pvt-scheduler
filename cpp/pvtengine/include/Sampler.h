@@ -1,6 +1,8 @@
 #ifndef SAMPLER_H
 #define SAMPLER_H
 
+#include "pvtengine.h"
+
 class Sampler
 {
 public:
@@ -12,7 +14,10 @@ public:
 	Sampler& operator=(const Sampler&) = delete;
 
 	//! Overloaded () operator to calculte the super-sampled PVT grids
-
+	PVT operator () (
+		const double & tau,
+		const PVT& sparsePVT
+	);
 };
 
 
