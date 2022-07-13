@@ -1,11 +1,8 @@
-clear;
-close all;
-clc;
-addpath(genpath('../functions'));
+function [Dx, Dy, xp, yp] = maze_path(rou, dx)
 
-%% input parameters.
-rou=10;
-dx=0.5; % half step [mm]
+% input parameters.
+% rou=10;
+% dx=0.5; % half step [mm]
 dy=dx;
 l=(4*rou-2)*dx; % workpiece length [mm]
 w=(4*rou-2)*dx; % workpiece width
@@ -83,9 +80,9 @@ end
 %% plot
 PATHX=X(S(1:2:end));
 PATHY=Y(S(1:2:end));
-Dx=PATHX;
+Dx=PATHX; % 
 Dy=PATHY;
-Dx=Dx+l/2;Dy=Dy+w/2; % Set the origin at the lower left corner. Comment this code if need to set it in the center.
+% Dx=Dx+l/2;Dy=Dy+w/2; % Set the origin at the lower left corner. Comment this code if need to set it in the center.
 
 xp = []; % dwell points
 yp = [];
@@ -97,9 +94,23 @@ for i = 1: size(Dx,2) - 1
     if Dx(i) == Dx(i+1)
         xp(i) = Dx(i);
         yp(i) = (Dy(i) + Dy(i+1))/2;
-    end
+    end   
 end
+
+if Dx(1) == Dx(size(Dx,2))
+    xp = [xp, Dx(1)];
+    yp = [yp, (Dy(1)+Dy(size(Dy,2)))/2];
+end
+if Dy(1) == Dy(size(Dy,2))
+    xp = [xp, (Dx(1)+Dx(size(Dx,2)))/2];
+    yp = [yp, Dy(1)];
+end
+
 
 plot(Dx,Dy,'*-','linewidth',2);  
 hold on
 plot(xp,yp,'o','linewidth',2);  
+hold off;
+axis equal;
+
+end

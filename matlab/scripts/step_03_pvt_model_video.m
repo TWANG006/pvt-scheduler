@@ -1,18 +1,19 @@
 clear;
 close all;
 clc;
-
+addpath(genpath('../functions'));
+addpath('../../../Slope-based-dwell-time/matlab/functions/'); % import viridis
 %% l. load data
 % calculated pvt
-load('step_02_pvt_model_calculation.mat');
+data_dir = '../../data/';
+load([data_dir 'step_02_pvt_model_calculation.mat']);
 pvt_t = t;
 
 % tif & surface
-load('step_01_multilayer_no1_data.mat');
+load([data_dir 'step_01_multilayer_no1_data.mat']);
 X = Xca;
 Y = Yca;
 Z = Z_to_remove_ca;
-
 
 %% 2. calculate the delta t
 % direct assignment
