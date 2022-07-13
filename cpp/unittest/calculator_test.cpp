@@ -17,16 +17,26 @@ TEST(PVT, Calculator)
 	Calculator calc;
 
 	auto ps = calc(t02t1, C.row(0), Calculator::P);
-	std::cout << ps << std::endl;
-
 	auto vs = calc(t02t1, C.row(0), Calculator::V);
-	std::cout << vs << std::endl;
-
 	auto as = calc(t02t1, C.row(0), Calculator::A);
-	std::cout << as << std::endl;
+
+	std::cout << "Dense Position is: " << std::endl;
+	std::cout << ps.transpose() << std::endl;
+
+	std::cout << "Dense Velocity is: " << std::endl;
+	std::cout << vs.transpose() << std::endl;
+
+	std::cout << "Dense Acceleration is: " << std::endl;
+	std::cout << as.transpose() << std::endl;
 
 	calc(ps, vs, as, t02t1, C.row(0));
+
+	std::cout << "Dense Position is: " << std::endl;
 	std::cout << ps.transpose() << std::endl;
+	
+	std::cout << "Dense Velocity is: " << std::endl;
 	std::cout << vs.transpose() << std::endl;
+
+	std::cout << "Dense Acceleration is: " << std::endl;
 	std::cout << as.transpose() << std::endl;
 }

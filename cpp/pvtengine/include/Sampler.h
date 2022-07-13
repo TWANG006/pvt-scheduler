@@ -6,7 +6,7 @@
 
 
 
-class Sampler
+class PVTENGINE_API Sampler
 {
 public:
 	//! Default constructor

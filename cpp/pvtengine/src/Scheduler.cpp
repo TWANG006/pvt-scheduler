@@ -113,7 +113,7 @@ bool Scheduler::clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth
 	Coeffs = MatrixX4d::Zero(num_v, 4);
 
 	#pragma omp parallel for
-	for (Eigen::Index i = 0; i < V.size() - 1; i++) {
+	for (int_t i = 0; i < V.size() - 1; i++) {
 		Coeffs.row(i) = pvt_coefficients(
 			m_P(i), m_P(i + 1),
 			V(i), V(i + 1),
@@ -135,7 +135,7 @@ void Scheduler::build_Cd(MatrixXXd& C, VectorXd& d)
 	d = VectorXd::Zero(6 * num_v + 4);
 
 	#pragma omp parallel for
-	for (Eigen::Index j = 0; j < num_v; j++)
+	for (int_t j = 0; j < num_v; j++)
 	{
 		auto i = j + 1;  // end id of the jth segment
 		auto id = j * 6; // starting id of the j-th 6-by-6 block
@@ -210,38 +210,38 @@ void Scheduler::build_lbub(VectorXd& lb, VectorXd& ub)
 void Scheduler::build_lbAubA(MatrixXXd& A, VectorXd& lbA, VectorXd& ubA)
 {
 	auto num_v = m_T.size() - 1;// number of V to calculate
-	A = MatrixXXd::Zero(3 * (num_v - 2), 6 * num_v);
-	lbA = VectorXd::Zero(3 * (num_v - 2));
-	ubA = VectorXd::Zero(3 * (num_v - 2));
+	A = MatrixXXd::Zero(1 * (num_v - 2), 6 * num_v);
+	lbA = VectorXd::Zero(1 * (num_v - 2));
+	ubA = VectorXd::Zero(1 * (num_v - 2));
 
     #pragma omp parallel for
-	for (Eigen::Index j = 1; j < num_v - 1; j++) {
+	for (int_t j = 1; j < num_v - 1; j++) {
 		auto i = j + 1;
 		auto id = j * 6;
 
-		// equal a at the intermediate points
-		A(j - 1, id - 6) = 6 * m_T(i - 1);
-		A(j - 1, id    ) = -6 * m_T(i - 1);
-		A(j - 1, id - 5) = 2;
-		A(j - 1, id + 1) = -2;
+		//// equal a at the intermediate points
+		//A(j - 1, id - 6) = 6 * m_T(i - 1);
+		//A(j - 1, id    ) = -6 * m_T(i - 1);
+		//A(j - 1, id - 5) = 2;
+		//A(j - 1, id + 1) = -2;
 
 		// equal v at the intermediate points
-		A(j,     id - 6) = 3 * m_T(i - 1) * m_T(i - 1);
-		A(j,     id    ) = -3 * m_T(i - 1) * m_T(i - 1);
-		A(j,     id - 5) = 2 * m_T(i - 1);
-		A(j,     id + 1) = -2 * m_T(i - 1);
-		A(j,     id - 4) = 1;
-		A(j,     id + 2) = -1;
+		A(j - 1, id - 6) = 3 * m_T(i - 1) * m_T(i - 1);
+		A(j - 1, id    ) = -3 * m_T(i - 1) * m_T(i - 1);
+		A(j - 1, id - 5) = 2 * m_T(i - 1);
+		A(j - 1, id + 1) = -2 * m_T(i - 1);
+		A(j - 1, id - 4) = 1;
+		A(j - 1, id + 2) = -1;
 
-		// eqaul p at the intermediate points
-		A(j + 1, id - 6) = m_T(i - 1) * m_T(i - 1) * m_T(i - 1);
-		A(j + 1, id    ) = -m_T(i - 1) * m_T(i - 1) * m_T(i - 1);
-		A(j + 1, id - 5) = m_T(i - 1) * m_T(i - 1);
-		A(j + 1, id + 1) = -m_T(i - 1) * m_T(i - 1);
-		A(j + 1, id - 4) = m_T(i - 1);
-		A(j + 1, id + 2) = -m_T(i - 1);
-		A(j + 1, id - 3) = 1;
-		A(j + 1, id + 3) = -1;
+		//// eqaul p at the intermediate points
+		//A(j + 1, id - 6) = m_T(i - 1) * m_T(i - 1) * m_T(i - 1);
+		//A(j + 1, id    ) = -m_T(i - 1) * m_T(i - 1) * m_T(i - 1);
+		//A(j + 1, id - 5) = m_T(i - 1) * m_T(i - 1);
+		//A(j + 1, id + 1) = -m_T(i - 1) * m_T(i - 1);
+		//A(j + 1, id - 4) = m_T(i - 1);
+		//A(j + 1, id + 2) = -m_T(i - 1);
+		//A(j + 1, id - 3) = 1;
+		//A(j + 1, id + 3) = -1;
 	}
 }
 
