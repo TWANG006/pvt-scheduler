@@ -3,20 +3,23 @@
 
 #include "pvtengine.h"
 
+
+
+
 class Sampler
 {
 public:
-	// Default constructor
+	//! Default constructor
 	Sampler() = default;
 
-	// Disable copyping
+	//! Disable copyping
 	Sampler(const Sampler&) = delete;
 	Sampler& operator=(const Sampler&) = delete;
 
 	//! Overloaded () operator to calculte the super-sampled PVT grids
-	PVT operator () (
-		const double & tau,
-		const PVT& sparsePVT
+	PVA operator () (
+		const double & tau,  /*!< [in] the delta_t used to upsample the PVT grid */
+		const PVTC& sparsePVT/*!< [in] the existing sparse PVT*/
 	);
 };
 

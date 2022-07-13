@@ -44,7 +44,7 @@ public:
 	* `amax`, `P` and `T` have already been input to the `Scheduler`.
 	* \return the PVT struct
 	*/
-	PVT operator () (
+	PVTC operator () (
 		const VectorXd& P,     /*!< [in] Positions*/
 		const VectorXd& T,     /*!< [in] Times*/
 		const double& vmax,    /*!< [in] max.speed*/
@@ -62,7 +62,7 @@ public:
 	* `amax`, `P` and `T` have already been input to the Scheduler.
 	* \return the PVT struct
 	*/
-	PVT operator () (
+	PVTC operator () (
 		const double& v0 = 0.0,/*!< [in] Initial velocity*/
 		const double& vt = 0.0,/*!< [in] End velocity*/
 		const double& a0 = 0.0,/*!< [in] Initial acceleration*/

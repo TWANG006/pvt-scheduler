@@ -20,6 +20,7 @@ using MatrixX4d = Eigen::Matrix<double, Eigen::Dynamic, 4, Eigen::RowMajor>;
 using Vector2d  = Eigen::Vector<double, 2>;
 using Vector4d  = Eigen::Vector<double, 4>;
 using VectorXd  = Eigen::Vector<double, Eigen::Dynamic>;
+using VectorXi  = Eigen::Vector<Eigen::Index, Eigen::Dynamic>;
 using Eigen::seq;
 using Eigen::seqN;
 using Eigen::all;
@@ -28,12 +29,19 @@ using Eigen::lastN;
 
 
 //! PVT struct
-struct PVT {
+struct PVTC {
 	VectorXd  P;     /*!< Positions*/
 	VectorXd  V;     /*!< Velocities*/
 	VectorXd  T;     /*!< Times*/
 	VectorXd  A;     /*!< Accelerations*/
 	MatrixX4d Coeffs;/*!< Coefficients*/
+};
+
+//! PVA struct
+struct PVA {
+	VectorXd  P;/*!< Positions*/
+	VectorXd  V;/*!< Velocities*/
+	VectorXd  A;/*!< Accelerations*/
 };
 
 #endif // !PVTENGINE_

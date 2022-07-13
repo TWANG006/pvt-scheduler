@@ -18,7 +18,7 @@ Scheduler::Scheduler(const VectorXd& P, const VectorXd& T, const double& vmax, c
 Scheduler::~Scheduler()
 {}
 
-PVT Scheduler::operator()(const VectorXd& P, const VectorXd& T, const double& vmax, const double& amax, const double& v0, const double& vt, const double& a0, const double& at, bool isVsmooth)
+PVTC Scheduler::operator()(const VectorXd& P, const VectorXd& T, const double& vmax, const double& amax, const double& v0, const double& vt, const double& a0, const double& at, bool isVsmooth)
 {
 	// update the member variables
 	m_P = P;
@@ -34,14 +34,14 @@ PVT Scheduler::operator()(const VectorXd& P, const VectorXd& T, const double& vm
 	VectorXd  V;
 	MatrixX4d Coeffs;
 	if (true == clls_with_qpOASES(V, Coeffs, isVsmooth)) {
-		return PVT{ m_P, V, m_T, Coeffs };
+		return PVTC{ m_P, V, m_T, Coeffs };
 	}
 	else {
-		return PVT();
+		return PVTC();
 	}
 }
 
-PVT Scheduler::operator()(const double& v0, const double& vt, const double& a0, const double& at, bool isVsmooth)
+PVTC Scheduler::operator()(const double& v0, const double& vt, const double& a0, const double& at, bool isVsmooth)
 {
 	// update the member variables
 	m_v0 = v0;
@@ -53,10 +53,10 @@ PVT Scheduler::operator()(const double& v0, const double& vt, const double& a0, 
 	VectorXd  V;
 	MatrixX4d Coeffs;
 	if (true == clls_with_qpOASES(V, Coeffs, isVsmooth)) {
-		return PVT{ m_P, V, m_T, Coeffs };
+		return PVTC{ m_P, V, m_T, Coeffs };
 	}
 	else {
-		return PVT();
+		return PVTC();
 	}
 }
 
