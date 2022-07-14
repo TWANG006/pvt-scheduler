@@ -9,8 +9,11 @@ Interpolator::Interpolator(const MatrixXXd& X, const MatrixXXd& Y, const MatrixX
 
 void Interpolator::build_bicubic_interpolant(const MatrixXXd& X, const MatrixXXd& Y, const MatrixXXd& Z)
 {
+	auto Ny = Z.rows();// number of rows
+	auto Nx = Z.cols();// number of cols
+
 	// pre-allocate the space for the LUT
-	m_lut = Matrix44dArray(Z.rows() - 1, Z.cols() - 1);
+	m_LUT = Matrix44dArray(Ny - 1, Nx - 1);
 
 	// construct the Left and Right matrices
 	/*
@@ -32,9 +35,6 @@ void Interpolator::build_bicubic_interpolant(const MatrixXXd& X, const MatrixXXd
 		{ 0,  0, -1,  1}
 	};
 
-	auto Ny = Z.rows();// number of rows
-	auto Nx = Z.cols();// number of cols
-
 	// precompute the coefficients for each interval
 	for (int_t i = 0; i < Ny - 1; i++) {
 		for (int_t j = 0; j < Nx - 1; j++) {
@@ -50,16 +50,16 @@ void Interpolator::build_bicubic_interpolant(const MatrixXXd& X, const MatrixXXd
 			// using the central-difference to calculate interior gradients
 			// and forwrad- and backward-difference on the edges.
 			// calculate gradient y (row)
-			auto ip = std::max<int_t>(i - 1, 0);      // (i-1)th id
+			auto ip = std::max<int_t>(i - 1, 0);     // (i-1)th id
 			auto in = std::min<int_t>(i + 1, Ny - 1);// (i+1)th id
 			auto hy = (Y(in, j) - Y(ip, j)) / dy;// dist between (i-1) and (i+1)
 			fy00 = (Z(in, j) - Z(ip, j)) / hy;
-			fy01 = (Z(in, j + 1) - Z(ip, j + 1)) / hy;
+			fy10 = (Z(in, j + 1) - Z(ip, j + 1)) / hy;
 
 			ip = std::max<int_t>(i, 0);
 			in = std::min<int_t>(i + 2, Ny - 1);
 			hy = (Y(in, j) - Y(ip, j)) / dy;
-			fy10 = (Z(in, j) - Z(ip, j)) / hy;
+			fy01 = (Z(in, j) - Z(ip, j)) / hy;
 			fy11 = (Z(in, j + 1) - Z(ip, j + 1)) / hy;
 
 			// calculate the gradient x (col);
@@ -67,12 +67,12 @@ void Interpolator::build_bicubic_interpolant(const MatrixXXd& X, const MatrixXXd
 			auto jn = std::min<int_t>(j + 1, Nx - 1);
 			auto hx = (X(i, jn) - X(i, jp)) / dx;
 			fx00 = (Z(i, jn) - Z(i, jp)) / hx;
-			fx10 = (Z(i + 1, jn) - Z(i + 1, jp)) / hx;
+			fx01 = (Z(i + 1, jn) - Z(i + 1, jp)) / hx;
 
 			jp = std::max<int_t>(j, 0);
 			jn = std::min<int_t>(j + 2, Nx - 1);
 			hx = (X(i, jn) - X(i, jp)) / dx;
-			fx01 = (Z(i, jn) - Z(i, jp)) / hx;
+			fx10 = (Z(i, jn) - Z(i, jp)) / hx;
 			fx11 = (Z(i + 1, jn) - Z(i + 1, jp)) / hx;
 
 			// calculate gradient xy
@@ -84,9 +84,34 @@ void Interpolator::build_bicubic_interpolant(const MatrixXXd& X, const MatrixXXd
 			hx = (X(i, jn) - X(i, jp)) / dx;
 			fxy00 = ((Z(in, jn) - Z(in, jp)) / hx - (Z(ip, jn) - Z(ip, jp)) / hx) / hy;
 
+			ip = std::max<int_t>(i, 0);
+			in = std::min<int_t>(i + 2, Ny - 1);
+			hy = (Y(in, j) - Y(ip, j)) / dy;
+			fxy01 = ((Z(in, jn) - Z(in, jp) / hx - (Z(ip, jn) - Z(ip, jp)) / hx)) / hy;
+
+			ip = std::max<int_t>(i - 1, 0);
+			in = std::min<int_t>(i + 1, Ny - 1);
 			jp = std::max<int_t>(j, 0);
 			jn = std::min<int_t>(j + 2, Nx - 1);
-			hx = 
+			hy = (Y(in, j) - Y(ip, j)) / dy;
+			hx = (X(i, jn) - X(i, jp)) / dx;
+			fxy10 = ((Z(in, jn) - Z(in, jp)) / hx - (Z(ip, jn) - Z(ip, jp)) / hx) / hy;
+
+			ip = std::max<int_t>(i, 0);
+			in = std::min<int_t>(i + 2, Ny - 1);
+			hy = (Y(in, j) - Y(ip, j)) / dy;
+			fxy11 = ((Z(in, jn) - Z(in, jp)) / hx - (Z(ip, jn) - Z(ip, jp)) / hx) / hy;
+
+			// construct the matrix F
+			Matrix44d F{
+				{f00,  f01,  fy00,  fy01},
+				{f10,  f11,  fy10,  fy11},
+				{fx00, fx01, fxy00, fxy01},
+				{fx10, fx11, fxy10, fxy11},
+			};
+
+			// calculate the (i,j)th matrix A
+			m_LUT(i, j) = L * F * R;
 		}
 	}
 }

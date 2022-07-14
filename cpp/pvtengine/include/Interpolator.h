@@ -58,7 +58,7 @@ protected:
 	);
 
 private:
-	Matrix44dArray m_lut;/*!< Bucubic lookup table*/
+	Matrix44dArray m_LUT;/*!< Bucubic lookup table*/
 };
 
 
