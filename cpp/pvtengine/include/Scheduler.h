@@ -1,9 +1,7 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
-
 #include "pvtengine.h"
-
 
 //! This is the class to calculate the velocities based on PVT.
 /*!
@@ -106,6 +104,5 @@ private:
 	double m_a0 = 0.0;   /*!< The initial acceleration.*/
 	double m_at = 0.0;   /*!< The end acceleration.*/
 };
-
 
 #endif // !SCHEDULER_H

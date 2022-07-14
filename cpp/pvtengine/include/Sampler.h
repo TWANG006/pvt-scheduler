@@ -3,9 +3,12 @@
 
 #include "pvtengine.h"
 
-
-
-
+//! This is the class to up-sample the calculate sparse PVT grid
+/*! 
+* The class has an overloaded () operator, which accept 'tau' and
+* the sparse PVT as the inputs. 'tau' is the delta t used to up-
+* sample the PVT grid.
+*/
 class PVTENGINE_API Sampler
 {
 public:
