@@ -58,10 +58,8 @@ protected:
 	);
 
 private:
-	std::vector<Matrix44d> m_lut;/*!< Bucubic lookup table*/
+	Matrix44dArray m_lut;/*!< Bucubic lookup table*/
 };
 
 
 #endif // INTERPOLATOR_H
-
-

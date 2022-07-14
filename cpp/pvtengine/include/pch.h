@@ -11,6 +11,7 @@
 #include "framework.h"
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <omp.h>
 
 #endif //PCH_H

@@ -18,6 +18,7 @@ using Matrix44d = Eigen::Matrix<double, 4, 4, Eigen::RowMajor>;
 using MatrixXXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using MatrixX2d = Eigen::Matrix<double, Eigen::Dynamic, 2, Eigen::RowMajor>;
 using MatrixX4d = Eigen::Matrix<double, Eigen::Dynamic, 4, Eigen::RowMajor>;
+using Matrix44dArray = Eigen::Array<Matrix44d, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using Vector2d  = Eigen::Vector<double, 2>;
 using Vector4d  = Eigen::Vector<double, 4>;
 using VectorXd  = Eigen::Vector<double, Eigen::Dynamic>;
