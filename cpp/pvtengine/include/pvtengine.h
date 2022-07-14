@@ -14,7 +14,7 @@
 
 // Eigen API aliases
 using int_t = Eigen::Index;
-using Matrix4d  = Eigen::Matrix<double, 4, 4, Eigen::RowMajor>;
+using Matrix44d = Eigen::Matrix<double, 4, 4, Eigen::RowMajor>;
 using MatrixXXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using MatrixX2d = Eigen::Matrix<double, Eigen::Dynamic, 2, Eigen::RowMajor>;
 using MatrixX4d = Eigen::Matrix<double, Eigen::Dynamic, 4, Eigen::RowMajor>;

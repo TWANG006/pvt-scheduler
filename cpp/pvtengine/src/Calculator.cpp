@@ -33,7 +33,7 @@ VectorXd Calculator::operator()(const VectorXd& t, const Vector4d& c, PVA pva)
 
 Vector4d Calculator::pvt_coefficients(const double& p0, const double& p1, const double& v0, const double& v1, const double& t0, const double& t1)
 {
-	Matrix4d A{
+	Matrix44d A{
 		{t0 * t0 * t0, t0 * t0, t0, 1},
 		{t1 * t1 * t1, t1 * t1, t1, 1},
 		{3 * t0 * t0 , 2 * t0 , 1 , 0},
@@ -70,7 +70,7 @@ void Calculator::calculate_pvt(VectorXd& p, VectorXd& v, VectorXd& a, const Vect
 
 PVTENGINE_API Vector4d pvt_coefficients(const double& p0, const double& p1, const double& v0, const double& v1, const double& t0, const double& t1)
 {
-	Matrix4d A{
+	Matrix44d A{
 		{t0 * t0 * t0, t0 * t0, t0, 1},
 		{t1 * t1 * t1, t1 * t1, t1, 1},
 		{3 * t0 * t0 , 2 * t0 , 1 , 0},

@@ -109,8 +109,10 @@
     <ClInclude Include="include\pvtengine.h" />
     <ClInclude Include="include\Scheduler.h" />
     <ClInclude Include="include\Sampler.h" />
+    <ClInclude Include="include\Interpolator.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Interpolator.cpp" />
     <ClCompile Include="src\Sampler.cpp" />
     <ClCompile Include="src\Calculator.cpp" />
     <ClCompile Include="src\Scheduler.cpp" />
