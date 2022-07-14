@@ -36,6 +36,7 @@ void Interpolator::build_bicubic_interpolant(const MatrixXXd& X, const MatrixXXd
 	};
 
 	// precompute the coefficients for each interval
+    #pragma omp parallel for
 	for (int_t i = 0; i < Ny - 1; i++) {
 		for (int_t j = 0; j < Nx - 1; j++) {
 			// calculate the F matrix
