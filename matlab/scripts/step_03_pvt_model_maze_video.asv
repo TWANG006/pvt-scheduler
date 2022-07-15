@@ -15,7 +15,7 @@ Z = Zca;
 
 %% 2. calculate the delta t
 % direct assignment
-tau = 1/20;  % ms， 1/60
+tau = 1/20;  % ms , 1/60
 
 fsfig('velocity map');
 subplot(121);
@@ -114,8 +114,8 @@ for i = 1: size(px_s)-1
     set(gca,'XLim',[min_x*1e3 max_x*1e3],'YLim',[min_y*1e3 max_y*1e3])
     hold on;
     plot3(1e3* (x_tif + xdg), 1e3 * (y_tif + ydg), z_tif,'-','color',[0.686 0.404 0.239],'linewidth',2);
-    plot3(1e3* (0.02*x_tif + xdg), 1e3 * (0.02*y_tif + ydg), 0.02*z_tif,'-','color',[0.686 0.404 0.239],'linewidth',4);%center of circle
-    plot3(px_s*1e3, py_s*1e3, 1000*ones(size(px_s,1),1), 'b-', 'LineWidth', 1); % maze path
+    plot3(1e3* (0.01x_tif + xdg), 1e3 * (y_tif + ydg), z_tif,'-','color',[0.686 0.404 0.239],'linewidth',2);
+    plot3(px_s*1e3, py_s*1e3, 100*ones(size(px_s,1),1), 'b-', 'LineWidth', 1); % maze path
     hold off;
     
     set(gcf,'position',[200, 200, 720,480]);
