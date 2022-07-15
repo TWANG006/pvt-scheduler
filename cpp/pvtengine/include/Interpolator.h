@@ -2,6 +2,7 @@
 #define INTERPOLATOR_H
 
 #include "pvtengine.h"
+#include <vector>
 
 //! This class implements the Bi-cubic interpolant for interpolating
 //! the TIF, which is needed in the Simulator
