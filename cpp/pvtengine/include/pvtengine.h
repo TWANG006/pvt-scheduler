@@ -23,8 +23,8 @@ using Vector2d  = Eigen::Vector<double, 2>;
 using Vector4d  = Eigen::Vector<double, 4>;
 using VectorXd  = Eigen::Vector<double, Eigen::Dynamic>;
 using VectorXi  = Eigen::Vector<int_t, Eigen::Dynamic>;
-using RowVector4d = Eigen::Matrix<double, 1, 4, Eigen::RowMajor>;
-using ColVector4d = Eigen::Matrix<double, 4, 1, Eigen::RowMajor>;
+using RowVector4d = Eigen::Matrix<double, 1, 4>;
+using ColVector4d = Eigen::Matrix<double, 4, 1>;
 using Eigen::seq;
 using Eigen::seqN;
 using Eigen::all;
@@ -46,5 +46,13 @@ struct PVA {
 	VectorXd  V;/*!< Velocities*/
 	VectorXd  A;/*!< Accelerations*/
 };
+
+//! generate the X, Y meshgrid mimicking the matlab function
+PVTENGINE_API void meshgrid(
+	const VectorXd& x,/*!< [in] x vector*/
+	const VectorXd& y,/*!< [in] y vector*/
+	MatrixXXd& X,     /*!< [out] X grid*/
+	MatrixXXd& Y      /*!< [out] Y grid*/
+);
 
 #endif // !PVTENGINE_

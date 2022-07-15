@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="src\cpp.hint" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\framework.h">

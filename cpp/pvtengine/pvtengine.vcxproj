@@ -100,6 +100,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="src\cpp.hint" />
   </ItemGroup>
   <ItemGroup>

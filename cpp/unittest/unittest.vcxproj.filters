@@ -11,6 +11,8 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="sampler_test.cpp" />
+    <ClCompile Include="misc_test.cpp" />
+    <ClCompile Include="interpolator_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">

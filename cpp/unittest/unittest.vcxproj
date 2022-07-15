@@ -37,6 +37,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="calculator_test.cpp" />
+    <ClCompile Include="interpolator_test.cpp" />
+    <ClCompile Include="misc_test.cpp" />
     <ClCompile Include="sampler_test.cpp" />
     <ClCompile Include="scheduler_test.cpp" />
     <ClCompile Include="pch.cpp">
