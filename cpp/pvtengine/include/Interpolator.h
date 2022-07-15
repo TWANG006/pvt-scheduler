@@ -41,24 +41,32 @@ public:
 		const MatrixXXd& Z /*!< [in] z coordinate grid*/
 	);
 
+	double operator() (
+		const double& x,/*!< [in] queried x coordinate*/
+		const double& y /*!< [in] queried y coordinate*/
+	) const;
+
 protected:
 	//! Build the bicubic interpolation LUT
-	void build_bicubic_interpolant(
-		const MatrixXXd& X,/*!< [in] x coordinate grid*/
-		const MatrixXXd& Y,/*!< [in] y coordinate grid*/
-		const MatrixXXd& Z /*!< [in] z coordinate grid*/
-	);
+	void build_bicubic_interpolant();
 
-	//! Precompute the gradients of the input values
-	void precompute_gradients(
-		const MatrixXXd& Z,/*!< [in] input values*/
-		MatrixXXd& Zx,     /*!< [out] gradients in x axis*/
-		MatrixXXd& Zy,     /*!< [out] gradients in y axis*/
-		MatrixXXd& Zxy     /*!< [out] gradients in y axis of Zx*/
-	);
+	//! find the lower-bound indcies of x, y for the interpolation
+	int_t get_x_index_left_of(const double& x) const;
+	int_t get_y_index_below(const double& y) const;
 
 private:
 	Matrix44dArray m_LUT;/*!< Bucubic lookup table*/
+	double m_xmin = INFINITY;
+	double m_xmax = -INFINITY;
+	double m_ymin = INFINITY;
+	double m_ymax = -INFINITY;
+
+	MatrixXXd m_X;
+	MatrixXXd m_Y;
+	MatrixXXd m_Z;
+
+	std::vector<double> m_xrange;
+	std::vector<double> m_yrange;
 };
 
 

@@ -23,6 +23,8 @@ using Vector2d  = Eigen::Vector<double, 2>;
 using Vector4d  = Eigen::Vector<double, 4>;
 using VectorXd  = Eigen::Vector<double, Eigen::Dynamic>;
 using VectorXi  = Eigen::Vector<int_t, Eigen::Dynamic>;
+using RowVector4d = Eigen::Matrix<double, 1, 4, Eigen::RowMajor>;
+using ColVector4d = Eigen::Matrix<double, 4, 1, Eigen::RowMajor>;
 using Eigen::seq;
 using Eigen::seqN;
 using Eigen::all;
