@@ -65,10 +65,10 @@ protected:
 
 private:
 	Matrix44dArray m_LUT;/*!< Bucubic lookup table*/
-	double m_xmin = INFINITY;
-	double m_xmax = -INFINITY;
-	double m_ymin = INFINITY;
-	double m_ymax = -INFINITY;
+	double m_xmin;
+	double m_xmax;
+	double m_ymin;
+	double m_ymax;
 
 	MatrixXXd m_X;
 	MatrixXXd m_Y;
