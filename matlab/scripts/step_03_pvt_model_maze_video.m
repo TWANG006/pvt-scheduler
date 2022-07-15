@@ -1,12 +1,12 @@
 clear;
-close all;
+% close all;
 clc;
 addpath(genpath('../functions'));
 addpath('../../../Slope-based-dwell-time/matlab/functions/'); % import viridis
 %% l. load data
 % calculated pvt
 data_dir = '../../data/sim_data/';
-load([data_dir 'step_02_pvt_2d_from_lsmr.mat']);
+load([data_dir 'step_02_pvt_2d_from_udo.mat']);
 
 pvt_t = cs_t;
 X = Xca;
@@ -15,7 +15,7 @@ Z = Zca;
 
 %% 2. calculate the delta t
 % direct assignment
-tau = 1/20;  % ms， 1/60
+% tau = 1/20;  % ms， 1/60
 
 fsfig('velocity map');
 subplot(121);
@@ -50,7 +50,7 @@ min_y = nanmin(Y(:)) - 2 * r_tif;
 max_y = nanmax(Y(:)) + 2 * r_tif;
 
 writerObj=VideoWriter('pvt_sim_test.avi');%make a movie
-writerObj.FrameRate = 60;
+writerObj.FrameRate = 20; %60
 open(writerObj);
 
 tmp_Z = remove_polynomials(X, Y, Z, 1);
