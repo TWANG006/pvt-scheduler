@@ -111,8 +111,10 @@
     <ClInclude Include="include\Scheduler.h" />
     <ClInclude Include="include\Sampler.h" />
     <ClInclude Include="include\Interpolator.h" />
+    <ClInclude Include="include\Simulator.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Simulator.cpp" />
     <ClCompile Include="src\Interpolator.cpp" />
     <ClCompile Include="src\Sampler.cpp" />
     <ClCompile Include="src\Calculator.cpp" />
