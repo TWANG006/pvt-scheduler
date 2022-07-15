@@ -46,9 +46,17 @@ public:
 		const double& y /*!< [in] queried y coordinate*/
 	) const;
 
+	MatrixXXd operator() (
+		const MatrixXXd& X,/*!< [in] X coordinate grid*/
+		const MatrixXXd& Y /*!< [in] Y coordinate grid*/
+	) const;
+
 protected:
 	//! Build the bicubic interpolation LUT
 	void build_bicubic_interpolant();
+
+	//! Perform the interpolation
+	double interp(const double& x, const double& y) const;
 
 	//! find the lower-bound indcies of x, y for the interpolation
 	int_t get_x_index_left_of(const double& x) const;

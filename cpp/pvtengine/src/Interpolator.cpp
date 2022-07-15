@@ -18,36 +18,24 @@ Interpolator::Interpolator(const MatrixXXd& X, const MatrixXXd& Y, const MatrixX
 
 double Interpolator::operator()(const double& x, const double& y) const
 {
-	// no extrapolation
-	if (x < m_xmin || x > m_xmax || y < m_ymin || y > m_ymax) {
-		return 0.0;
+	return interp(x, y);
+}
+
+MatrixXXd Interpolator::operator()(const MatrixXXd& X, const MatrixXXd& Y) const
+{
+	auto Ny = X.rows();
+	auto Nx = X.cols();
+
+	MatrixXXd Z(Ny, Nx);
+
+	#pragma omp parallel for
+	for (int_t i = 0; i < Ny; i++) {
+		for (int_t j = 0; j < Nx; j++) {
+			Z(i, j) = interp(X(i, j), Y(i, j));
+		}
 	}
 
-	// find the interval that x, y belongs to
-	auto i = get_y_index_below(y);
-	auto j = get_x_index_left_of(x);
-
-	i = i < 0 ? 0 : i;
-	j = j < 0 ? 0 : j;
-
-	// calculate the distance
-	auto dy = m_Y(i + 1, j) - m_Y(i, j);
-	auto dx = m_X(i, j + 1) - m_X(i, j);
-
-	// create the coordinate vectors
-	ColVector4d vy;
-	vy[0] = 1;                 // 1
-	vy[1] = (y - m_Y(i, j)) / dy;// y^1
-	vy[2] = vy[1] * vy[1];     // y^2
-	vy[3] = vy[2] * vy[1];     // y^3
-	
-	RowVector4d vx;
-	vx[0] = 1;                 // 1
-	vx[1] = (x - m_X(i, j)) / dx;// x^1
-	vx[2] = vx[1] * vx[1];     // x^2
-	vx[3] = vx[2] * vx[1];     // x^3
-
-	return vx * m_LUT(i, j) * vy;
+	return Z;
 }
 
 
@@ -159,6 +147,40 @@ void Interpolator::build_bicubic_interpolant()
 			m_LUT(i, j) = L * F * R;
 		}
 	}
+}
+
+double Interpolator::interp(const double& x, const double& y) const
+{
+	// no extrapolation
+	if (x < m_xmin || x > m_xmax || y < m_ymin || y > m_ymax) {
+		return 0.0;
+	}
+
+	// find the interval that x, y belongs to
+	auto i = get_y_index_below(y);
+	auto j = get_x_index_left_of(x);
+
+	i = i < 0 ? 0 : i;
+	j = j < 0 ? 0 : j;
+
+	// calculate the distance
+	auto dy = m_Y(i + 1, j) - m_Y(i, j);
+	auto dx = m_X(i, j + 1) - m_X(i, j);
+
+	// create the coordinate vectors
+	ColVector4d vy;
+	vy[0] = 1;                 // 1
+	vy[1] = (y - m_Y(i, j)) / dy;// y^1
+	vy[2] = vy[1] * vy[1];     // y^2
+	vy[3] = vy[2] * vy[1];     // y^3
+
+	RowVector4d vx;
+	vx[0] = 1;                 // 1
+	vx[1] = (x - m_X(i, j)) / dx;// x^1
+	vx[2] = vx[1] * vx[1];     // x^2
+	vx[3] = vx[2] * vx[1];     // x^3
+
+	return vx * m_LUT(i, j) * vy;
 }
 
 int_t Interpolator::get_x_index_left_of(const double& x) const
