@@ -28,7 +28,6 @@ MatrixXXd Interpolator::operator()(const MatrixXXd& X, const MatrixXXd& Y) const
 
 	MatrixXXd Z(Ny, Nx);
 
-	#pragma omp parallel for
 	for (int_t i = 0; i < Ny; i++) {
 		for (int_t j = 0; j < Nx; j++) {
 			Z(i, j) = interp(X(i, j), Y(i, j));
