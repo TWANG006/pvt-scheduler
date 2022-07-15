@@ -15,6 +15,8 @@ TEST(Interpolator, Simple_function)
 
 	MatrixXXd X, Y;
 	meshgrid(x, y, X, Y);
+	Y = (Y.maxCoeff() - Y.array() + Y.minCoeff()).matrix();
+
 
 	// test function
 	auto f = [](double x, double y) {return x * y + 2 * x + 3 * y; };
@@ -27,11 +29,12 @@ TEST(Interpolator, Simple_function)
 	}
 
 	// build the interpolator
-	Interpolator bicubic(X, Y, Z);
+	Interpolator bicubic(X, Y.colwise().reverse(), Z.colwise().reverse());
 
-	std::cout << bicubic(1.5, 2.2) << ", " << bicubic(2.1, 2.3) << std::endl;
+	std::cout << bicubic(1.5, 2.2)<<", "<<bicubic(2.1, 2.3)<< std::endl;
 
 	ASSERT_NEAR(bicubic(1.5, 2.2),  f(1.5, 2.2), 0.1);
+	ASSERT_NEAR(bicubic(2.1, 2.3),  f(2.1, 2.3), 0.1);
 	ASSERT_NEAR(bicubic(0, 0),  f(0, 0), 0.1);
 	ASSERT_NEAR(bicubic(2, -1), f(2, -1), 0.1);
 

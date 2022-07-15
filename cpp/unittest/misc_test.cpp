@@ -19,6 +19,10 @@ TEST(misc_test, meshgrid_test)
 
 	meshgrid(x, y, X, Y);
 
+	Y = (Y.maxCoeff() - Y.array() + Y.minCoeff()).matrix();
+
 	std::cout << X << std::endl;
 	std::cout << Y << std::endl;
+
+	std::cout << Y.colwise().reverse() << std::endl;
 }
