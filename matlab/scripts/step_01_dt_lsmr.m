@@ -5,7 +5,7 @@ addpath('../../../5-functions/');
 
 %% load data
 data_dir = '../../data/sim_data/';
-data_file = 'step_00_rect_tif1_rect_60mm_tif_10mm.mat';
+data_file = 'step_00_rect_map_rect_60mm_tif_2mm.mat';
 load([data_dir data_file]);
 
 xp = xp1;
@@ -18,35 +18,11 @@ precision = 1e-3;
 precision_unit = 'nm';
 min_t = 10e-2;
 
-%% Define the CA range
-% r_tif = size(Xtif, 2) * median(diff(Xtif(1, :))) * 0.5;
-% ca_range = ((min(X(:)) + r_tif) <= X) & (X <= (max(X(:)) - r_tif)) & ((min(Y(:)) + r_tif) <= Y) & (Y <= (max(Y(:)) - r_tif));
-
-xc = 0.5 * (max(X(:)) + min(X(:)));
-yc = 0.5 * (max(Y(:)) + min(Y(:)));
-ca_range = ((xc - 6e-3) <= X) & (X <= (xc + 6e-3)) & ((yc - 6e-3) <= Y) & (Y <= (yc + 6e-3));
-
-Z_to_remove_ca = Z;
-Z_to_remove_ca(~ca_range) = NaN;
-
-Xca = X;
-Yca = Y;
-Xca(~ca_range) = NaN;
-Yca(~ca_range) = NaN;
-
-% delete the rows and columns which are all NaN
-Xca(all(isnan(Xca)'),:) = [];%Delete rows that are all NaN
-Xca(:,all(isnan(Xca))) = [];%Delete columns that are all NaN
-Yca(all(isnan(Yca)'),:) = [];
-Yca(:,all(isnan(Yca))) = [];
-Z_to_remove_ca(all(isnan(Z_to_remove_ca)'),:) = [];
-Z_to_remove_ca(:,all(isnan(Z_to_remove_ca))) = [];
-
 %% TIF 1
 [t, Zremoval_ca, Zresidual_ca, ~] = DwellTime2D_LSMR(...
     Xca, ...
     Yca, ...
-    Z_to_remove_ca,...
+    Zca,...
     Xtif, ...
     Ytif, ...
     Ztif, ...
@@ -61,18 +37,23 @@ Z_to_remove_ca(:,all(isnan(Z_to_remove_ca))) = [];
 
 
 %% display
-figure;
-subplot(131);
-ShowSurfaceMap(X, Y, Z, 3, true, 1e9, 'nm', 'initial map');
-subplot(132);
-ShowSurfaceMap(Xca, Yca, Zremoval_ca, 3, true, 1e9, 'nm', 'Zremoval');
-subplot(133);
-ShowSurfaceMap(Xca, Yca, Zresidual_ca, 3, true, 1e9, 'nm', 'Zresidual');
-
+fsfig('position mode');
+subplot(241);
+ShowSurfaceMap(X, Y, Z, 3, true, 1e9, 'nm', 'initial surface error');
+subplot(242);
+ShowSurfaceMap(Xtif, Ytif, Ztif, 0, false, 1e9, 'nm', 'TIF');
+subplot(245);
+ShowDwellTime(xp, yp, t, false, 0, 'jet', 'Dwell Time');  
+subplot(246);
+ShowSurfaceMap(Xca, Yca, Zca, 3, true, 1e9, 'nm', 'Clear Aperture');
+subplot(247);
+ShowSurfaceMap(Xca, Yca, Zremoval_ca, 3, true, 1e9, 'nm', 'Removed surface error');
+subplot(248);
+ShowSurfaceMap(Xca, Yca, Zresidual_ca, 3, true, 1e9, 'nm', 'Residual surface error');
 %% save data
 save([data_dir mfilename '.mat'], ...
     'X', 'Y', 'Z', ...
-    'Xca', 'Yca', 'Z_to_remove_ca',  ...
+    'Xca', 'Yca', 'Zca',  ...
     'Zremoval_ca', ...
     'Zresidual_ca',  ...
     'xp',  ...

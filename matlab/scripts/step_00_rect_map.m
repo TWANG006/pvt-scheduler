@@ -22,14 +22,22 @@ Y = Y - nanmean(Y(:));
 Z = RemoveSurface1(X, Y, Z);
 Z = Z - nanmin(Z(:));
 
+Zca = imresize(Z, 1/5);
+[Xca, Yca] = meshgrid(0:size(Zca,2)-1, 0:size(Zca,1)-1); 
+surf_mpp = median(diff(X(1, :)));
+Xca = Xca * surf_mpp;
+Yca = (max(Yca(:)) - Yca) * surf_mpp;
+Xca = Xca - nanmean(Xca(:));
+Yca = Yca - nanmean(Yca(:));
+Zca = Zca - nanmin(Zca(:));
+
 % display the initial surf
 fsfig('');
-ShowSurfaceMap(X, Y, Z);
-
+ShowSurfaceMap(Xca, Yca, Zca);
 
 %% clean tifs
 % tif radii
-r1 = 10e-3; 
+r1 = 2e-3; 
 
 % sampling interval
 tifMpp = 0.1e-3; 
@@ -55,7 +63,7 @@ tif1Params.mu_xy = [0, 0];
 % display
 fsfig('');
 ShowSurfaceMap(Xtif1, Ytif1, Ztif1);
-
+figure;
 
 %% generate tool path
 % minX = min(min(X));    maxX = max(max(X));
@@ -72,7 +80,7 @@ ShowSurfaceMap(Xtif1, Ytif1, Ztif1);
 %     i1...
 % );
 
-
+0
 [Dx, Dy, xp, yp] = maze_path(10, 0.5)
 xp1 = Dx * 1e-3;
 yp1 = Dy * 1e-3;
@@ -87,6 +95,7 @@ outFile = [outDir mfilename '_rect_60mm_tif_' ...
 
 save(outFile, ...
     'X', 'Y', 'Z', ...
+    'Xca', 'Yca', 'Zca', ...
     'Xtif1', 'Ytif1', 'Ztif1', 'tif1Params', ...
     'xp1', 'yp1' ...
 );

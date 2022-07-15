@@ -1,5 +1,5 @@
 clear;
-close all;
+% close all;
 clc;
 addpath(genpath('../functions'));
 
