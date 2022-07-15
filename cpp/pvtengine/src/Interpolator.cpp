@@ -49,10 +49,10 @@ void Interpolator::build_bicubic_interpolant()
 
 	// construct the Left and Right matrices
 	/*
-	 *|a00 a01 a02 a03| | 1  0  0  0 || f00  f01  fy00  fy01||1  0 -3 2|
-	 *|a10 a11 a12 a13|=| 0  0  1  0 || f10  f11  fy10  fy11||0  0  3 2|
-	 *|a20 a21 a22 a23| |-3  3 -2  -1||fx00 fx01 fxy00 fxy00||0  1 -2 1|
-	 *|a30 a31 a32 a33| | 2 -2  1  1 ||fx10 fx11 fxy10 fxy11||0  0 -1 1|
+	 *|a00 a01 a02 a03| | 1  0  0  0 || f00  f01  fy00  fy01||1  0 -3  2|
+	 *|a10 a11 a12 a13|=| 0  0  1  0 || f10  f11  fy10  fy11||0  0  3 -2|
+	 *|a20 a21 a22 a23| |-3  3 -2  -1||fx00 fx01 fxy00 fxy00||0  1 -2  1|
+	 *|a30 a31 a32 a33| | 2 -2  1  1 ||fx10 fx11 fxy10 fxy11||0  0 -1  1|
 	*/
 	Matrix44d L{
 		{ 1,  0,  0,  0},

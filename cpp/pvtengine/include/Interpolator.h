@@ -12,10 +12,10 @@
 *              z(x,y) = sum sum a_ij * x^i * y^j
 *                       i=0 j=0
 * which can be concisely converted to matrix-based operations as
-*   |a00 a01 a02 a03| | 1  0  0  0 || f00  f01  fy00  fy01||1  0 -3 2|
-* A=|a10 a11 a12 a13|=| 0  0  1  0 || f10  f11  fy10  fy11||0  0  3 2|
-*   |a20 a21 a22 a23| |-3  3 -2  -1||fx00 fx01 fxy00 fxy00||0  1 -2 1|
-*   |a30 a31 a32 a33| | 2 -2  1  1 ||fx10 fx11 fxy10 fxy11||0  0 -1 1|
+*   |a00 a01 a02 a03| | 1  0  0  0|| f00  f01  fy00  fy01||1  0 -3  2|
+* A=|a10 a11 a12 a13|=| 0  0  1  0|| f10  f11  fy10  fy11||0  0  3 -2|
+*   |a20 a21 a22 a23| |-3  3 -2 -1||fx00 fx01 fxy00 fxy00||0  1 -2  1|
+*   |a30 a31 a32 a33| | 2 -2  1  1||fx10 fx11 fxy10 fxy11||0  0 -1  1|
 * and the interpolated values p(x,y) can be obatained as
 *                     |a00 a01 a02 a03|| 1 |
 * z(x,y)=|1 x x^2 x^3||a10 a11 a12 a13|| y |.
