@@ -3,13 +3,15 @@ clear; clc;
 close all;
 
 %% input parameters.
-length = 30; %unit:[mm] , must be even
-width = 10;
+length = 80; %unit:[mm]. max(length, width) must be even.
+width = 8; 
 
 b_remaze = 1; 
+i_iter = 0;
 
 while b_remaze
-    [Dx, Dy, X_dp, Y_dp, S] = maze_path(0.5*length, 0.5); % call square maze algorithm.
+    half_dp = max(length, width);
+    [Dx, Dy, X_dp, Y_dp, S] = maze_path(0.5*half_dp, 0.5); % call square maze algorithm.
     
     % dwell points. (Xp, Yp)
     [Xp, Yp] = meshgrid(0 : 0.5*size(X_dp,2)-1, 0 : 0.5*size(X_dp,1)-1);
@@ -90,6 +92,7 @@ while b_remaze
     if sum(sum(b_seq)) == 2*m1*n1 - 2
         b_remaze = 0; % out of the while loop
     end
+    i_iter = i_iter + 1; % number of iterations
     
 end
 
@@ -100,8 +103,21 @@ plot(re_Dx * 1e-3, re_Dy * 1e-3, 'r-*');axis xy tight equal;
 axis equal;
 set(gca,'xcolor', 'none');
 set(gca,'ycolor', 'none');
+title('Rectangular maze');
+xlabel('x [mm]');
+ylabel('y [mm]');
 
+% Labeling entrance and exit
+x_entrance = re_Dx(1);
+y_entrance = re_Dy(1) -  median(diff(Yp1(:, 1)));
+x_exit = re_Dx(size(re_Dx,2));
+y_exit = re_Dy(size(re_Dy,2)) -  median(diff(Yp1(:, 1)));
 
-
-
-
+hold on;
+plot([x_entrance * 1e-3, re_Dx(1) * 1e-3], [y_entrance * 1e-3, re_Dy(1) * 1e-3], 'bo--');
+plot([x_exit * 1e-3, re_Dx(size(re_Dx,2)) * 1e-3], [y_exit * 1e-3, re_Dy(size(re_Dy,2)) * 1e-3], 'ro--');
+text(x_entrance * 1e-3, y_entrance * 1e-3,'ENT');
+text(x_exit * 1e-3, y_exit * 1e-3,'EX');
+xlabel('x [mm]');
+ylabel('y [mm]');
+hold off;
