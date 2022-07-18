@@ -52,8 +52,32 @@ for n = 1: n_positions
         v(n), v(n + 1), ...
         t(n), t(n + 1) ...
     );
+    
 end
 
+% res_0 = res * 0;
+% 
+% for n = 1: n_positions
+%     %     c(n, :) = res((1: 4) + (n - 1) * 6);
+%     c(n, :) = pvt_coefficients(...
+%         p(n), p(n + 1), ...
+%         v(n), v(n + 1), ...
+%         t(n), t(n + 1) ...
+%     );
+%     
+%     res_0((n - 1)*6 + 1: (n - 1)*6 + 6) = [c(n, :)'; v(n); a(n);];
+% end
+% 
+% % solve again using res_0
+% % if is_c1_smooth == true
+% %     res = lsqlin(C, d, [], [], Aeq, beq, lb, ub, res_0, options);
+% % else
+%     res = lsqlin(C, d, [], [], [], [], lb, ub, res_0, options);
+% % end
+% 
+% for n = 1: n_positions
+%     c(n, :) = res((1: 4) + (n - 1) * 6);
+% end
 
 end
 

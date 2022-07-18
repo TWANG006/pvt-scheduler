@@ -16,7 +16,7 @@ vx_max = 250e-3;
 ay_max = 1;
 vy_max = 150e-3;
 
-tau = 1/120;
+tau = 1/60;
 
 
 %% calculate pvt for x and y seperately
