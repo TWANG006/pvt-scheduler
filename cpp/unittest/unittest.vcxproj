@@ -33,6 +33,7 @@
     <IntDir>$(SolutionDIR)bin\$(ProjectName)\temp\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemGroup>
+    <ClInclude Include="eigen3-hdf5.hpp" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -45,6 +46,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="simulator_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\pvtengine\pvtengine.vcxproj">
@@ -64,36 +66,36 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>X64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X64;_DEBUG;_CONSOLE;H5_BUILT_AS_DYNAMIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>../pvtengine/include/;$(EIGEN_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../pvtengine/include/;$(EIGEN_DIR);$(HDF5_DIR_64)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDIR)lib\$(Platform)\$(Configuration)\;$(SolutionDIR)packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.5\lib\native\v140\windesktop\msvcstl\static\rt-dyn\$(PlatForm)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtest_maind.lib;pvtengine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDIR)lib\$(Platform)\$(Configuration)\;$(SolutionDIR)packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.5\lib\native\v140\windesktop\msvcstl\static\rt-dyn\$(PlatForm)\$(Configuration);$(HDF5_DIR_64)\lib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gtest_maind.lib;pvtengine.lib;hdf5.lib;hdf5_cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PreprocessorDefinitions>X64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X64;NDEBUG;_CONSOLE;H5_BUILT_AS_DYNAMIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>../pvtengine/include/;$(EIGEN_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../pvtengine/include/;$(EIGEN_DIR);$(HDF5_DIR_64)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <AdditionalLibraryDirectories>$(SolutionDIR)lib\$(Platform)\$(Configuration)\;$(SolutionDIR)packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.5\lib\native\v140\windesktop\msvcstl\static\rt-dyn\$(PlatForm)\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtest_main.lib;pvtengine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDIR)lib\$(Platform)\$(Configuration)\;$(SolutionDIR)packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.5\lib\native\v140\windesktop\msvcstl\static\rt-dyn\$(PlatForm)\$(Configuration);$(HDF5_DIR_64)\lib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gtest_main.lib;pvtengine.lib;hdf5.lib;hdf5_cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

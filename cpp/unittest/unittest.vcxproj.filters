@@ -13,6 +13,7 @@
     <ClCompile Include="sampler_test.cpp" />
     <ClCompile Include="misc_test.cpp" />
     <ClCompile Include="interpolator_test.cpp" />
+    <ClCompile Include="simulator_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">
@@ -26,6 +27,7 @@
     <ClInclude Include="pch.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="eigen3-hdf5.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

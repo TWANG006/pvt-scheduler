@@ -158,3 +158,28 @@ save([data_dir mfilename '.mat'], ...
     'vx_s', 'vy_s', ...
     'ax_s', 'ay_s' ...
     );
+
+
+%% write to hdf5
+h5create([data_dir mfilename '.h5'], '/X', size(X'));
+h5write([data_dir mfilename '.h5'], '/X', X');
+h5create([data_dir mfilename '.h5'], '/Y', size(Y'));
+h5write([data_dir mfilename '.h5'], '/Y', Y');
+h5create([data_dir mfilename '.h5'], '/Z', size(Z'));
+h5write([data_dir mfilename '.h5'], '/Z', Z');
+
+h5create([data_dir mfilename '.h5'], '/Xtif', size(Xtif'));
+h5write([data_dir mfilename '.h5'], '/Xtif', Xtif');
+h5create([data_dir mfilename '.h5'], '/Ytif', size(Ytif'));
+h5write([data_dir mfilename '.h5'], '/Ytif', Ytif');
+h5create([data_dir mfilename '.h5'], '/Ztif', size(Ztif'));
+h5write([data_dir mfilename '.h5'], '/Ztif', Ztif');
+
+h5create([data_dir mfilename '.h5'], '/px', size(px_s'));
+h5write([data_dir mfilename '.h5'], '/px', px_s');
+h5create([data_dir mfilename '.h5'], '/py', size(py_s'));
+h5write([data_dir mfilename '.h5'], '/py', py_s');
+h5create([data_dir mfilename '.h5'], '/vx', size(vx_s'));
+h5write([data_dir mfilename '.h5'], '/vx', vx_s');
+h5create([data_dir mfilename '.h5'], '/vy', size(vy_s'));
+h5write([data_dir mfilename '.h5'], '/vy', vy_s');
