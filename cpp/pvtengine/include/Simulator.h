@@ -22,6 +22,7 @@ public:
 	Simulator() = delete;
 	Simulator(const Simulator&) = delete;
 	Simulator& operator=(const Simulator&) = delete;
+	virtual ~Simulator();
 
 	//! Construct the Simulator using the PVT and TIF
 	/*!
@@ -46,6 +47,15 @@ public:
 	MatrixXXd operator()(
 		const PVA& xPV,/*!< [in] PVT in x axis*/
 		const PVA& yPV /*!< [in] PVT in y axis*/
+	);
+
+	//! calculate removal for each PVT segment
+	void removal_per_pvt_segment(
+		const double& p0,/*!< [in] starting p*/
+		const double& p1,/*!< [in] ending p*/
+		const double& v0,/*!< [in] starting v*/
+		const double& v1,/*!< [in] ending v*/
+		MatrixXXd& Zrem  /*!< [out] removed material*/
 	);
 
 private:

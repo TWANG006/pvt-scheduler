@@ -19,7 +19,8 @@ vx_max = 250e-3; % Maximum velocity in the x-direction
 ay_max = 1;
 vy_max = 150e-3;
 
-tau = 1/20; 
+tau = 1/20;
+
 %% calculate pvt for x and y seperately
 [vx, ax, cx] = pvt_scheduler(px, cs_t, ax_max, vx_max, true);
 [vy, ay, cy] = pvt_scheduler(py, cs_t, ay_max, vy_max, true);
