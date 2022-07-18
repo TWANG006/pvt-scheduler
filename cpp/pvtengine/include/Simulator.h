@@ -59,7 +59,9 @@ public:
 		const double& vx1,/*!< [in] ending vx*/
 		const double& vy0,/*!< [in] starting vy*/
 		const double& vy1,/*!< [in] ending vy*/
-		MatrixXXd& Zrem  /*!< [out] removed material*/
+		MatrixXXd& Zrem,  /*!< [out] removed material*/
+		double& x_dp,     /*!< [out] dwell point x coordinate*/
+		double& y_dp      /*!< [out] dwell point y coordinate*/
 	);
 
 private:
