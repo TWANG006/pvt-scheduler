@@ -219,19 +219,19 @@ void Scheduler::build_lbAubA(MatrixXXd& A, VectorXd& lbA, VectorXd& ubA)
 		auto i = j + 1;
 		auto id = j * 6;
 
-		//// equal a at the intermediate points
-		//A(j - 1, id - 6) = 6 * m_T(i - 1);
-		//A(j - 1, id    ) = -6 * m_T(i - 1);
-		//A(j - 1, id - 5) = 2;
-		//A(j - 1, id + 1) = -2;
+		// equal a at the intermediate points
+		A(j - 1, id - 6) = 6 * m_T(i - 1);
+		A(j - 1, id    ) = -6 * m_T(i - 1);
+		A(j - 1, id - 5) = 2;
+		A(j - 1, id + 1) = -2;
 
 		// equal v at the intermediate points
-		A(j - 1, id - 6) = 3 * m_T(i - 1) * m_T(i - 1);
-		A(j - 1, id    ) = -3 * m_T(i - 1) * m_T(i - 1);
-		A(j - 1, id - 5) = 2 * m_T(i - 1);
-		A(j - 1, id + 1) = -2 * m_T(i - 1);
-		A(j - 1, id - 4) = 1;
-		A(j - 1, id + 2) = -1;
+		//A(j - 1, id - 6) = 3 * m_T(i - 1) * m_T(i - 1);
+		//A(j - 1, id    ) = -3 * m_T(i - 1) * m_T(i - 1);
+		//A(j - 1, id - 5) = 2 * m_T(i - 1);
+		//A(j - 1, id + 1) = -2 * m_T(i - 1);
+		//A(j - 1, id - 4) = 1;
+		//A(j - 1, id + 2) = -1;
 
 		//// eqaul p at the intermediate points
 		//A(j + 1, id - 6) = m_T(i - 1) * m_T(i - 1) * m_T(i - 1);
