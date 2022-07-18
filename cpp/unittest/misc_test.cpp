@@ -26,3 +26,13 @@ TEST(misc_test, meshgrid_test)
 
 	std::cout << Y.colwise().reverse() << std::endl;
 }
+
+TEST(misc_test, eigen_mul)
+{
+	MatrixX2d A{
+		{1, 2},
+		{3, 4},
+	};
+
+	std::cout << A * 2 << std::endl;
+}
