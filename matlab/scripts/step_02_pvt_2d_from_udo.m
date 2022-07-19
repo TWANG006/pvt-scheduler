@@ -161,12 +161,12 @@ save([data_dir mfilename '.mat'], ...
 
 
 %% write to hdf5
-h5create([data_dir mfilename '.h5'], '/X', size(X'));
-h5write([data_dir mfilename '.h5'], '/X', X');
-h5create([data_dir mfilename '.h5'], '/Y', size(Y'));
-h5write([data_dir mfilename '.h5'], '/Y', Y');
-h5create([data_dir mfilename '.h5'], '/Z', size(Z'));
-h5write([data_dir mfilename '.h5'], '/Z', Z');
+h5create([data_dir mfilename '.h5'], '/X', size(Xca'));
+h5write([data_dir mfilename '.h5'], '/X', Xca');
+h5create([data_dir mfilename '.h5'], '/Y', size(Yca'));
+h5write([data_dir mfilename '.h5'], '/Y', Yca');
+h5create([data_dir mfilename '.h5'], '/Z', size(Zca'));
+h5write([data_dir mfilename '.h5'], '/Z', Zca');
 
 h5create([data_dir mfilename '.h5'], '/Xtif', size(Xtif'));
 h5write([data_dir mfilename '.h5'], '/Xtif', Xtif');

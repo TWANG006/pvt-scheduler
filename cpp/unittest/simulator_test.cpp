@@ -22,14 +22,22 @@ TEST(Simulator, hdf5_2_eigen)
 	EigenHDF5::internal::_load<VectorXd>(h5_file.openDataSet("vx"), xPV.V);
 	EigenHDF5::internal::_load<VectorXd>(h5_file.openDataSet("vy"), yPV.V);
 
-	Ytif = Ytif.colwise().reverse();
-	Ztif = Ztif.colwise().reverse();
+	//std::cout << Ytif.col(0) << std::endl;
 
-	/*Y = Y.colwise().reverse();
-	Z = Z.colwise().reverse();*/
+	Ytif = Ytif.colwise().reverse().eval();
+	Ztif = Ztif.colwise().reverse().eval();
+
+	std::cout << Ytif.minCoeff() << std::endl;
+	std::cout << Ytif.maxCoeff() << std::endl;
+
+	std::cout << Xtif.minCoeff() << std::endl;
+	std::cout << Xtif.maxCoeff() << std::endl;
+
+	//Y = Y.colwise().reverse().eval();
+	//Z = Z.colwise().reverse().eval();
 
 	Simulator sim(Xtif, Ytif, Ztif, X, Y, Z);
 	auto Zrem = sim(xPV, yPV);
 
-	std::cout << Zrem << std::endl;
+	std::cout << Zrem.mean() << std::endl;
 }
