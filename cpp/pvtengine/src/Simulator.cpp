@@ -83,8 +83,8 @@ void Simulator::removal_per_pvt_segment(const double& px0, const double& px1, co
 
 	// calculate the distance from each point on the surface to the dwell
 	// point (x_dp, y_dp)
-	MatrixXXd Xk = (m_X.array() - x_dp).matrix();
-	MatrixXXd Yk = (m_Y.array() - y_dp).matrix();
+	auto Xk = (m_X.array() - x_dp).matrix();
+	auto Yk = (m_Y.array() - y_dp).matrix();
 
 	// calculate the removal
 	Zrem = m_interp(Xk, Yk) * t_dp;
