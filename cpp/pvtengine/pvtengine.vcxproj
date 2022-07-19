@@ -75,6 +75,9 @@
       <ImportLibrary>$(SolutionDir)lib\$(Platform)\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <AdditionalDependencies>qpOASES.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -100,6 +103,9 @@
       <ImportLibrary>$(SolutionDir)lib\$(Platform)\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <AdditionalDependencies>qpOASES.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

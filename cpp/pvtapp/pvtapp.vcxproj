@@ -21,10 +21,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
+    <UseInteloneMKL>Sequential</UseInteloneMKL>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
+    <UseInteloneMKL>Sequential</UseInteloneMKL>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
@@ -55,15 +57,36 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDIR)bin\$(ProjectName)\temp\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDIR)bin\$(ProjectName)\temp\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
-      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zc:__cplusplus /permissive- %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>../pvtengine/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>pvtengine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../pvtengine/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>pvtengine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
