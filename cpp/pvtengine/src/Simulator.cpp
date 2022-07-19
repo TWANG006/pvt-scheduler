@@ -19,23 +19,6 @@ MatrixXXd Simulator::operator()(const PVA& xPV, const PVA& yPV)
 	MatrixXXd Zrem(m_Z.rows(), m_Z.cols());
 	Zrem.fill(0.0);
 	
-	//for (int_t i = 0; i < num_seg; i++) {
-	//	MatrixXXd Zrem_per_seg;
-	//	double x_dp = 0.0, y_dp = 0.0;
-
-	//	// get the per-segment removal
-	//	removal_per_pvt_segment(
-	//		xPV.P(i), xPV.P(i + 1),
-	//		yPV.P(i), yPV.P(i + 1),
-	//		xPV.V(i), xPV.V(i + 1),
-	//		yPV.V(i), yPV.V(i + 1),
-	//		Zrem_per_seg,
-	//		x_dp, y_dp
-	//	);
-
-	//	// acumulate to the thread-private Zrem_private
-	//	Zrem += Zrem_per_seg;
-	//}
 	#pragma omp parallel 
 	{
 		MatrixXXd Zrem_private(m_Z.rows(), m_Z.cols());
