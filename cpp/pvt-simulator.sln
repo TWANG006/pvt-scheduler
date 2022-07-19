@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pvtengine", "pvtengine\pvte
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unittest", "unittest\unittest.vcxproj", "{4967C550-3DE3-43FF-83B8-F66A3B9AD782}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pvtapp", "pvtapp\pvtapp.vcxproj", "{2221ED5C-C5FA-4CA7-B43E-26630C772E3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{4967C550-3DE3-43FF-83B8-F66A3B9AD782}.Debug|x64.Build.0 = Debug|x64
 		{4967C550-3DE3-43FF-83B8-F66A3B9AD782}.Release|x64.ActiveCfg = Release|x64
 		{4967C550-3DE3-43FF-83B8-F66A3B9AD782}.Release|x64.Build.0 = Release|x64
+		{2221ED5C-C5FA-4CA7-B43E-26630C772E3D}.Debug|x64.ActiveCfg = Debug|x64
+		{2221ED5C-C5FA-4CA7-B43E-26630C772E3D}.Debug|x64.Build.0 = Debug|x64
+		{2221ED5C-C5FA-4CA7-B43E-26630C772E3D}.Release|x64.ActiveCfg = Release|x64
+		{2221ED5C-C5FA-4CA7-B43E-26630C772E3D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
