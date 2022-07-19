@@ -340,7 +340,13 @@ void save (Eigen3Hdf5_H5CommonFG &h5group, const std::string &name, const Eigen:
     typedef typename Derived::Scalar Scalar;
     const H5::DataType * const datatype = DatatypeSpecialization<Scalar>::get();
     const H5::DataSpace dataspace = internal::create_dataspace(mat);
-    H5::DataSet dataset = h5group.createDataSet(name, *datatype, dataspace, plist);
+    H5::DataSet dataset;
+    if (h5group.exists(name)) {
+        dataset = h5group.openDataSet(name.c_str());
+    }
+    else {
+        dataset = h5group.createDataSet(name, *datatype, dataspace, plist);
+    }
 
     bool written = false;  // flag will be true when the data has been written
     if (mat.derived().Flags & Eigen::RowMajor)

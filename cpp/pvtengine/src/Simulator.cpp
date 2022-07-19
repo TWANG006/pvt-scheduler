@@ -59,10 +59,13 @@ void Simulator::removal_per_pvt_segment(const double& px0, const double& px1, co
 	y_dp = 0.5 * (py0 + py1);
 
 	// calculate the dwell time as the p_avg / v_avg
-	auto t_dp = std::max<double>(
-		std::abs((px0 - px1) / (0.5 * (vx0 + vx1))),
-		std::abs((py0 - py1) / (0.5 * (vy0 + vy1)))
-	);
+	auto t_dp = 0.0;
+	if (abs(px0 - px1) < abs(py0 - py1)) {
+		t_dp = std::abs((py0 - py1) / (0.5 * (vy0 + vy1)));
+	}
+	else {
+		t_dp = std::abs((px0 - px1) / (0.5 * (vx0 + vx1)));
+	}
 
 	// calculate the distance from each point on the surface to the dwell
 	// point (x_dp, y_dp)

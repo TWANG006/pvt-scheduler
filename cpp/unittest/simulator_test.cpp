@@ -6,12 +6,12 @@ TEST(Simulator, hdf5_2_eigen)
 {
 	H5::H5File h5_file(
 		"../../data/sim_data/step_02_pvt_2d_from_udo.h5",
-		H5F_ACC_RDONLY
+		H5F_ACC_RDWR
 	);	
 
 	MatrixXXd Xtif, Ytif, Ztif, X, Y, Z;
 	PVA xPV, yPV;
-	EigenHDF5::internal::_load<MatrixXXd>(h5_file.openDataSet("Xtif"), Xtif);
+	EigenHDF5::load<MatrixXXd>(h5_file, "Xtif", Xtif);
 	EigenHDF5::internal::_load<MatrixXXd>(h5_file.openDataSet("Ytif"), Ytif);
 	EigenHDF5::internal::_load<MatrixXXd>(h5_file.openDataSet("Ztif"), Ztif);
 	EigenHDF5::internal::_load<MatrixXXd>(h5_file.openDataSet("X"), X);
@@ -38,6 +38,8 @@ TEST(Simulator, hdf5_2_eigen)
 
 	Simulator sim(Xtif, Ytif, Ztif, X, Y, Z);
 	auto Zrem = sim(xPV, yPV);
+
+	EigenHDF5::save<MatrixXXd>(h5_file, "Zrem", Zrem);
 
 	std::cout << Zrem.mean() << std::endl;
 }
