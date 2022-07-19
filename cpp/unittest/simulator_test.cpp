@@ -12,15 +12,15 @@ TEST(Simulator, hdf5_2_eigen)
 	MatrixXXd Xtif, Ytif, Ztif, X, Y, Z;
 	PVA xPV, yPV;
 	EigenHDF5::load<MatrixXXd>(h5_file, "Xtif", Xtif);
-	EigenHDF5::internal::_load<MatrixXXd>(h5_file.openDataSet("Ytif"), Ytif);
-	EigenHDF5::internal::_load<MatrixXXd>(h5_file.openDataSet("Ztif"), Ztif);
-	EigenHDF5::internal::_load<MatrixXXd>(h5_file.openDataSet("X"), X);
-	EigenHDF5::internal::_load<MatrixXXd>(h5_file.openDataSet("Y"), Y);
-	EigenHDF5::internal::_load<MatrixXXd>(h5_file.openDataSet("Z"), Z);
-	EigenHDF5::internal::_load<VectorXd>(h5_file.openDataSet("px"), xPV.P);
-	EigenHDF5::internal::_load<VectorXd>(h5_file.openDataSet("py"), yPV.P);
-	EigenHDF5::internal::_load<VectorXd>(h5_file.openDataSet("vx"), xPV.V);
-	EigenHDF5::internal::_load<VectorXd>(h5_file.openDataSet("vy"), yPV.V);
+	EigenHDF5::load<MatrixXXd>(h5_file, "Ytif", Ytif);
+	EigenHDF5::load<MatrixXXd>(h5_file, "Ztif", Ztif);
+	EigenHDF5::load<MatrixXXd>(h5_file, "X", X);
+	EigenHDF5::load<MatrixXXd>(h5_file, "Y", Y);
+	EigenHDF5::load<MatrixXXd>(h5_file, "Z", Z);
+	EigenHDF5::load<VectorXd>(h5_file, "px", xPV.P);
+	EigenHDF5::load<VectorXd>(h5_file, "py", yPV.P);
+	EigenHDF5::load<VectorXd>(h5_file, "vx", xPV.V);
+	EigenHDF5::load<VectorXd>(h5_file, "vy", yPV.V);
 
 	//std::cout << Ytif.col(0) << std::endl;
 
