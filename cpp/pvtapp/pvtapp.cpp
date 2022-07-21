@@ -1,7 +1,7 @@
 #include "pvtapp.h"
 #include <QMessageBox>
 #include <QFileDialog>
-
+#include <QCloseEvent>
 
 pvtapp::pvtapp(QWidget *parent)
     : QMainWindow(parent)
@@ -47,6 +47,24 @@ void pvtapp::open_h5file(const QString& file_name)
             QString("%1 \n %2").arg(file_name).arg(QString(err.getDetailMsg().c_str())),
             QString("File loading error")
         );
+    }
+}
+
+void pvtapp::closeEvent(QCloseEvent* event)
+{
+    auto res = QMessageBox::warning(
+        this,
+        tr("Exit"),
+        tr("Do you want to close the pvtapp?"),
+        QMessageBox::Yes,
+        QMessageBox::No
+    );
+    
+    if (QMessageBox::Yes == res) {
+        event->accept();
+    }
+    else {
+        event->ignore();
     }
 }
 

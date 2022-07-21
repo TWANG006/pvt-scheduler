@@ -4,7 +4,6 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_pvtapp.h"
 #include "H5Cpp.h"
-#pragma warning (disable : 4251)
 
 class pvtapp : public QMainWindow
 {
@@ -14,11 +13,13 @@ public:
     pvtapp(QWidget* parent = nullptr);
     ~pvtapp();
 
+public slots:
     void ErrMsg(const QString& msg, const QString& cap = "Error");
 
 private:
     void init_connections();
     void open_h5file(const QString& file_name);
+    void closeEvent(QCloseEvent* event);
 
 private slots:
     void on_action_Open_triggered();
