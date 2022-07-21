@@ -23,6 +23,11 @@ void pvtapp::ErrMsg(const QString & msg, const QString& cap)
     );
 }
 
+void pvtapp::init_ui()
+{
+    ui.h5_treeWidget->setHeaderHidden(false);
+}
+
 void pvtapp::init_connections()
 {
 }
@@ -48,6 +53,47 @@ void pvtapp::open_h5file(const QString& file_name)
             QString("File loading error")
         );
     }
+    traverse_h5_file(ui.h5_treeWidget, m_h5);
+}
+
+void pvtapp::traverse_h5_file(QTreeWidget* tree_widget, const H5::H5File& h5_file)
+{
+    // clear the current content
+    tree_widget->clear();
+
+    // traverse the h5_file
+    for (int i = 0; i < h5_file.getNumObjs(); i++) {
+        auto obj_name = h5_file.getObjnameByIdx(i);
+        QTreeWidgetItem* root_item = add_tree_root(QString::fromStdString(group_name), tree_widget);
+        
+        // set the current item to the first column
+        if (0 == i) {
+            tree_widget->setCurrentItem(root_item);
+        }
+
+        // get the data set names in a group
+        auto group = h5_file.openGroup(group_name);
+        for (int j = 0; j < group.getNumObjs(); j++) {
+            add_tree_child(QString::fromStdString(group.getObjnameByIdx(j)), root_item);
+        }
+
+        root_item = nullptr;
+    }
+    m_h5.close();
+}
+
+QTreeWidgetItem* pvtapp::add_tree_root(const QString& name, QTreeWidget* tree_widget)
+{
+    QTreeWidgetItem* root_item = new QTreeWidgetItem(tree_widget);
+    root_item->setText(0, name);
+    return root_item;
+}
+
+void pvtapp::add_tree_child(const QString& name, QTreeWidgetItem* parent)
+{
+    QTreeWidgetItem* child_item = new QTreeWidgetItem();
+    child_item->setText(0, name);
+    parent->addChild(child_item);
 }
 
 void pvtapp::closeEvent(QCloseEvent* event)

@@ -120,14 +120,10 @@
     <QtRcc Include="pvtapp.qrc" />
     <QtUic Include="pvtapp.ui" />
     <QtMoc Include="pvtapp.h" />
-    <ClCompile Include="H5TreeModel.cpp" />
     <ClCompile Include="pvtapp.cpp" />
     <ClCompile Include="main.cpp" />
     <None Include="pvtapp.ico" />
     <ResourceCompile Include="pvtapp.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="H5TreeModel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

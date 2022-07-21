@@ -17,8 +17,13 @@ public slots:
     void ErrMsg(const QString& msg, const QString& cap = "Error");
 
 private:
+    void init_ui();
     void init_connections();
     void open_h5file(const QString& file_name);
+    void traverse_h5_file(QTreeWidget* tree_widget, const H5::H5File& h5_file);
+    QTreeWidgetItem* add_tree_root(const QString& name, QTreeWidget* tree_widget);
+    void add_tree_child(const QString& name, QTreeWidgetItem* parent);
+    
     void closeEvent(QCloseEvent* event);
 
 private slots:

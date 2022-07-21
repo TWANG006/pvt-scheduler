@@ -14,15 +14,20 @@
    <string>pvtapp</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTreeView" name="h5_treeView">
+   <widget class="QTreeWidget" name="h5_treeWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>201</width>
-      <height>301</height>
+      <width>161</width>
+      <height>201</height>
      </rect>
     </property>
+    <column>
+     <property name="text">
+      <string notr="true">1</string>
+     </property>
+    </column>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
