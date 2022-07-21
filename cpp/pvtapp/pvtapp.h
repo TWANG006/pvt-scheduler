@@ -3,6 +3,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_pvtapp.h"
+#include "hdf5.h"
 #include "H5Cpp.h"
 
 class pvtapp : public QMainWindow
@@ -19,15 +20,20 @@ public slots:
 private:
     void init_ui();
     void init_connections();
+
+    // H5 related
     void open_h5file(const QString& file_name);
     void traverse_h5_file(QTreeWidget* tree_widget, const H5::H5File& h5_file);
+    void traverse_child(const H5::H5Object& group, QTreeWidgetItem* parent);
     QTreeWidgetItem* add_tree_root(const QString& name, QTreeWidget* tree_widget);
-    void add_tree_child(const QString& name, QTreeWidgetItem* parent);
-    
+    QTreeWidgetItem* add_tree_child(const QString& name, QTreeWidgetItem* parent);
+
     void closeEvent(QCloseEvent* event);
 
 private slots:
     void on_action_Open_triggered();
+    void on_itemExpanded(QTreeWidgetItem* item);
+    void on_itemCollapsed(QTreeWidgetItem* item);
 
 private:
     Ui::pvtappClass ui;

@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QCloseEvent>
 
+
 pvtapp::pvtapp(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -30,6 +31,8 @@ void pvtapp::init_ui()
 
 void pvtapp::init_connections()
 {
+    connect(ui.h5_treeWidget, &QTreeWidget::itemExpanded, this, &pvtapp::on_itemExpanded);
+    connect(ui.h5_treeWidget, &QTreeWidget::itemCollapsed, this, &pvtapp::on_itemCollapsed);
 }
 
 void pvtapp::open_h5file(const QString& file_name)
@@ -42,6 +45,15 @@ void pvtapp::open_h5file(const QString& file_name)
 
         // try to open the file
         m_h5.openFile(file_name.toStdString(), H5F_ACC_RDONLY);
+
+        // traverse the h5 file if open succeed
+        traverse_h5_file(ui.h5_treeWidget, m_h5);
+
+        // show the file info
+        QFileInfo file_info(file_name);
+        ui.h5_treeWidget->setHeaderLabel(file_info.fileName());
+
+        m_h5.close();
     }
     catch (H5::FileIException err)
     {
@@ -53,7 +65,6 @@ void pvtapp::open_h5file(const QString& file_name)
             QString("File loading error")
         );
     }
-    traverse_h5_file(ui.h5_treeWidget, m_h5);
 }
 
 void pvtapp::traverse_h5_file(QTreeWidget* tree_widget, const H5::H5File& h5_file)
@@ -64,22 +75,42 @@ void pvtapp::traverse_h5_file(QTreeWidget* tree_widget, const H5::H5File& h5_fil
     // traverse the h5_file
     for (int i = 0; i < h5_file.getNumObjs(); i++) {
         auto obj_name = h5_file.getObjnameByIdx(i);
-        QTreeWidgetItem* root_item = add_tree_root(QString::fromStdString(group_name), tree_widget);
+        QTreeWidgetItem* root_item = add_tree_root(QString::fromStdString(obj_name), tree_widget);
         
-        // set the current item to the first column
-        if (0 == i) {
-            tree_widget->setCurrentItem(root_item);
-        }
+        //// set the current item to the first column
+        //if (0 == i) {
+        //    tree_widget->setCurrentItem(root_item);
+        //}
 
-        // get the data set names in a group
-        auto group = h5_file.openGroup(group_name);
-        for (int j = 0; j < group.getNumObjs(); j++) {
-            add_tree_child(QString::fromStdString(group.getObjnameByIdx(j)), root_item);
+        // traverse the sub-groups, if any
+        if (h5_file.getObjTypeByIdx(i) == H5G_obj_t::H5G_GROUP) {
+            root_item->setIcon(0, QIcon(":/pvtapp/images/folder.svg"));
+            traverse_child(h5_file.openGroup(obj_name), root_item);
         }
-
-        root_item = nullptr;
+        if (h5_file.getObjTypeByIdx(i) == H5G_obj_t::H5G_DATASET) {
+            root_item->setIcon(0, QIcon(":/pvtapp/images/dataset.svg"));
+        }
     }
-    m_h5.close();
+}
+
+void pvtapp::traverse_child(const H5::H5Object& group, QTreeWidgetItem* parent)
+{
+    auto num_obj = group.getNumObjs();
+    if (num_obj == 0) {
+        return;
+    }
+    for (int i = 0; i < num_obj; i++) {
+        auto obj_name = group.getObjnameByIdx(i);
+        QTreeWidgetItem* root_item = add_tree_child(QString::fromStdString(obj_name), parent);
+
+        if (group.getObjTypeByIdx(i) == H5G_obj_t::H5G_GROUP) {
+            root_item->setIcon(0, QIcon(":/pvtapp/images/folder.svg"));
+            traverse_child(group.openGroup(group.getObjnameByIdx(i)), root_item);
+        }
+        if (group.getObjTypeByIdx(i) == H5G_obj_t::H5G_DATASET) {
+            root_item->setIcon(0, QIcon(":/pvtapp/images/dataset.svg"));
+        }
+    }
 }
 
 QTreeWidgetItem* pvtapp::add_tree_root(const QString& name, QTreeWidget* tree_widget)
@@ -89,11 +120,12 @@ QTreeWidgetItem* pvtapp::add_tree_root(const QString& name, QTreeWidget* tree_wi
     return root_item;
 }
 
-void pvtapp::add_tree_child(const QString& name, QTreeWidgetItem* parent)
+QTreeWidgetItem* pvtapp::add_tree_child(const QString& name, QTreeWidgetItem* parent)
 {
     QTreeWidgetItem* child_item = new QTreeWidgetItem();
     child_item->setText(0, name);
     parent->addChild(child_item);
+    return child_item;
 }
 
 void pvtapp::closeEvent(QCloseEvent* event)
@@ -112,6 +144,16 @@ void pvtapp::closeEvent(QCloseEvent* event)
     else {
         event->ignore();
     }
+}
+
+void pvtapp::on_itemExpanded(QTreeWidgetItem* item)
+{
+    item->setIcon(0, QIcon(":/pvtapp/images/folder-open.svg"));
+}
+
+void pvtapp::on_itemCollapsed(QTreeWidgetItem* item)
+{
+    item->setIcon(0, QIcon(":/pvtapp/images/folder.svg"));
 }
 
 void pvtapp::on_action_Open_triggered()

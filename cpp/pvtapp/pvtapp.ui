@@ -23,11 +23,9 @@
       <height>201</height>
      </rect>
     </property>
-    <column>
-     <property name="text">
-      <string notr="true">1</string>
-     </property>
-    </column>
+    <property name="columnCount">
+     <number>0</number>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -54,9 +52,14 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_Open"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Open">
+   <property name="icon">
+    <iconset resource="pvtapp.qrc">
+     <normaloff>:/pvtapp/images/folder-open.svg</normaloff>:/pvtapp/images/folder-open.svg</iconset>
+   </property>
    <property name="text">
     <string>&amp;Open...</string>
    </property>

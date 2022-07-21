@@ -1,4 +1,7 @@
 <RCC>
-    <qresource prefix="pvtapp">
-    </qresource>
+  <qresource prefix="pvtapp">
+    <file>images/dataset.svg</file>
+    <file>images/folder.svg</file>
+    <file>images/folder-open.svg</file>
+  </qresource>
 </RCC>
