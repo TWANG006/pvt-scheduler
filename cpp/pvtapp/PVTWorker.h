@@ -11,6 +11,12 @@ public:
 	PVTWorker(QObject* parent = nullptr);
 	~PVTWorker();
 
+signals:
+	void ErrMsg(const QString& msg, const QString& cap);
+
+public slots:
+	void on_load_tif(const QString& fullPath);
+
 private:
 
 };

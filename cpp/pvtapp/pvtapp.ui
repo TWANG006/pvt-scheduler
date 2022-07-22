@@ -70,7 +70,7 @@
       <item row="0" column="0">
        <widget class="QPushButton" name="load_tif_button">
         <property name="text">
-         <string>Load TIF</string>
+         <string>Load Tool Influence Function</string>
         </property>
        </widget>
       </item>

@@ -49,6 +49,7 @@ void pvtapp::init_connections()
     connect(ui.h5_treeWidget, &QTreeWidget::itemExpanded, this, &pvtapp::on_itemExpanded);
     connect(ui.h5_treeWidget, &QTreeWidget::itemCollapsed, this, &pvtapp::on_itemCollapsed);
     connect(ui.h5_treeWidget, &QTreeWidget::itemClicked, this, &pvtapp::on_itemClicked);
+    connect(m_ptrPVTWorker, &PVTWorker::ErrMsg, this, &pvtapp::ErrMsg);
 }
 
 void pvtapp::init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget)
@@ -91,13 +92,16 @@ void pvtapp::open_h5file(const QString& file_name)
 
         // traverse the h5 file if open succeed
         traverse_h5_file(ui.h5_treeWidget, m_h5);
+        
+        m_h5.close();
 
         // show the file info
         QFileInfo file_info(file_name);
         ui.h5_treeWidget->setHeaderLabel(file_info.fileName());
         ui.h5_treeWidget->expandToDepth(0);
 
-        m_h5.close();
+        // clear the selection
+        m_h5FullPath.clear();
     }
     catch (H5::FileIException err)
     {
@@ -182,6 +186,32 @@ void pvtapp::on_itemClicked(QTreeWidgetItem* treeItem, int col)
         treeItem = treeItem->parent();
     }
     ErrMsg(m_h5FullPath);
+}
+
+void pvtapp::on_load_tif_button_clicked()
+{
+    if (m_h5FullPath.isEmpty()) {
+        ErrMsg("Please select where the TIF is from the above H5 file.");
+    }
+    else {
+        // determine if the selection contains TIF
+        bool isXtif = false, isYtif = false, isZtif = false;
+        auto selected_items = ui.h5_treeWidget->selectedItems();
+        for (auto& item : selected_items) {
+            for (int i = 0; i < item->childCount(); i++) {
+                if (item->child(i)->text(0).contains("Xtif")) { isXtif = true; }
+                if (item->child(i)->text(0).contains("Ytif")) { isYtif = true; }
+                if (item->child(i)->text(0).contains("Ztif")) { isZtif = true; }
+            }
+        }
+
+        if (isXtif && isYtif && isZtif) {
+            emit load_tif(m_h5FullPath);
+        }
+        else {
+            ErrMsg("Xtif, Ytif or Ztif is not found in the selected location.");
+        }
+    }
 }
 
 void pvtapp::end_thread(QThread& thrd)

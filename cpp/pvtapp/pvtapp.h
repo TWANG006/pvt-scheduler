@@ -16,6 +16,9 @@ public:
     pvtapp(QWidget* parent = nullptr);
     ~pvtapp();
 
+signals:
+    void load_tif(const QString& fullPath);
+
 public slots:
     void ErrMsg(const QString& msg, const QString& cap = "Error");
 
@@ -40,6 +43,7 @@ private slots:
     void on_itemExpanded(QTreeWidgetItem* item);
     void on_itemCollapsed(QTreeWidgetItem* item);
     void on_itemClicked(QTreeWidgetItem* treeItem, int col);
+    void on_load_tif_button_clicked();
 
 private:
     Ui::pvtappClass ui;

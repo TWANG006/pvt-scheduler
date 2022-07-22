@@ -8,3 +8,8 @@ PVTWorker::PVTWorker(QObject* parent)
 PVTWorker::~PVTWorker()
 {
 }
+
+void PVTWorker::on_load_tif(const QString& fullPath)
+{
+
+}
