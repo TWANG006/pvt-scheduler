@@ -6,26 +6,62 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>599</width>
-    <height>400</height>
+    <width>1309</width>
+    <height>823</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>pvtapp</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTreeWidget" name="h5_treeWidget">
+   <widget class="QGroupBox" name="config_groupBox">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>20</y>
-      <width>161</width>
-      <height>201</height>
+      <y>10</y>
+      <width>221</width>
+      <height>731</height>
      </rect>
     </property>
-    <property name="columnCount">
-     <number>0</number>
+    <property name="title">
+     <string>Configurations</string>
     </property>
+    <widget class="QTreeWidget" name="h5_treeWidget">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>30</y>
+       <width>161</width>
+       <height>201</height>
+      </rect>
+     </property>
+     <property name="columnCount">
+      <number>0</number>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="tif_groupBox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>249</y>
+       <width>201</width>
+       <height>181</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Tool Influence Function</string>
+     </property>
+     <widget class="QCustomPlot" name="tif_plot" native="true">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>30</y>
+        <width>171</width>
+        <height>111</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -33,7 +69,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>599</width>
+     <width>1309</width>
      <height>22</height>
     </rect>
    </property>
@@ -69,6 +105,14 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="pvtapp.qrc"/>
  </resources>

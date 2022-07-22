@@ -74,8 +74,8 @@
       <PreprocessorDefinitions>H5_BUILT_AS_DYNAMIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Platform)\$(Configuration)\;$(HDF5_DIR_64)\lib\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>pvtengine.lib;hdf5.lib;hdf5_cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Platform)\$(Configuration)\;$(HDF5_DIR_64)\lib\;$(QTDIR)\lib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>pvtengine.lib;hdf5.lib;hdf5_cpp.lib;Qt6PrintSupport.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -84,10 +84,11 @@
       <OpenMPSupport>true</OpenMPSupport>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>H5_BUILT_AS_DYNAMIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>$(Qt_STDCPP_)</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Platform)\$(Configuration)\;$(HDF5_DIR_64)\lib\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>pvtengine.lib;hdf5_D.lib;hdf5_cpp_D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Platform)\$(Configuration)\;$(HDF5_DIR_64)\lib\;$(QTDIR)\lib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>pvtengine.lib;hdf5_D.lib;hdf5_cpp_D.lib;Qt6PrintSupportd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -118,6 +119,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="PVTWorker.cpp" />
+    <ClCompile Include="qcustomplot.cpp" />
     <QtRcc Include="pvtapp.qrc" />
     <QtUic Include="pvtapp.ui" />
     <QtMoc Include="pvtapp.h" />
@@ -128,6 +130,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PVTWorker.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="qcustomplot.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -30,7 +30,6 @@ private:
     QTreeWidgetItem* add_tree_root(const QString& name, QTreeWidget* tree_widget);
     QTreeWidgetItem* add_tree_child(const QString& name, QTreeWidgetItem* parent);
 
-
     void end_thread(QThread& thrd);
 
     void closeEvent(QCloseEvent* event);
@@ -39,6 +38,7 @@ private slots:
     void on_action_Open_triggered();
     void on_itemExpanded(QTreeWidgetItem* item);
     void on_itemCollapsed(QTreeWidgetItem* item);
+    void on_itemClicked(QTreeWidgetItem* treeItem, int col);
 
 private:
     Ui::pvtappClass ui;
@@ -47,6 +47,7 @@ private:
 
     QString m_h5FileName;
     H5::H5File m_h5;
+    QString m_h5FullPath;
 };
 
 #endif // !PVT_APP_H

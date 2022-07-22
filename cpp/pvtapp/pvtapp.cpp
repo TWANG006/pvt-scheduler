@@ -43,6 +43,7 @@ void pvtapp::init_connections()
 {
     connect(ui.h5_treeWidget, &QTreeWidget::itemExpanded, this, &pvtapp::on_itemExpanded);
     connect(ui.h5_treeWidget, &QTreeWidget::itemCollapsed, this, &pvtapp::on_itemCollapsed);
+    connect(ui.h5_treeWidget, &QTreeWidget::itemClicked, this, &pvtapp::on_itemClicked);
 }
 
 void pvtapp::open_h5file(const QString& file_name)
@@ -136,6 +137,19 @@ QTreeWidgetItem* pvtapp::add_tree_child(const QString& name, QTreeWidgetItem* pa
     child_item->setText(0, name);
     parent->addChild(child_item);
     return child_item;
+}
+
+void pvtapp::on_itemClicked(QTreeWidgetItem* treeItem, int col)
+{
+    m_h5FullPath = treeItem->text(col);
+
+    while (treeItem->parent() != NULL)
+    {
+        m_h5FullPath = treeItem->parent()->text(col) + "/" + m_h5FullPath;
+        treeItem = treeItem->parent();
+    }
+    m_h5FullPath = "/" + m_h5FullPath;
+    ErrMsg(m_h5FullPath);
 }
 
 void pvtapp::end_thread(QThread& thrd)
