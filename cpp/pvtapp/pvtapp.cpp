@@ -6,6 +6,7 @@
 pvtapp::pvtapp(QWidget *parent)
     : QMainWindow(parent)
     , m_ptrPVTWorker(new PVTWorker())
+    , m_tifColormap(nullptr)
 {
     ui.setupUi(this);
 
@@ -15,6 +16,9 @@ pvtapp::pvtapp(QWidget *parent)
 
     // init the signal/slot connections
     init_connections();
+
+    //setup ui
+    init_ui();
 
     // start the worker thread
     m_pvtWorkerThread.start();
@@ -37,6 +41,7 @@ void pvtapp::ErrMsg(const QString & msg, const QString& cap)
 void pvtapp::init_ui()
 {
     ui.h5_treeWidget->setHeaderHidden(false);
+    init_qcpcolormap(m_tifColormap, ui.tif_plot);
 }
 
 void pvtapp::init_connections()
@@ -44,6 +49,33 @@ void pvtapp::init_connections()
     connect(ui.h5_treeWidget, &QTreeWidget::itemExpanded, this, &pvtapp::on_itemExpanded);
     connect(ui.h5_treeWidget, &QTreeWidget::itemCollapsed, this, &pvtapp::on_itemCollapsed);
     connect(ui.h5_treeWidget, &QTreeWidget::itemClicked, this, &pvtapp::on_itemClicked);
+}
+
+void pvtapp::init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget)
+{
+    // setup the widget
+    widget->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    widget->axisRect()->setupFullAxesBox(true);
+    widget->xAxis->setLabel("x [mm]");
+    widget->yAxis->setLabel("y [mm]");
+
+    // setup the colormap
+    colormap = new QCPColorMap(widget->xAxis, widget->yAxis);
+    QCPColorScale* scale = new QCPColorScale(widget);
+    widget->plotLayout()->addElement(0, 1, scale);
+    scale->setType(QCPAxis::atRight);
+    scale->setRangeDrag(false);
+    scale->setRangeZoom(false);
+    scale->setLabel("height");
+    colormap->setColorScale(scale);
+    QCPColorGradient cg(QCPColorGradient::gpJet);
+    cg.setNanHandling(QCPColorGradient::nhTransparent);
+    colormap->setGradient(cg);
+
+    // setup colorbar
+    QCPMarginGroup* marginGroup = new QCPMarginGroup(widget);
+    widget->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+    scale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 }
 
 void pvtapp::open_h5file(const QString& file_name)
@@ -63,6 +95,7 @@ void pvtapp::open_h5file(const QString& file_name)
         // show the file info
         QFileInfo file_info(file_name);
         ui.h5_treeWidget->setHeaderLabel(file_info.fileName());
+        ui.h5_treeWidget->expandToDepth(0);
 
         m_h5.close();
     }
@@ -82,24 +115,24 @@ void pvtapp::traverse_h5_file(QTreeWidget* tree_widget, const H5::H5File& h5_fil
 {
     // clear the current content
     tree_widget->clear();
+    
+    // add the file name as the 1st level node
+    QTreeWidgetItem* root_item = add_tree_root(m_h5FileName, tree_widget);
+    root_item->setIcon(0, QIcon(":/pvtapp/images/folder.svg"));
 
     // traverse the h5_file
     for (int i = 0; i < h5_file.getNumObjs(); i++) {
+        // get the child object name and add to the tree widget
         auto obj_name = h5_file.getObjnameByIdx(i);
-        QTreeWidgetItem* root_item = add_tree_root(QString::fromStdString(obj_name), tree_widget);
-        
-        //// set the current item to the first column
-        //if (0 == i) {
-        //    tree_widget->setCurrentItem(root_item);
-        //}
+        QTreeWidgetItem* child_item = add_tree_child(QString::fromStdString(obj_name), root_item);
 
         // traverse the sub-groups, if any
         if (h5_file.getObjTypeByIdx(i) == H5G_obj_t::H5G_GROUP) {
-            root_item->setIcon(0, QIcon(":/pvtapp/images/folder.svg"));
-            traverse_child(h5_file.openGroup(obj_name), root_item);
+            child_item->setIcon(0, QIcon(":/pvtapp/images/folder.svg"));
+            traverse_child(h5_file.openGroup(obj_name), child_item);
         }
         if (h5_file.getObjTypeByIdx(i) == H5G_obj_t::H5G_DATASET) {
-            root_item->setIcon(0, QIcon(":/pvtapp/images/dataset.svg"));
+            child_item->setIcon(0, QIcon(":/pvtapp/images/dataset.svg"));
         }
     }
 }
@@ -148,7 +181,6 @@ void pvtapp::on_itemClicked(QTreeWidgetItem* treeItem, int col)
         m_h5FullPath = treeItem->parent()->text(col) + "/" + m_h5FullPath;
         treeItem = treeItem->parent();
     }
-    m_h5FullPath = "/" + m_h5FullPath;
     ErrMsg(m_h5FullPath);
 }
 

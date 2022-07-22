@@ -22,6 +22,7 @@ public slots:
 private:
     void init_ui();
     void init_connections();
+    void init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget);
 
     // H5 related
     void open_h5file(const QString& file_name);
@@ -48,6 +49,8 @@ private:
     QString m_h5FileName;
     H5::H5File m_h5;
     QString m_h5FullPath;
+
+    QCPColorMap* m_tifColormap;
 };
 
 #endif // !PVT_APP_H
