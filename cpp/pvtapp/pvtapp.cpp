@@ -3,17 +3,27 @@
 #include <QFileDialog>
 #include <QCloseEvent>
 
-
 pvtapp::pvtapp(QWidget *parent)
     : QMainWindow(parent)
+    , m_ptrPVTWorker(new PVTWorker())
 {
     ui.setupUi(this);
 
+    // create the worker thread
+    m_ptrPVTWorker->moveToThread(&m_pvtWorkerThread);
+    connect(&m_pvtWorkerThread, &QThread::finished, m_ptrPVTWorker, &QObject::deleteLater);
+
+    // init the signal/slot connections
     init_connections();
+
+    // start the worker thread
+    m_pvtWorkerThread.start();
 }
 
 pvtapp::~pvtapp()
-{}
+{
+    end_thread(m_pvtWorkerThread);
+}
 
 void pvtapp::ErrMsg(const QString & msg, const QString& cap)
 {
@@ -126,6 +136,14 @@ QTreeWidgetItem* pvtapp::add_tree_child(const QString& name, QTreeWidgetItem* pa
     child_item->setText(0, name);
     parent->addChild(child_item);
     return child_item;
+}
+
+void pvtapp::end_thread(QThread& thrd)
+{
+    if (thrd.isRunning()) {
+        thrd.quit();
+        thrd.wait();
+    }
 }
 
 void pvtapp::closeEvent(QCloseEvent* event)

@@ -3,8 +3,10 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_pvtapp.h"
+#include <QThread>
 #include "hdf5.h"
 #include "H5Cpp.h"
+#include "PVTWorker.h"
 
 class pvtapp : public QMainWindow
 {
@@ -28,6 +30,9 @@ private:
     QTreeWidgetItem* add_tree_root(const QString& name, QTreeWidget* tree_widget);
     QTreeWidgetItem* add_tree_child(const QString& name, QTreeWidgetItem* parent);
 
+
+    void end_thread(QThread& thrd);
+
     void closeEvent(QCloseEvent* event);
 
 private slots:
@@ -37,6 +42,9 @@ private slots:
 
 private:
     Ui::pvtappClass ui;
+    PVTWorker* m_ptrPVTWorker;
+    QThread m_pvtWorkerThread;
+
     QString m_h5FileName;
     H5::H5File m_h5;
 };
