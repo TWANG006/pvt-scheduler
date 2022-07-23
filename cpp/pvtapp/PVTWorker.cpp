@@ -1,6 +1,7 @@
 #include "PVTWorker.h"
 #include "eigen3-hdf5.hpp"
 #include <QVector>
+#include <iostream>
 
 PVTWorker::PVTWorker(QObject* parent)
 	: QObject(parent)

@@ -3,11 +3,13 @@
 #include <QFileDialog>
 #include <QCloseEvent>
 #include "utils.h"
+#include <iostream>
 
 pvtapp::pvtapp(QWidget *parent)
     : QMainWindow(parent)
     , m_ptrPVTWorker(new PVTWorker())
     , m_tifColormap(nullptr)
+    , m_pathCurve(nullptr)
 {
     ui.setupUi(this);
 
@@ -76,8 +78,8 @@ void pvtapp::update_tif_plot(int rows, int cols, double res, double min_z, doubl
 
 void pvtapp::update_path_plot(double width, double height, const QVector<double>& px, const QVector<double>& py)
 {
-    ui.path_plot->graph()->setData(px, py);
-    ui.path_plot->graph()->rescaleAxes();
+    m_pathCurve->setData(px, py);
+    m_pathCurve->rescaleAxes();
     ui.path_plot->replot();
 }
 
@@ -130,12 +132,12 @@ void pvtapp::init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget)
 void pvtapp::init_lineplot(QCustomPlot*& line_plot)
 {
     // add graph
-    line_plot->addGraph();
+    m_pathCurve = new QCPCurve(line_plot->xAxis, line_plot->yAxis);
 
     // set pen color to blue
-    line_plot->graph()->setPen(QPen(QColor(40, 110, 255)));
-    line_plot->graph()->setLineStyle(QCPGraph::lsNone);
-    line_plot->graph()->setScatterStyle(QCPScatterStyle::ssDisc);
+    m_pathCurve->setPen(QPen(QColor(40, 110, 255)));
+    m_pathCurve->setLineStyle(QCPCurve::lsLine);
+    m_pathCurve->setScatterStyle(QCPScatterStyle::ssDisc);
 
     // configure right and top axis to show ticks but no labels
     line_plot->xAxis2->setVisible(true);
@@ -148,7 +150,7 @@ void pvtapp::init_lineplot(QCustomPlot*& line_plot)
     connect(line_plot->yAxis, SIGNAL(rangeChanged(QCPRange)), line_plot->yAxis2, SLOT(setRange(QCPRange)));
     
     // rescale the graph so that it its the visible area
-    line_plot->graph()->rescaleAxes();
+    m_pathCurve->rescaleAxes();
 
     // Allow user to drag axis ranges with mouse, zoom with mouse wheel and select graphs by clicking:
     line_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);

@@ -75,6 +75,7 @@ private:
     QString m_h5FullPath;
 
     QCPColorMap* m_tifColormap;
+    QCPCurve* m_pathCurve;
 };
 
 #endif // !PVT_APP_H
