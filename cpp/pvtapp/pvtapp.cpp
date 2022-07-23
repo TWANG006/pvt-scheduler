@@ -2,6 +2,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QCloseEvent>
+#include "utils.h"
 
 pvtapp::pvtapp(QWidget *parent)
     : QMainWindow(parent)
@@ -14,11 +15,11 @@ pvtapp::pvtapp(QWidget *parent)
     m_ptrPVTWorker->moveToThread(&m_pvtWorkerThread);
     connect(&m_pvtWorkerThread, &QThread::finished, m_ptrPVTWorker, &QObject::deleteLater);
 
-    // init the signal/slot connections
-    init_connections();
-
     //setup ui
     init_ui();
+
+    // init the signal/slot connections
+    init_connections();
 
     // start the worker thread
     m_pvtWorkerThread.start();
@@ -29,13 +30,48 @@ pvtapp::~pvtapp()
     end_thread(m_pvtWorkerThread);
 }
 
-void pvtapp::ErrMsg(const QString & msg, const QString& cap)
+void pvtapp::err_msg(const QString & msg, const QString& cap)
 {
     QMessageBox::critical(
         this,
         cap,
         msg
     );
+}
+
+void pvtapp::update_tif_plot(int rows, int cols, double res, double min_z, double max_z, const QVector<double>& X, const QVector<double>& Y, const QVector<double>& Z)
+{
+    // 1. Set the size
+    m_tifColormap->data()->setSize(cols, rows);
+
+    double x_s = X[0] * 1e3, x_e = X[cols - 1] * 1e3;
+    double y_e = Y[0] * 1e3, y_s = Y[(rows - 1) * cols] * 1e3;
+    double v = std::max(x_e - x_s, y_e - y_s) * 0.5;
+
+    m_tifColormap->data()->setRange(QCPRange(x_s, x_e), QCPRange(y_s, y_e));
+
+    // 2. Feed the data
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            auto id = ELT2D(cols, j, i);
+            m_tifColormap->data()->setData(X[id] * 1e3, Y[id] * 1e3, Z[id] * 1e9);
+        }
+    }
+
+    // 3. Rescale the color range
+    m_tifColormap->setDataRange(QCPRange(min_z * 1e9, max_z * 1e9));
+
+    // 4. rescale the key (x) and value (y) axes so the whole color map is visible:
+    ui.tif_plot->xAxis->setRange(0.5 * (x_e - x_s) + x_s - v, 0.5 * (x_e - x_s) + x_s + v);
+    ui.tif_plot->yAxis->setRange(0.5 * (y_e - y_s) + y_s - v, 0.5 * (y_e - y_s) + y_s + v);
+
+    ui.tif_plot->replot();
+
+    // update the params
+    ui.prr_value_box->setValue(1e9 * (max_z - min_z));
+    ui.r_value_box->setValue((x_e - x_s) * 0.5);
 }
 
 void pvtapp::init_ui()
@@ -49,7 +85,9 @@ void pvtapp::init_connections()
     connect(ui.h5_treeWidget, &QTreeWidget::itemExpanded, this, &pvtapp::on_itemExpanded);
     connect(ui.h5_treeWidget, &QTreeWidget::itemCollapsed, this, &pvtapp::on_itemCollapsed);
     connect(ui.h5_treeWidget, &QTreeWidget::itemClicked, this, &pvtapp::on_itemClicked);
-    connect(m_ptrPVTWorker, &PVTWorker::ErrMsg, this, &pvtapp::ErrMsg);
+    connect(this, &pvtapp::load_tif, m_ptrPVTWorker, &PVTWorker::load_tif);
+    connect(m_ptrPVTWorker, &PVTWorker::err_msg, this, &pvtapp::err_msg);
+    connect(m_ptrPVTWorker, &PVTWorker::update_tif_plot, this, &pvtapp::update_tif_plot);
 }
 
 void pvtapp::init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget)
@@ -103,12 +141,12 @@ void pvtapp::open_h5file(const QString& file_name)
         // clear the selection
         m_h5FullPath.clear();
     }
-    catch (H5::FileIException err)
+    catch (const H5::FileIException& err)
     {
         // close the file handle
         m_h5.close();
 
-        ErrMsg(
+        err_msg(
             QString("%1 \n %2").arg(file_name).arg(QString(err.getDetailMsg().c_str())),
             QString("File loading error")
         );
@@ -185,13 +223,12 @@ void pvtapp::on_itemClicked(QTreeWidgetItem* treeItem, int col)
         m_h5FullPath = treeItem->parent()->text(col) + "/" + m_h5FullPath;
         treeItem = treeItem->parent();
     }
-    ErrMsg(m_h5FullPath);
 }
 
 void pvtapp::on_load_tif_button_clicked()
 {
     if (m_h5FullPath.isEmpty()) {
-        ErrMsg("Please select where the TIF is from the above H5 file.");
+        err_msg("Please select where the TIF is from the above H5 file.");
     }
     else {
         // determine if the selection contains TIF
@@ -206,10 +243,10 @@ void pvtapp::on_load_tif_button_clicked()
         }
 
         if (isXtif && isYtif && isZtif) {
-            emit load_tif(m_h5FullPath);
+            emit load_tif(m_h5FileName, m_h5FullPath);
         }
         else {
-            ErrMsg("Xtif, Ytif or Ztif is not found in the selected location.");
+            err_msg("Xtif, Ytif or Ztif is not found in the selected location.");
         }
     }
 }

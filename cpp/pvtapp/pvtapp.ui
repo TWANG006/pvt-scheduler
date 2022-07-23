@@ -45,13 +45,13 @@
        <x>10</x>
        <y>240</y>
        <width>301</width>
-       <height>311</height>
+       <height>301</height>
       </rect>
      </property>
      <property name="title">
       <string>Tool Influence Function</string>
      </property>
-     <layout class="QGridLayout" name="tif_gridLayout" rowstretch="0,2,0">
+     <layout class="QGridLayout" name="gridLayout" rowstretch="0,1,0">
       <property name="leftMargin">
        <number>2</number>
       </property>
@@ -78,21 +78,24 @@
        <widget class="QCustomPlot" name="tif_plot" native="true"/>
       </item>
       <item row="2" column="0">
-       <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,0,0,1,0">
+       <layout class="QGridLayout" name="tif_param_gridLayout" columnstretch="0,1,0,0,1,0">
         <property name="spacing">
          <number>2</number>
         </property>
-        <item row="0" column="0" rowspan="2">
+        <item row="0" column="0">
          <widget class="QLabel" name="prr_label">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;PRR =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1" rowspan="2">
+        <item row="0" column="1">
          <widget class="QDoubleSpinBox" name="prr_value_box">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
           </property>
           <property name="buttonSymbols">
            <enum>QAbstractSpinBox::NoButtons</enum>
@@ -105,84 +108,27 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="prr_label_2">
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;FWHM =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QDoubleSpinBox" name="fwhm_value_box">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="buttonSymbols">
-           <enum>QAbstractSpinBox::NoButtons</enum>
-          </property>
-          <property name="maximum">
-           <double>999999.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.010000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLabel" name="fwhm_unit_label">
-          <property name="text">
-           <string>mm</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="3">
-         <widget class="QLabel" name="res_label">
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Res =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="4">
-         <widget class="QDoubleSpinBox" name="res_value_box">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="buttonSymbols">
-           <enum>QAbstractSpinBox::NoButtons</enum>
-          </property>
-          <property name="maximum">
-           <double>999999.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.010000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="5">
-         <widget class="QLabel" name="res_unit_label">
-          <property name="text">
-           <string>mm/pix</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2" rowspan="2">
+        <item row="0" column="2">
          <widget class="QLabel" name="prr_unit_label">
           <property name="text">
            <string>nm/s</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="3" rowspan="2">
+        <item row="0" column="3">
          <widget class="QLabel" name="r_label">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;R =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="4" rowspan="2">
+        <item row="0" column="4">
          <widget class="QDoubleSpinBox" name="r_value_box">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
           </property>
           <property name="buttonSymbols">
            <enum>QAbstractSpinBox::NoButtons</enum>
@@ -195,7 +141,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="5" rowspan="2">
+        <item row="0" column="5">
          <widget class="QLabel" name="r_unit_label">
           <property name="text">
            <string>mm</string>

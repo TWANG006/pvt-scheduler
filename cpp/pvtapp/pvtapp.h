@@ -4,6 +4,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_pvtapp.h"
 #include <QThread>
+#include <QVector>
 #include "hdf5.h"
 #include "H5Cpp.h"
 #include "PVTWorker.h"
@@ -17,10 +18,20 @@ public:
     ~pvtapp();
 
 signals:
-    void load_tif(const QString& fullPath);
+    void load_tif(const QString& file_name, const QString& fullPath);
 
 public slots:
-    void ErrMsg(const QString& msg, const QString& cap = "Error");
+    void err_msg(const QString& msg, const QString& cap = "Error");
+    void update_tif_plot(
+        int rows,
+        int cols,
+        double res,
+        double min_z,
+        double max_z,
+        const QVector<double>& X,
+        const QVector<double>& Y,
+        const QVector<double>& Z
+    );
 
 private:
     void init_ui();

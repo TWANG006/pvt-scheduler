@@ -10,10 +10,18 @@
     <ClCompile Include="calculator_test.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="sampler_test.cpp" />
-    <ClCompile Include="misc_test.cpp" />
-    <ClCompile Include="interpolator_test.cpp" />
-    <ClCompile Include="simulator_test.cpp" />
+    <ClCompile Include="interpolator_test.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="misc_test.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="sampler_test.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="simulator_test.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">
@@ -27,7 +35,9 @@
     <ClInclude Include="pch.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="eigen3-hdf5.hpp" />
+    <ClInclude Include="eigen3-hdf5.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
