@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1309</width>
-    <height>823</height>
+    <height>852</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,139 +19,251 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>321</width>
-      <height>731</height>
+      <width>287</width>
+      <height>771</height>
      </rect>
     </property>
     <property name="title">
      <string>Configurations</string>
     </property>
-    <widget class="QTreeWidget" name="h5_treeWidget">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>301</width>
-       <height>201</height>
-      </rect>
+    <layout class="QGridLayout" name="config_gridLayout" rowstretch="1,2,2">
+     <property name="leftMargin">
+      <number>2</number>
      </property>
-     <property name="columnCount">
-      <number>0</number>
+     <property name="topMargin">
+      <number>2</number>
      </property>
-    </widget>
-    <widget class="QGroupBox" name="tif_groupBox">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>240</y>
-       <width>301</width>
-       <height>301</height>
-      </rect>
+     <property name="rightMargin">
+      <number>2</number>
      </property>
-     <property name="title">
-      <string>Tool Influence Function</string>
+     <property name="bottomMargin">
+      <number>2</number>
      </property>
-     <layout class="QGridLayout" name="gridLayout" rowstretch="0,1,0">
-      <property name="leftMargin">
-       <number>2</number>
-      </property>
-      <property name="topMargin">
-       <number>2</number>
-      </property>
-      <property name="rightMargin">
-       <number>2</number>
-      </property>
-      <property name="bottomMargin">
-       <number>2</number>
-      </property>
-      <property name="spacing">
-       <number>2</number>
-      </property>
-      <item row="0" column="0">
-       <widget class="QPushButton" name="load_tif_button">
-        <property name="text">
-         <string>Load Tool Influence Function</string>
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QTreeWidget" name="h5_treeWidget">
+       <property name="columnCount">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QGroupBox" name="tif_groupBox">
+       <property name="title">
+        <string>Tool Influence Function</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout" rowstretch="0,1,0">
+        <property name="leftMargin">
+         <number>2</number>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QCustomPlot" name="tif_plot" native="true"/>
-      </item>
-      <item row="2" column="0">
-       <layout class="QGridLayout" name="tif_param_gridLayout" columnstretch="0,1,0,0,1,0">
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>2</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
+        </property>
         <property name="spacing">
          <number>2</number>
         </property>
         <item row="0" column="0">
-         <widget class="QLabel" name="prr_label">
+         <widget class="QPushButton" name="load_tif_button">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;PRR =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>Load Tool Influence Function</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QDoubleSpinBox" name="prr_value_box">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-          <property name="buttonSymbols">
-           <enum>QAbstractSpinBox::NoButtons</enum>
-          </property>
-          <property name="maximum">
-           <double>999999.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.010000000000000</double>
-          </property>
-         </widget>
+        <item row="1" column="0">
+         <widget class="QCustomPlot" name="tif_plot" native="true"/>
         </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="prr_unit_label">
-          <property name="text">
-           <string>nm/s</string>
+        <item row="2" column="0">
+         <layout class="QGridLayout" name="tif_param_gridLayout" columnstretch="0,1,0,0,1,0">
+          <property name="spacing">
+           <number>2</number>
           </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="r_label">
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;R =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="4">
-         <widget class="QDoubleSpinBox" name="r_value_box">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-          <property name="buttonSymbols">
-           <enum>QAbstractSpinBox::NoButtons</enum>
-          </property>
-          <property name="maximum">
-           <double>999999.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.010000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="5">
-         <widget class="QLabel" name="r_unit_label">
-          <property name="text">
-           <string>mm</string>
-          </property>
-         </widget>
+          <item row="0" column="0">
+           <widget class="QLabel" name="prr_label">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;PRR =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="prr_value_box">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="maximum">
+             <double>999999.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="prr_unit_label">
+            <property name="text">
+             <string>nm/s</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="r_label">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;R =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QDoubleSpinBox" name="r_value_box">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="maximum">
+             <double>999999.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5">
+           <widget class="QLabel" name="r_unit_label">
+            <property name="text">
+             <string>mm</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
-      </item>
-     </layout>
-    </widget>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QGroupBox" name="tool_path_groupBox">
+       <property name="title">
+        <string>Tool path</string>
+       </property>
+       <layout class="QGridLayout" name="tool_path_gridLayout" rowstretch="0,1,0">
+        <property name="leftMargin">
+         <number>2</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>2</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
+        </property>
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QPushButton" name="load_path_button">
+          <property name="text">
+           <string>Load Tool Path</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCustomPlot" name="path_plot" native="true"/>
+        </item>
+        <item row="2" column="0">
+         <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1,0,0,1,0">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="path_w_label">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;width =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="path_w_value_box">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="maximum">
+             <double>999999.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="path_w_unit_label">
+            <property name="text">
+             <string>mm</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="path_h_label">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;height =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QDoubleSpinBox" name="path_h_value_box">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="maximum">
+             <double>999999.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5">
+           <widget class="QLabel" name="path_h_unit_label">
+            <property name="text">
+             <string>mm</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
