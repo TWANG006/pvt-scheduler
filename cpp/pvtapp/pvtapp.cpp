@@ -74,10 +74,18 @@ void pvtapp::update_tif_plot(int rows, int cols, double res, double min_z, doubl
     ui.r_value_box->setValue((x_e - x_s) * 0.5);
 }
 
+void pvtapp::update_path_plot(double width, double height, const QVector<double>& px, const QVector<double>& py)
+{
+    ui.path_plot->graph()->setData(px, py);
+    ui.path_plot->graph()->rescaleAxes();
+    ui.path_plot->replot();
+}
+
 void pvtapp::init_ui()
 {
     ui.h5_treeWidget->setHeaderHidden(false);
     init_qcpcolormap(m_tifColormap, ui.tif_plot);
+    init_lineplot(ui.path_plot);
 }
 
 void pvtapp::init_connections()
@@ -88,6 +96,8 @@ void pvtapp::init_connections()
     connect(this, &pvtapp::load_tif, m_ptrPVTWorker, &PVTWorker::load_tif);
     connect(m_ptrPVTWorker, &PVTWorker::err_msg, this, &pvtapp::err_msg);
     connect(m_ptrPVTWorker, &PVTWorker::update_tif_plot, this, &pvtapp::update_tif_plot);
+    connect(this, &pvtapp::load_path, m_ptrPVTWorker, &PVTWorker::load_path);
+    connect(m_ptrPVTWorker, &PVTWorker::update_path_plot, this, &pvtapp::update_path_plot);
 }
 
 void pvtapp::init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget)
@@ -115,6 +125,33 @@ void pvtapp::init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget)
     QCPMarginGroup* marginGroup = new QCPMarginGroup(widget);
     widget->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
     scale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+}
+
+void pvtapp::init_lineplot(QCustomPlot*& line_plot)
+{
+    // add graph
+    line_plot->addGraph();
+
+    // set pen color to blue
+    line_plot->graph()->setPen(QPen(QColor(40, 110, 255)));
+    line_plot->graph()->setLineStyle(QCPGraph::lsNone);
+    line_plot->graph()->setScatterStyle(QCPScatterStyle::ssDisc);
+
+    // configure right and top axis to show ticks but no labels
+    line_plot->xAxis2->setVisible(true);
+    line_plot->xAxis2->setTickLabels(false);
+    line_plot->yAxis2->setVisible(true);
+    line_plot->yAxis2->setTickLabels(false);
+
+    // make left and bottom axes always transfer their ranges to right and top axes:
+    connect(line_plot->xAxis, SIGNAL(rangeChanged(QCPRange)), line_plot->xAxis2, SLOT(setRange(QCPRange)));
+    connect(line_plot->yAxis, SIGNAL(rangeChanged(QCPRange)), line_plot->yAxis2, SLOT(setRange(QCPRange)));
+    
+    // rescale the graph so that it its the visible area
+    line_plot->graph()->rescaleAxes();
+
+    // Allow user to drag axis ranges with mouse, zoom with mouse wheel and select graphs by clicking:
+    line_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
 }
 
 void pvtapp::open_h5file(const QString& file_name)
@@ -247,6 +284,32 @@ void pvtapp::on_load_tif_button_clicked()
         }
         else {
             err_msg("Xtif, Ytif or Ztif is not found in the selected location.");
+        }
+    }
+}
+
+void pvtapp::on_load_path_button_clicked()
+{
+    if (m_h5FullPath.isEmpty()) {
+        err_msg("Please select where the Path is from the above H5 file.");
+    }
+    else {
+        bool is_px = false, is_py = false;
+        auto selected_items = ui.h5_treeWidget->selectedItems();
+        for (auto& item : selected_items) {
+            for (int i = 0; i < item->childCount(); i++) {
+                if (item->child(i)->text(0).contains("px")) { is_px = true; }
+                if (item->child(i)->text(0).contains("py")) { is_py = true; }
+            }
+        }
+
+        if (is_px && is_py) {
+            emit load_path(m_h5FileName, m_h5FullPath);
+        }
+        else {
+            err_msg(tr("px or py is not found in the selected path: \n %1")
+                .arg(m_h5FullPath)
+            );
         }
     }
 }

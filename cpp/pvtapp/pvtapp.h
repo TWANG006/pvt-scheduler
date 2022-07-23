@@ -19,6 +19,7 @@ public:
 
 signals:
     void load_tif(const QString& file_name, const QString& fullPath);
+    void load_path(const QString& file_name, const QString& fullPath);
 
 public slots:
     void err_msg(const QString& msg, const QString& cap = "Error");
@@ -32,11 +33,18 @@ public slots:
         const QVector<double>& Y,
         const QVector<double>& Z
     );
+    void update_path_plot(
+        double width,
+        double height,
+        const QVector<double>& px,
+        const QVector<double>& py
+    );
 
 private:
     void init_ui();
     void init_connections();
     void init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget);
+    void init_lineplot(QCustomPlot*& line_plot);
 
     // H5 related
     void open_h5file(const QString& file_name);
@@ -55,6 +63,7 @@ private slots:
     void on_itemCollapsed(QTreeWidgetItem* item);
     void on_itemClicked(QTreeWidgetItem* treeItem, int col);
     void on_load_tif_button_clicked();
+    void on_load_path_button_clicked();
 
 private:
     Ui::pvtappClass ui;
@@ -69,6 +78,3 @@ private:
 };
 
 #endif // !PVT_APP_H
-
-
-

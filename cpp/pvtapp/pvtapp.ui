@@ -26,7 +26,7 @@
     <property name="title">
      <string>Configurations</string>
     </property>
-    <layout class="QGridLayout" name="config_gridLayout" rowstretch="1,2,2">
+    <layout class="QGridLayout" name="config_gridLayout" rowstretch="1,2,2,0">
      <property name="leftMargin">
       <number>2</number>
      </property>
@@ -49,7 +49,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QGroupBox" name="tif_groupBox">
        <property name="title">
         <string>Tool Influence Function</string>
@@ -156,7 +156,7 @@
        </layout>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="1" column="0">
       <widget class="QGroupBox" name="tool_path_groupBox">
        <property name="title">
         <string>Tool path</string>

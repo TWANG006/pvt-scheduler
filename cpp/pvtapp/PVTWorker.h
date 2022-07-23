@@ -25,9 +25,16 @@ signals:
 		const QVector<double>& Y,
 		const QVector<double>& Z
 	);
+	void update_path_plot(
+		double width,
+		double height,
+		const QVector<double>& px,
+		const QVector<double>& py
+	);
 
 public slots:
-	void load_tif(const QString& fileName, const QString& fullPath);
+	void load_tif(const QString& file_name, const QString& full_path);
+	void load_path(const QString& file_name, const QString& full_path);
 
 private:
 	void get_path_name(
@@ -38,6 +45,8 @@ private:
 
 private:
 	H5::H5File m_h5;
+	VectorXd m_px;
+	VectorXd m_py;
 	MatrixXXd m_Xtif;
 	MatrixXXd m_Ytif;
 	MatrixXXd m_Ztif;
