@@ -19,8 +19,9 @@ public:
     ~pvtapp();
 
 signals:
-    void load_tif(const QString& file_name, const QString& fullPath);
-    void load_path(const QString& file_name, const QString& fullPath);
+    void load_tif(const QString& file_name, const QString& full_path);
+    void load_path(const QString& file_name, const QString& full_path);
+    void load_dt(const QString& file_name, const QString& full_path);
 
 public slots:
     void err_msg(const QString& msg, const QString& cap = "Error");
@@ -39,6 +40,12 @@ public slots:
         double height,
         const QVector<double>& px,
         const QVector<double>& py
+    );
+    void update_dt_plot(
+        double total_dt,
+        const QVector<double>& dpx,
+        const QVector<double>& dpy,
+        const QVector<double>& dt
     );
 
 private:
@@ -66,6 +73,7 @@ private slots:
     void on_itemClicked(QTreeWidgetItem* treeItem, int col);
     void on_load_tif_button_clicked();
     void on_load_path_button_clicked();
+    void on_load_dt_button_clicked();
 
 private:
     Ui::pvtappClass ui;

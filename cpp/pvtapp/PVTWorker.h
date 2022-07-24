@@ -31,10 +31,17 @@ signals:
 		const QVector<double>& px,
 		const QVector<double>& py
 	);
+	void update_dt_plot(
+		double total_dt,
+		const QVector<double>& dpx,
+		const QVector<double>& dpy,
+		const QVector<double>& dt
+	);
 
 public slots:
 	void load_tif(const QString& file_name, const QString& full_path);
 	void load_path(const QString& file_name, const QString& full_path);
+	void load_dt(const QString& file_name, const QString& full_path);
 
 private:
 	void get_path_name(
@@ -44,13 +51,15 @@ private:
 	);
 
 private:
-	H5::H5File m_h5;
-	VectorXd m_px;
-	VectorXd m_py;
-	MatrixXXd m_Xtif;
-	MatrixXXd m_Ytif;
-	MatrixXXd m_Ztif;
-
+	H5::H5File m_h5;  /*!< the H5 file handle*/
+	VectorXd   m_px;  /*!< PVT's p in x*/
+	VectorXd   m_py;  /*!< PVT's p in y*/
+	MatrixXXd  m_Xtif;/*!< TIF x coordinate grid*/
+	MatrixXXd  m_Ytif;/*!< TIF y coordinate grid*/
+	MatrixXXd  m_Ztif;/*!< TIF*/
+	VectorXd   m_dpx; /*!< dwell point x coordinates*/
+	VectorXd   m_dpy; /*!< dwell point y coordiantes*/
+	VectorXd   m_dt;  /*!< dwell time and the dwell points*/
 };
 
 #endif // !PVT_WORKER_H

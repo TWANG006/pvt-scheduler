@@ -79,9 +79,18 @@ void pvtapp::update_tif_plot(int rows, int cols, double res, double min_z, doubl
 
 void pvtapp::update_path_plot(double width, double height, const QVector<double>& px, const QVector<double>& py)
 {
+    // update the plots
     m_pathCurve->setData(px, py);
     m_pathCurve->rescaleAxes();
     ui.path_plot->replot();
+
+    // update the params
+    ui.path_w_value_box->setValue(width);
+    ui.path_h_value_box->setValue(height);
+}
+
+void pvtapp::update_dt_plot(double total_dt, const QVector<double>& dpx, const QVector<double>& dpy, const QVector<double>& dt)
+{
 }
 
 void pvtapp::init_ui()
@@ -97,11 +106,13 @@ void pvtapp::init_connections()
     connect(ui.h5_treeWidget, &QTreeWidget::itemExpanded, this, &pvtapp::on_itemExpanded);
     connect(ui.h5_treeWidget, &QTreeWidget::itemCollapsed, this, &pvtapp::on_itemCollapsed);
     connect(ui.h5_treeWidget, &QTreeWidget::itemClicked, this, &pvtapp::on_itemClicked);
-    connect(this, &pvtapp::load_tif, m_ptrPVTWorker, &PVTWorker::load_tif);
     connect(m_ptrPVTWorker, &PVTWorker::err_msg, this, &pvtapp::err_msg);
+    connect(this, &pvtapp::load_tif, m_ptrPVTWorker, &PVTWorker::load_tif);
     connect(m_ptrPVTWorker, &PVTWorker::update_tif_plot, this, &pvtapp::update_tif_plot);
     connect(this, &pvtapp::load_path, m_ptrPVTWorker, &PVTWorker::load_path);
     connect(m_ptrPVTWorker, &PVTWorker::update_path_plot, this, &pvtapp::update_path_plot);
+    connect(this, &pvtapp::load_dt, m_ptrPVTWorker, &PVTWorker::load_dt);
+    connect(m_ptrPVTWorker, &PVTWorker::update_dt_plot, this, &pvtapp::update_dt_plot);
 }
 
 void pvtapp::init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget)
@@ -339,6 +350,33 @@ void pvtapp::on_load_path_button_clicked()
         }
         else {
             err_msg(tr("px or py is not found in the selected path: \n %1")
+                .arg(m_h5FullPath)
+            );
+        }
+    }
+}
+
+void pvtapp::on_load_dt_button_clicked()
+{
+    if (m_h5FullPath.isEmpty()) {
+        err_msg("Please select where the Dwell Time is from the above H5 file.");
+    }
+    else {
+        bool is_dpx = false, is_dpy = false, is_dt = false;
+        auto selected_items = ui.h5_treeWidget->selectedItems();
+        for (auto& item : selected_items) {
+            for (int i = 0; i < item->childCount(); i++) {
+                if (item->child(i)->text(0).contains("dpx")) { is_dpx = true; }
+                if (item->child(i)->text(0).contains("dpy")) { is_dpy = true; }
+                if (item->child(i)->text(0).contains("dy"))  { is_dt = true;  }
+            }
+        }
+
+        if (is_dpx && is_dpy && is_dt) {
+            emit load_dt(m_h5FileName, m_h5FullPath);
+        }
+        else {
+            err_msg(tr("dpx, dpy or dt is not found in the selected path: \n %1")
                 .arg(m_h5FullPath)
             );
         }

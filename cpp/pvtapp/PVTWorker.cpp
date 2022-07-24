@@ -30,12 +30,15 @@ void PVTWorker::load_path(const QString& file_name, const QString& full_path)
 		// close the file
 		m_h5.close();
 
+		// calculate the range in x and y
 		auto width = m_px.maxCoeff() - m_px.minCoeff();
 		auto height = m_py.maxCoeff() - m_py.minCoeff();
 
+		// convert to mm
 		VectorXd px_mm(m_px * 1e3);
 		VectorXd py_mm(m_py * 1e3);
 
+		// update the path plot
 		emit update_path_plot(
 			width * 1e3,
 			height * 1e3,
@@ -54,6 +57,52 @@ void PVTWorker::load_path(const QString& file_name, const QString& full_path)
 		);
 	}
 
+}
+
+void PVTWorker::load_dt(const QString& file_name, const QString& full_path)
+{
+	// get the h5 file and data path names
+	QString path_name;
+	get_path_name(full_path, file_name, path_name);
+
+	try
+	{
+		// open the h5 file
+		m_h5.openFile(file_name.toStdString(), H5F_ACC_RDONLY);
+
+		// load the path
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/dpx").toStdString(), m_dpx);
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/dpy").toStdString(), m_dpy);
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/dt").toStdString(), m_dt);
+
+		// close the file
+		m_h5.close();
+
+		// calculate the total dwell time in [min]
+		auto total_dt = m_dt.sum() * (1/60.0);
+
+		// change to mm
+		VectorXd dpx_mm(m_px * 1e3);
+		VectorXd dpy_mm(m_py * 1e3);
+
+		// emit the update dt plot signal
+		emit update_dt_plot(
+			total_dt, 
+			QVector<double>(dpx_mm.data(), dpx_mm.data() + dpx_mm.size()),
+			QVector<double>(dpy_mm.data(), dpy_mm.data() + dpy_mm.size()),
+			QVector<double>(m_dt.data(), m_dt.data() + m_dt.size())
+		);
+	}
+	catch (const H5::FileIException& err)
+	{
+		// close the file handle
+		m_h5.close();
+
+		emit err_msg(
+			QString("%1 \n %2").arg(file_name).arg(QString(err.getDetailMsg().c_str())),
+			QString("File loading error")
+		);
+	}
 }
 
 void PVTWorker::get_path_name(const QString& filePath, const QString& file_name, QString& path_name)
