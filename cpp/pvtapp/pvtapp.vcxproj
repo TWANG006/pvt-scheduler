@@ -137,7 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="eigen3-hdf5.hpp" />
-    <ClInclude Include="QCPColorCurve.h" />
+    <QtMoc Include="QCPColorCurve.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

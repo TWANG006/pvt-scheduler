@@ -5,12 +5,13 @@
 #include "utils.h"
 #include <iostream>
 
-pvtapp::pvtapp(QWidget *parent)
+pvtapp::pvtapp(QWidget* parent)
     : QMainWindow(parent)
     , m_ptrPVTWorker(new PVTWorker())
     , m_tifColormap(nullptr)
     , m_pathCurve(nullptr)
-    , m_pathColorCurve(nullptr)
+    , m_dtColorCurve(nullptr)
+    , m_dtScale(nullptr)
 {
     ui.setupUi(this);
 
@@ -89,8 +90,25 @@ void pvtapp::update_path_plot(double width, double height, const QVector<double>
     ui.path_h_value_box->setValue(height);
 }
 
-void pvtapp::update_dt_plot(double total_dt, const QVector<double>& dpx, const QVector<double>& dpy, const QVector<double>& dt)
+void pvtapp::update_dt_plot(double total_dt, double max_dt, double min_dt, const QVector<double>& dpx, const QVector<double>& dpy, const QVector<double>& dt)
 {
+    // generate gradient
+    QCPColorGradient jetG(QCPColorGradient::gpJet);
+    
+    // colors
+    QVector<QRgb> colors(dt.size(), 0);
+
+    // generate colors for each scatter point
+    jetG.colorize(dt.data(), QCPRange(min_dt, max_dt), colors.data(), dt.size());
+
+    // set data
+    m_dtColorCurve->setData(dpx, dpy, colors);
+    m_dtColorCurve->rescaleAxes();
+    m_dtScale->setDataRange(QCPRange(min_dt, max_dt));
+    m_dtScale->rescaleDataRange(true);
+    ui.dt_plot->replot();
+
+    ui.total_dt_value_box->setValue(total_dt);
 }
 
 void pvtapp::init_ui()
@@ -172,11 +190,11 @@ void pvtapp::init_lineplot(QCustomPlot*& line_plot)
 void pvtapp::init_scatterplot(QCustomPlot*& scatter_plot)
 {
     // add the color curve graph
-    m_pathColorCurve = new QCPColorCurve(scatter_plot->xAxis, scatter_plot->yAxis);
+    m_dtColorCurve = new QCPColorCurve(scatter_plot->xAxis, scatter_plot->yAxis);
 
     // set the line style to scatter points
-    m_pathColorCurve->setLineStyle(QCPCurve::lsNone);
-    m_pathColorCurve->setScatterStyle(QCPScatterStyle::ssDisc);
+    m_dtColorCurve->setLineStyle(QCPCurve::lsNone);
+    m_dtColorCurve->setScatterStyle(QCPScatterStyle::ssDisc);
 
     // configure right and top axis to show ticks but no labels
     scatter_plot->xAxis2->setVisible(true);
@@ -189,11 +207,22 @@ void pvtapp::init_scatterplot(QCustomPlot*& scatter_plot)
     connect(scatter_plot->yAxis, SIGNAL(rangeChanged(QCPRange)), scatter_plot->yAxis2, SLOT(setRange(QCPRange)));
 
     // rescale the graph so that it its the visible area
-    m_pathColorCurve->rescaleAxes();
+    m_dtColorCurve->rescaleAxes();
 
     // Allow user to drag axis ranges with mouse, zoom with mouse wheel and select graphs by clicking:
     scatter_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
 
+    // set colorbar
+    m_dtScale = new QCPColorScale(scatter_plot);
+    scatter_plot->plotLayout()->addElement(0, 1, m_dtScale);
+    m_dtScale->setGradient(QCPColorGradient(QCPColorGradient::gpJet));
+    m_dtScale->setType(QCPAxis::atRight);
+    m_dtScale->setRangeDrag(false);
+    m_dtScale->setRangeZoom(false);
+    m_dtScale->setLabel("[s]");
+    QCPMarginGroup* marginGroup = new QCPMarginGroup(scatter_plot);
+    scatter_plot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+    m_dtScale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 }
 
 void pvtapp::open_h5file(const QString& file_name)
@@ -368,7 +397,7 @@ void pvtapp::on_load_dt_button_clicked()
             for (int i = 0; i < item->childCount(); i++) {
                 if (item->child(i)->text(0).contains("dpx")) { is_dpx = true; }
                 if (item->child(i)->text(0).contains("dpy")) { is_dpy = true; }
-                if (item->child(i)->text(0).contains("dy"))  { is_dt = true;  }
+                if (item->child(i)->text(0).contains("dt"))  { is_dt = true;  }
             }
         }
 

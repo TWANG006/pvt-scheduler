@@ -5,6 +5,8 @@
 
 class QCPColorCurve : public QCPCurve
 {
+	Q_OBJECT
+
 public:
 	QCPColorCurve(QCPAxis* keyAxis, QCPAxis* valueAxis);
 	virtual ~QCPColorCurve();
@@ -12,18 +14,20 @@ public:
 	void setData(
 		const QVector<double>& keys,
 		const QVector<double>& values,
-		const QVector<QColor>& colors
+		const QVector<QRgb>& colors
 	);
 
 protected:
+	//virtual void draw(QCPPainter* painter) Q_DECL_OVERRIDE;
 	virtual void drawScatterPlot(
-		QCPPainter* painter, 
-		const QVector<QPoint>& points,
+		QCPPainter* painter,
+		const QVector<QPointF>& points,
 		const QCPScatterStyle& style
-	) const;
+	) const Q_DECL_OVERRIDE;
+
 
 private:
-	QVector<QColor> m_colors;
+	QVector<QRgb> m_colors;
 };
 
 #endif // !QCPCOLORCURVE_H

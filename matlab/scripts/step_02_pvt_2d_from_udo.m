@@ -187,5 +187,5 @@ h5create([data_dir mfilename '.h5'], '/dpx', size(xp));
 h5write([data_dir mfilename '.h5'], '/dpx', xp);
 h5create([data_dir mfilename '.h5'], '/dpy', size(yp));
 h5write([data_dir mfilename '.h5'], '/dpy', yp);
-h5create([data_dir mfilename '.h5'], '/dt', size(t));
-h5write([data_dir mfilename '.h5'], '/dt', t);
+h5create([data_dir mfilename '.h5'], '/dt', size(t'));
+h5write([data_dir mfilename '.h5'], '/dt', t');

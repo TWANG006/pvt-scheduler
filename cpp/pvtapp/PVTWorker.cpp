@@ -82,12 +82,14 @@ void PVTWorker::load_dt(const QString& file_name, const QString& full_path)
 		auto total_dt = m_dt.sum() * (1/60.0);
 
 		// change to mm
-		VectorXd dpx_mm(m_px * 1e3);
-		VectorXd dpy_mm(m_py * 1e3);
+		VectorXd dpx_mm(m_dpx * 1e3);
+		VectorXd dpy_mm(m_dpy * 1e3);
 
 		// emit the update dt plot signal
 		emit update_dt_plot(
-			total_dt, 
+			total_dt,
+			m_dt.maxCoeff(),
+			m_dt.minCoeff(),
 			QVector<double>(dpx_mm.data(), dpx_mm.data() + dpx_mm.size()),
 			QVector<double>(dpy_mm.data(), dpy_mm.data() + dpy_mm.size()),
 			QVector<double>(m_dt.data(), m_dt.data() + m_dt.size())

@@ -63,15 +63,15 @@
     <QtMoc Include="qcustomplot.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="QCPColorCurve.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="eigen3-hdf5.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="QCPColorCurve.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

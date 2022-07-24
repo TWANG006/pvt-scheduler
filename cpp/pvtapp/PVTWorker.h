@@ -33,6 +33,8 @@ signals:
 	);
 	void update_dt_plot(
 		double total_dt,
+		double max_dt,
+		double min_dt,
 		const QVector<double>& dpx,
 		const QVector<double>& dpy,
 		const QVector<double>& dt

@@ -43,6 +43,8 @@ public slots:
     );
     void update_dt_plot(
         double total_dt,
+        double max_dt, 
+        double min_dt,
         const QVector<double>& dpx,
         const QVector<double>& dpy,
         const QVector<double>& dt
@@ -86,7 +88,8 @@ private:
 
     QCPColorMap* m_tifColormap;
     QCPCurve* m_pathCurve;
-    QCPColorCurve* m_pathColorCurve;
+    QCPColorCurve* m_dtColorCurve;
+    QCPColorScale* m_dtScale;
 };
 
 #endif // !PVT_APP_H
