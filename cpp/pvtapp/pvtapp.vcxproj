@@ -119,6 +119,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="PVTWorker.cpp" />
+    <ClCompile Include="QCPColorCurve.cpp" />
     <ClCompile Include="qcustomplot.cpp" />
     <QtRcc Include="pvtapp.qrc" />
     <QtUic Include="pvtapp.ui" />
@@ -136,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="eigen3-hdf5.hpp" />
+    <ClInclude Include="QCPColorCurve.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
