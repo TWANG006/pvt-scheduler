@@ -8,6 +8,7 @@
 #include "hdf5.h"
 #include "H5Cpp.h"
 #include "PVTWorker.h"
+#include "QCPColorCurve.h"
 
 class pvtapp : public QMainWindow
 {
@@ -45,6 +46,7 @@ private:
     void init_connections();
     void init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget);
     void init_lineplot(QCustomPlot*& line_plot);
+    void init_scatterplot(QCustomPlot*& scatter_plot);
 
     // H5 related
     void open_h5file(const QString& file_name);
@@ -76,6 +78,7 @@ private:
 
     QCPColorMap* m_tifColormap;
     QCPCurve* m_pathCurve;
+    QCPColorCurve* m_pathColorCurve;
 };
 
 #endif // !PVT_APP_H

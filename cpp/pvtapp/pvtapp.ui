@@ -32,7 +32,7 @@
     <property name="title">
      <string>Configurations</string>
     </property>
-    <layout class="QGridLayout" name="config_gridLayout" rowstretch="1,1,0,0">
+    <layout class="QGridLayout" name="config_gridLayout" rowstretch="0,0,0,0">
      <property name="leftMargin">
       <number>2</number>
      </property>
@@ -130,6 +130,9 @@
               <pointsize>10</pointsize>
              </font>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -180,6 +183,9 @@
               <family>Times New Roman</family>
               <pointsize>10</pointsize>
              </font>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
             </property>
             <property name="readOnly">
              <bool>true</bool>
@@ -279,6 +285,9 @@
               <pointsize>10</pointsize>
              </font>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -329,6 +338,9 @@
               <family>Times New Roman</family>
               <pointsize>10</pointsize>
              </font>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
             </property>
             <property name="readOnly">
              <bool>true</bool>
@@ -461,6 +473,9 @@
               <pointsize>10</pointsize>
              </font>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -531,10 +546,10 @@
    <widget class="QGroupBox" name="dwell_time_groupBox">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>330</y>
-      <width>471</width>
-      <height>221</height>
+      <x>330</x>
+      <y>260</y>
+      <width>481</width>
+      <height>211</height>
      </rect>
     </property>
     <property name="font">
@@ -546,14 +561,96 @@
     <property name="title">
      <string>Dwell Time</string>
     </property>
+    <layout class="QGridLayout" name="dt_gridLayout" rowstretch="0,1" columnstretch="1,1">
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
+     <property name="bottomMargin">
+      <number>2</number>
+     </property>
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="load_dt_button">
+       <property name="font">
+        <font>
+         <family>Times New Roman</family>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Load dwell time</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <layout class="QHBoxLayout" name="total_dt_horizontalLayout" stretch="0,1,0">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="total_dt_label">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Total dwell time = &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="total_dt_value_box">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="font">
+          <font>
+           <family>Times New Roman</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="maximum">
+          <double>999999.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.010000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="total_dt_unit_label">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;min&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0" colspan="2">
+      <widget class="QCustomPlot" name="dt_plot" native="true"/>
+     </item>
+    </layout>
    </widget>
    <widget class="QGroupBox" name="tool_path_groupBox">
     <property name="geometry">
      <rect>
       <x>330</x>
       <y>20</y>
-      <width>471</width>
-      <height>271</height>
+      <width>481</width>
+      <height>241</height>
      </rect>
     </property>
     <property name="font">
@@ -565,7 +662,7 @@
     <property name="title">
      <string>Tool path</string>
     </property>
-    <layout class="QGridLayout" name="tool_path_gridLayout" rowstretch="0,1,0" columnstretch="1,1">
+    <layout class="QGridLayout" name="tool_path_gridLayout" rowstretch="0,1" columnstretch="1,1">
      <property name="leftMargin">
       <number>2</number>
      </property>
@@ -590,16 +687,16 @@
         </font>
        </property>
        <property name="text">
-        <string>Load Tool Path</string>
+        <string>Load tool path</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1">
-      <layout class="QGridLayout" name="path_gridLayout" columnstretch="0,1,0,0,1,0">
+      <layout class="QHBoxLayout" name="tool_path_horizontalLayout" stretch="0,1,0,0,1,0">
        <property name="spacing">
         <number>2</number>
        </property>
-       <item row="0" column="0">
+       <item>
         <widget class="QLabel" name="path_w_label">
          <property name="font">
           <font>
@@ -612,7 +709,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item>
         <widget class="QDoubleSpinBox" name="path_w_value_box">
          <property name="enabled">
           <bool>true</bool>
@@ -622,6 +719,9 @@
            <family>Times New Roman</family>
            <pointsize>10</pointsize>
           </font>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
          <property name="readOnly">
           <bool>true</bool>
@@ -637,7 +737,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
+       <item>
         <widget class="QLabel" name="path_w_unit_label">
          <property name="font">
           <font>
@@ -650,7 +750,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
+       <item>
         <widget class="QLabel" name="path_h_label">
          <property name="font">
           <font>
@@ -663,7 +763,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="4">
+       <item>
         <widget class="QDoubleSpinBox" name="path_h_value_box">
          <property name="enabled">
           <bool>true</bool>
@@ -673,6 +773,9 @@
            <family>Times New Roman</family>
            <pointsize>10</pointsize>
           </font>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
          <property name="readOnly">
           <bool>true</bool>
@@ -688,7 +791,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="5">
+       <item>
         <widget class="QLabel" name="path_h_unit_label">
          <property name="font">
           <font>

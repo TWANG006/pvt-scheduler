@@ -10,6 +10,7 @@ pvtapp::pvtapp(QWidget *parent)
     , m_ptrPVTWorker(new PVTWorker())
     , m_tifColormap(nullptr)
     , m_pathCurve(nullptr)
+    , m_pathColorCurve(nullptr)
 {
     ui.setupUi(this);
 
@@ -88,6 +89,7 @@ void pvtapp::init_ui()
     ui.h5_treeWidget->setHeaderHidden(false);
     init_qcpcolormap(m_tifColormap, ui.tif_plot);
     init_lineplot(ui.path_plot);
+    init_scatterplot(ui.dt_plot);
 }
 
 void pvtapp::init_connections()
@@ -154,6 +156,33 @@ void pvtapp::init_lineplot(QCustomPlot*& line_plot)
 
     // Allow user to drag axis ranges with mouse, zoom with mouse wheel and select graphs by clicking:
     line_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+}
+
+void pvtapp::init_scatterplot(QCustomPlot*& scatter_plot)
+{
+    // add the color curve graph
+    m_pathColorCurve = new QCPColorCurve(scatter_plot->xAxis, scatter_plot->yAxis);
+
+    // set the line style to scatter points
+    m_pathColorCurve->setLineStyle(QCPCurve::lsNone);
+    m_pathColorCurve->setScatterStyle(QCPScatterStyle::ssDisc);
+
+    // configure right and top axis to show ticks but no labels
+    scatter_plot->xAxis2->setVisible(true);
+    scatter_plot->xAxis2->setTickLabels(false);
+    scatter_plot->yAxis2->setVisible(true);
+    scatter_plot->yAxis2->setTickLabels(false);
+
+    // make left and bottom axes always transfer their ranges to right and top axes:
+    connect(scatter_plot->xAxis, SIGNAL(rangeChanged(QCPRange)), scatter_plot->xAxis2, SLOT(setRange(QCPRange)));
+    connect(scatter_plot->yAxis, SIGNAL(rangeChanged(QCPRange)), scatter_plot->yAxis2, SLOT(setRange(QCPRange)));
+
+    // rescale the graph so that it its the visible area
+    m_pathColorCurve->rescaleAxes();
+
+    // Allow user to drag axis ranges with mouse, zoom with mouse wheel and select graphs by clicking:
+    scatter_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+
 }
 
 void pvtapp::open_h5file(const QString& file_name)
