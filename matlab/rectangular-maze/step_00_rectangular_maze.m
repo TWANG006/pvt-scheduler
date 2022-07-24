@@ -1,10 +1,11 @@
 % Rectangular maze path
 clear; clc;
 close all;
-
+tic
 %% input parameters.
-length = 80; %unit:[mm]. max(length, width) must be even.
-width = 8; 
+length = 10; %unit:[mm]. max(length, width) must be even.
+width = 6; 
+max_iter = 1; % maximum number of cycles
 
 b_remaze = 1; 
 i_iter = 0;
@@ -88,11 +89,12 @@ while b_remaze
     r_diff = (abs(diff(r_re_Sn, 1, 2)) == 1);
     r_diff = fliplr(r_diff);
     
+    i_iter = i_iter + 1; % number of iterations
+    
     b_seq = u_diff + d_diff + l_diff + r_diff;
-    if sum(sum(b_seq)) == 2*m1*n1 - 2
+    if sum(sum(b_seq)) == 2*m1*n1 - 2  || i_iter == max_iter
         b_remaze = 0; % out of the while loop
     end
-    i_iter = i_iter + 1; % number of iterations
     
 end
 
@@ -115,9 +117,10 @@ y_exit = re_Dy(size(re_Dy,2)) -  median(diff(Yp1(:, 1)));
 
 hold on;
 plot([x_entrance * 1e-3, re_Dx(1) * 1e-3], [y_entrance * 1e-3, re_Dy(1) * 1e-3], 'bo--');
-plot([x_exit * 1e-3, re_Dx(size(re_Dx,2)) * 1e-3], [y_exit * 1e-3, re_Dy(size(re_Dy,2)) * 1e-3], 'ro--');
+plot([x_exit * 1e-3, re_Dx(size(re_Dx,2)) * 1e-3], [y_exit * 1e-3, re_Dy(size(re_Dy,2)) * 1e-3], 'mo--');
 text(x_entrance * 1e-3, y_entrance * 1e-3,'ENT');
 text(x_exit * 1e-3, y_exit * 1e-3,'EX');
 xlabel('x [mm]');
 ylabel('y [mm]');
 hold off;
+toc

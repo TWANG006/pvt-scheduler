@@ -80,8 +80,7 @@ figure;
 %     i1...
 % );
 
-0
-[Dx, Dy, xp, yp] = maze_path(7, 0.5)
+[Dx, Dy, xp, yp] = maze_path(5, 0.5);
 xp1 = Dx * 1e-3;
 yp1 = Dy * 1e-3;
 

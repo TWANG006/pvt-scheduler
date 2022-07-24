@@ -1,7 +1,9 @@
 clear;
 close all;
 clc;
-
+addpath(genpath('../functions'));
+addpath('../../../Slope-based-dwell-time/matlab/functions/'); % import viridis
+addpath(genpath('../../data/'));
 %% l. load data
 % calculated pvt
 load('step_02_pvt_model_calculation.mat');
@@ -68,6 +70,6 @@ show_surface_map(X, Y, Z, 0, viridis, 'flat', false, 2, 1e9, 'nm', 'Desired');
 subplot(3, 1, 2);
 show_surface_map(X, Y, Zremoval, 0, viridis, 'flat', false, 2, 1e9, 'nm', 'Removed');
 subplot(3, 1, 3);
-figure;
+% figure;
 show_surface_map(X, Y, Zresidual, 1, viridis, 'flat', true, 2, 1e9, 'nm', 'Residual');
 
