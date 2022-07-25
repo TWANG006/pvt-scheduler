@@ -337,7 +337,7 @@
       <property name="title">
        <string>Initial surface error map</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout" rowstretch="0,1" columnstretch="1,1">
+      <layout class="QGridLayout" name="gridLayout" rowstretch="0,0" columnstretch="1,0">
        <property name="leftMargin">
         <number>2</number>
        </property>
@@ -353,6 +353,9 @@
        <property name="spacing">
         <number>2</number>
        </property>
+       <item row="1" column="0" colspan="2">
+        <widget class="QCustomPlot" name="surf_plot" native="true"/>
+       </item>
        <item row="0" column="0">
         <widget class="QPushButton" name="load_surf_button">
          <property name="font">
@@ -367,10 +370,52 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <layout class="QHBoxLayout" name="surf_horizontalLayout" stretch="0,1,0,0,1,0">
+        <layout class="QHBoxLayout" name="surf_horizontalLayout" stretch="0,0,0,0,1,0,0,1,0">
          <property name="spacing">
           <number>2</number>
          </property>
+         <item>
+          <widget class="QLabel" name="surf_res_label">
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Res = &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="surf_res_value_box">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::NoButtons</enum>
+           </property>
+           <property name="maximum">
+            <double>999999.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="surf_res_unit_label">
+           <property name="text">
+            <string>mm, </string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QLabel" name="surf_pv_label">
            <property name="font">
@@ -481,9 +526,6 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QCustomPlot" name="surf_plot" native="true"/>
-       </item>
       </layout>
      </widget>
     </item>
@@ -509,10 +551,52 @@
         <number>2</number>
        </property>
        <item row="0" column="1">
-        <layout class="QHBoxLayout" name="res_horizontalLayout" stretch="0,1,0,0,1,0">
+        <layout class="QHBoxLayout" name="res_horizontalLayout" stretch="0,0,0,0,1,0,0,1,0">
          <property name="spacing">
           <number>2</number>
          </property>
+         <item>
+          <widget class="QLabel" name="res_res_label">
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Res = &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="res_res_value_box">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::NoButtons</enum>
+           </property>
+           <property name="maximum">
+            <double>999999.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="res_res_unit_label">
+           <property name="text">
+            <string>mm, </string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QLabel" name="ref_pv_label">
            <property name="font">

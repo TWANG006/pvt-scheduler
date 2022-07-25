@@ -23,43 +23,59 @@ signals:
     void load_path(const QString& file_name, const QString& full_path);
     void load_dt(const QString& file_name, const QString& full_path);
     void load_vxvy(const QString& file_name, const QString& full_path);
+    void load_surf(const QString& file_name, const QString& full_path);
 
 public slots:
     void err_msg(const QString& msg, const QString& cap = "Error");
     void update_tif_plot(
-        int rows,
-        int cols,
-        double res,
-        double min_z,
-        double max_z,
-        double min_x,
-        double max_x,
-        double min_y,
-        double max_y,
+        const int& rows,
+        const int& cols,
+        const double& res,
+        const double& min_z,
+        const double& max_z,
+        const double& min_x,
+        const double& max_x,
+        const double& min_y,
+        const double& max_y,
         const QVector<double>& X,
         const QVector<double>& Y,
         const QVector<double>& Z
     );
     void update_path_plot(
-        double width,
-        double height,
+        const double& width,
+        const double& height,
         const QVector<double>& px,
         const QVector<double>& py
     );
     void update_dt_plot(
-        double total_dt,
-        double max_dt, 
-        double min_dt,
+        const double& total_dt,
+        const double& max_dt,
+        const double& min_dt,
         const QVector<double>& dpx,
         const QVector<double>& dpy,
         const QVector<double>& dt
     );
     void update_feed_plot(
-        double max_feed,
-        double min_feed,
+        const double& max_feed,
+        const double& min_feed,
         const QVector<double>& px,
         const QVector<double>& py,
         const QVector<double>& feed
+    );
+    void update_surf_plot(
+        const int& rows,
+        const int& cols,
+        const double& max_x,
+        const double& min_x,
+        const double& max_y,
+        const double& min_y,
+        const double& max_z,
+        const double& min_z,
+        const double& rms_z,
+        const double& res,
+        const QVector<double>& X,
+        const QVector<double>& Y,
+        const QVector<double>& Z
     );
 
 private:
@@ -90,6 +106,7 @@ private slots:
     void on_load_path_button_clicked();
     void on_load_dt_button_clicked();
     void on_load_feed_button_clicked();
+    void on_load_surf_button_clicked();
 
 private:
     Ui::pvtappClass ui;

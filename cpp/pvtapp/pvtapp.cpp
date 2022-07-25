@@ -47,7 +47,20 @@ void pvtapp::err_msg(const QString & msg, const QString& cap)
     );
 }
 
-void pvtapp::update_tif_plot(int rows, int cols, double res, double min_z, double max_z, double min_x, double max_x, double min_y, double max_y,const QVector<double>& X, const QVector<double>& Y, const QVector<double>& Z)
+void pvtapp::update_tif_plot(
+    const int&             rows,
+    const int&             cols,
+    const double&          res,
+    const double&          min_z,
+    const double&          max_z,
+    const double&          min_x,
+    const double&          max_x,
+    const double&          min_y,
+    const double&          max_y,
+    const QVector<double>& X, 
+    const QVector<double>& Y, 
+    const QVector<double>& Z
+)
 {
     // 1. Set the size
     m_tifColormap->data()->setSize(cols, rows);
@@ -82,7 +95,12 @@ void pvtapp::update_tif_plot(int rows, int cols, double res, double min_z, doubl
     ui.r_value_box->setValue((x_e - x_s) * 0.5);
 }
 
-void pvtapp::update_path_plot(double width, double height, const QVector<double>& px, const QVector<double>& py)
+void pvtapp::update_path_plot(
+    const double&          width,
+    const double&          height,
+    const QVector<double>& px,
+    const QVector<double>& py
+)
 {
     // update the plots
     m_pathCurve->setData(px, py);
@@ -94,7 +112,14 @@ void pvtapp::update_path_plot(double width, double height, const QVector<double>
     ui.path_h_value_box->setValue(height);
 }
 
-void pvtapp::update_dt_plot(double total_dt, double max_dt, double min_dt, const QVector<double>& dpx, const QVector<double>& dpy, const QVector<double>& dt)
+void pvtapp::update_dt_plot(
+    const double&          total_dt,
+    const double&          max_dt,
+    const double&          min_dt,
+    const QVector<double>& dpx,
+    const QVector<double>& dpy,
+    const QVector<double>& dt
+)
 {
     // generate gradient
     QCPColorGradient jetG(QCPColorGradient::gpJet);
@@ -115,7 +140,13 @@ void pvtapp::update_dt_plot(double total_dt, double max_dt, double min_dt, const
     ui.total_dt_value_box->setValue(total_dt);
 }
 
-void pvtapp::update_feed_plot(double max_feed, double min_feed, const QVector<double>& px, const QVector<double>& py, const QVector<double>& feed)
+void pvtapp::update_feed_plot(
+    const double&          max_feed,
+    const double&          min_feed,
+    const QVector<double>& px,
+    const QVector<double>& py,
+    const QVector<double>& feed
+)
 {
     // generate gradient
     QCPColorGradient jetG(QCPColorGradient::gpJet);
@@ -132,6 +163,56 @@ void pvtapp::update_feed_plot(double max_feed, double min_feed, const QVector<do
     m_feedScale->setDataRange(QCPRange(min_feed, max_feed));
     m_feedScale->rescaleDataRange(true);
     ui.feed_plot->replot();
+}
+
+void pvtapp::update_surf_plot(
+    const int&             rows,
+    const int&             cols,
+    const double&          max_x,
+    const double&          min_x,
+    const double&          max_y,
+    const double&          min_y,
+    const double&          max_z,
+    const double&          min_z,
+    const double&          rms_z,
+    const double&          res,
+    const QVector<double>& X,
+    const QVector<double>& Y,
+    const QVector<double>& Z
+)
+{
+    // 1. Set the size
+    m_surfColormap->data()->setSize(cols, rows);
+
+    double x_s = min_x * 1e3, x_e = max_x * 1e3;
+    double y_s = min_y * 1e3, y_e = max_y * 1e3;
+    double v = std::max(x_e - x_s, y_e - y_s) * 0.5;
+
+    m_surfColormap->data()->setRange(QCPRange(x_s, x_e), QCPRange(y_s, y_e));
+
+    // 2. Feed the data
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            auto id = ELT2D(cols, j, i);
+            m_surfColormap->data()->setData(X[id] * 1e3, Y[id] * 1e3, Z[id] * 1e9);
+        }
+    }
+
+    // 3. Rescale the color range
+    m_surfColormap->setDataRange(QCPRange(min_z * 1e9, max_z * 1e9));
+
+    // 4. rescale the key (x) and value (y) axes so the whole color map is visible:
+    ui.surf_plot->xAxis->setRange(0.5 * (x_e - x_s) + x_s - v, 0.5 * (x_e - x_s) + x_s + v);
+    ui.surf_plot->yAxis->setRange(0.5 * (y_e - y_s) + y_s - v, 0.5 * (y_e - y_s) + y_s + v);
+
+    ui.surf_plot->replot();
+
+    // update the params
+    ui.surf_pv_value_box->setValue(1e9 * (max_z - min_z));
+    ui.surf_rms_value_box->setValue(1e9 * rms_z);
+    ui.surf_res_value_box->setValue(1e3 * res);
 }
 
 void pvtapp::init_ui()
@@ -164,6 +245,8 @@ void pvtapp::init_connections()
     connect(m_ptrPVTWorker, &PVTWorker::err_msg, this, &pvtapp::err_msg);
     connect(this, &pvtapp::load_tif, m_ptrPVTWorker, &PVTWorker::load_tif);
     connect(m_ptrPVTWorker, &PVTWorker::update_tif_plot, this, &pvtapp::update_tif_plot);
+    connect(this, &pvtapp::load_surf, m_ptrPVTWorker, &PVTWorker::load_surf);
+    connect(m_ptrPVTWorker, &PVTWorker::update_surf_plot, this, &pvtapp::update_surf_plot);
     connect(this, &pvtapp::load_path, m_ptrPVTWorker, &PVTWorker::load_path);
     connect(m_ptrPVTWorker, &PVTWorker::update_path_plot, this, &pvtapp::update_path_plot);
     connect(this, &pvtapp::load_dt, m_ptrPVTWorker, &PVTWorker::load_dt);
@@ -510,6 +593,32 @@ void pvtapp::on_load_feed_button_clicked()
         }
         else {
             err_msg(tr("px, py, vx or vy is not found in the selected path: \n %1")
+                .arg(m_h5FullPath)
+            );
+        }
+    }
+}
+
+void pvtapp::on_load_surf_button_clicked()
+{
+    if (m_h5FullPath.isEmpty()) {
+        err_msg("Please select where the Dwell Time is from the above H5 file.");
+    }
+    else {
+        bool is_X = false, is_Y = false, is_Z = false;
+        auto selected_items = ui.h5_treeWidget->selectedItems();
+        for (auto& item : selected_items) {
+            for (int i = 0; i < item->childCount(); i++) {
+                if (item->child(i)->text(0).contains("X")) { is_X = true; }
+                if (item->child(i)->text(0).contains("Y")) { is_Y = true; }
+                if (item->child(i)->text(0).contains("Z")) { is_Z = true; }
+            }
+        }
+		if (is_X && is_Y && is_Z) {
+            emit load_surf(m_h5FileName, m_h5FullPath);
+        }
+        else {
+            err_msg(tr("X, Y or Z is not found in the selected path: \n %1")
                 .arg(m_h5FullPath)
             );
         }

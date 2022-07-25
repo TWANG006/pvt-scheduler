@@ -55,4 +55,12 @@ PVTENGINE_API void meshgrid(
 	MatrixXXd& Y      /*!< [out] Y grid*/
 );
 
+PVTENGINE_API double PV(const MatrixXXd& Z);
+
+PVTENGINE_API double PV(const VectorXd& z);
+
+PVTENGINE_API double RMS(const MatrixXXd& Z);
+
+PVTENGINE_API double RMS(const VectorXd& Z);
+
 #endif // !PVTENGINE_
