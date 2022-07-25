@@ -4,24 +4,21 @@ clc;
 addpath(genpath('../functions'));
 tic
 %% generate a very simple 5-point 2d path
-data_dir = '../../data/sim_data/';
-data_file = 'step_01_dt_udo_ibf.mat';
-load([data_dir data_file]);
+dataDir = '../../data/sim_data/';
+dataFile = 'step_01_dt_udo_ibf.mat';
+load([dataDir dataFile]);
 
-pathFile = 'stitch_Maze_1_dp.mat';
-load([data_dir pathFile], 'dp_x', 'dp_y');
-px = [dp_x, dp_x(end)]; 
-py = [dp_y, 25];%%
-surf_mpp = 0.001;
-px = px * surf_mpp;
-yp = yp * surf_mpp;
-px = px -0.0050;
-py = py -0.0050;
+% path 1
+px = path_x;
+py = path_y;
+
+% % path2
+% px = [path_x, path_x(end)];
+% py = [path_y, path_y(end)]; 
+
 % figure;
 % plot(px,py,'o','linewidth',2);  
 
-% px = xp; 
-% py = yp;
 cs_t = cumsum(t);
 %% parameters
 ax_max = 2; % Maximum acceleration in the x-direction
@@ -43,7 +40,7 @@ vx_s = [];
 py_s = [];
 ay_s = [];
 vy_s = [];
-
+ts = [];
 for n = 1: length(cs_t) - 1
     % 1. generate t's for each segment
     if n == 1
@@ -53,6 +50,7 @@ for n = 1: length(cs_t) - 1
     end
     t1 = cs_t(n + 1);
     t02t1 = linspace(t0, t1, ceil((t1 - t0) / tau));
+    ts = [ts; t02t1(:)];
     
     px_s = [px_s; calculate_pvt_p(t02t1, cx(n, :))];
     vx_s = [vx_s; calculate_pvt_v(t02t1, cx(n, :))];
@@ -132,6 +130,7 @@ for i = 1: size(px_s)-1
             py_s(i), py_s(i + 1), ...
             vx_s(i), vx_s(i + 1), ...
             vy_s(i), vy_s(i + 1), ...
+            ts(i+1) - ts(i), ...
             F ...
         );
     Zremoval_ca = Zremoval_ca + Zn;
@@ -147,20 +146,22 @@ ShowSurfaceMap(Xca, Yca, Zca, 3, true, 1e9, 'nm', 'initial surface error');
 subplot(242);
 ShowSurfaceMap(Xtif, Ytif, Ztif, 0, false, 1e9, 'nm', 'TIF');
 subplot(245);
-ShowDwellTime(xp, yp, t, false, 0, 'jet', 'Dwell Time');  
+ShowDwellTime(dwell_x, dwell_y, t, false, 0, 'jet', 'Dwell Time');  
 subplot(246);
 ShowSurfaceMap(Xca, Yca, Zca, 3, true, 1e9, 'nm', 'Clear Aperture');
 subplot(247);
 ShowSurfaceMap(Xca, Yca, Zremoval_ca, 3, true, 1e9, 'nm', 'Removed surface error');
 subplot(248);
+% figure;
 ShowSurfaceMap(Xca, Yca, Zresidual_ca, 3, true, 1e9, 'nm', 'Residual surface error'); 
 hold on; plot3(px_s*1e3, py_s*1e3, 100*ones(size(px_s,1),1), 'b-', 'LineWidth', 1); hold off;
 
 %% save data
-save([data_dir mfilename '.mat'], ...
+save([dataDir mfilename '.mat'], ...
     'Xca', 'Yca', 'Zca',  ...
     'Zremoval_ca', 'Zresidual_ca',  ...
-    'xp', 'yp', 't', ...
+    'dwell_x', 'dwell_y', 't', ...
+    'path_x', 'path_y',  ...
     'cs_t', ...
     'Xtif', 'Ytif', 'Ztif',...
     'px_s', 'py_s', ...
