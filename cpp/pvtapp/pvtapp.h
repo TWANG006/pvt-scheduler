@@ -101,6 +101,8 @@ private:
     QString m_h5FullPath;
 
     QCPColorMap* m_tifColormap;
+    QCPColorMap* m_surfColormap;
+    QCPColorMap* m_resColormap;
     QCPCurve* m_pathCurve;
     QCPColorCurve* m_dtColorCurve;
     QCPColorScale* m_dtScale;

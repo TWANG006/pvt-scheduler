@@ -9,6 +9,8 @@ pvtapp::pvtapp(QWidget* parent)
     : QMainWindow(parent)
     , m_ptrPVTWorker(new PVTWorker())
     , m_tifColormap(nullptr)
+    , m_surfColormap(nullptr)
+    , m_resColormap(nullptr)
     , m_pathCurve(nullptr)
     , m_dtColorCurve(nullptr)
     , m_dtScale(nullptr)
@@ -136,6 +138,8 @@ void pvtapp::init_ui()
 {
     ui.h5_treeWidget->setHeaderHidden(false);
     init_qcpcolormap(m_tifColormap, ui.tif_plot);
+    init_qcpcolormap(m_surfColormap, ui.surf_plot);
+    init_qcpcolormap(m_resColormap, ui.res_plot);
     init_lineplot(ui.path_plot);
     init_dtplot(ui.dt_plot);
     init_feedplot(ui.feed_plot);
@@ -152,6 +156,10 @@ void pvtapp::init_connections()
     connect(ui.file_dockWidget, &QDockWidget::visibilityChanged, ui.actionToggle_File_view, &QAction::setChecked);
     connect(ui.actionToggle_Tool_path_view, &QAction::toggled, ui.path_dockWidget, &QDockWidget::setVisible);
     connect(ui.path_dockWidget, &QDockWidget::visibilityChanged, ui.actionToggle_Tool_path_view, &QAction::setChecked);
+    connect(ui.actionToggle_Dwell_time_view, &QAction::toggled, ui.dt_dockWidget, &QDockWidget::setVisible);
+    connect(ui.dt_dockWidget, &QDockWidget::visibilityChanged, ui.actionToggle_Dwell_time_view, &QAction::setChecked);
+    connect(ui.velocity_dockWidget, &QDockWidget::visibilityChanged, ui.actionToggle_Feedrate_view, &QAction::setChecked);
+    connect(ui.actionToggle_Feedrate_view, &QAction::toggled, ui.velocity_dockWidget, &QDockWidget::setVisible);
 
     connect(m_ptrPVTWorker, &PVTWorker::err_msg, this, &pvtapp::err_msg);
     connect(this, &pvtapp::load_tif, m_ptrPVTWorker, &PVTWorker::load_tif);
@@ -179,7 +187,7 @@ void pvtapp::init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget)
     scale->setType(QCPAxis::atRight);
     scale->setRangeDrag(false);
     scale->setRangeZoom(false);
-    scale->setLabel("height");
+    scale->setLabel("height [nm]");
     colormap->setColorScale(scale);
     QCPColorGradient cg(QCPColorGradient::gpJet);
     cg.setNanHandling(QCPColorGradient::nhTransparent);

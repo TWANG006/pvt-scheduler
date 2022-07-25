@@ -674,6 +674,7 @@
     <addaction name="actionToggle_TIF_view"/>
     <addaction name="actionToggle_Tool_path_view"/>
     <addaction name="actionToggle_Dwell_time_view"/>
+    <addaction name="actionToggle_Feedrate_view"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_View"/>
@@ -1393,6 +1394,17 @@
    </property>
    <property name="text">
     <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="actionToggle_Feedrate_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Toggle Feedrate view</string>
    </property>
   </action>
  </widget>
