@@ -1,17 +1,17 @@
-% Rectangular maze path
+% Rectangular maze path.
+% No unicursal in Row 1. 
+
 clear; clc;
 close all;
-tic
 
 outDir = '../../data/sim_data/';
 %% input parameters.
-length = 34; %unit:[mm]. max(length, width) must be even.
-width = 12; 
-max_iter = 10000; % maximum number of cycles
+length = 14; %unit:[mm]. max(length, width) must be even.
+width = 8; 
+max_iter = 1; % maximum number of cycles
 
 b_remaze = 1; 
 i_iter = 0;
-min_bseq = 100000; 
 
 while b_remaze
     half_dp = max(length, width);
@@ -21,7 +21,6 @@ while b_remaze
     [Xp, Yp] = meshgrid(0 : 0.5*size(X_dp,2)-1, 0 : 0.5*size(X_dp,1)-1);
     surf_mpp = 2 * median(diff(X_dp(1, :)));
     Xp = Xp * surf_mpp;
-    % Yp = (max(Yp(:)) - Yp) * surf_mpp;
     Yp = Yp * surf_mpp;
     Xp = Xp - nanmean(Xp(:));
     Yp = Yp - nanmean(Yp(:));
@@ -75,7 +74,6 @@ while b_remaze
         end    
     end
     
-    % diff(re_Sn(:, :))
     u_re_Sn = [-1*ones(1,n1); re_Sn]; % compare with upwards
     u_diff = (abs(diff(u_re_Sn)) == 1);
     
@@ -96,8 +94,7 @@ while b_remaze
     
     b_seq = u_diff + d_diff + l_diff + r_diff;
     minus_bseq = (2*m1*n1 - 2) - sum(sum(b_seq))
-    min_bseq = min(min_bseq, minus_bseq);
-    if (minus_bseq == 0) && (re_Sn(1,1) == m1*n1) && (re_Sn(1,2) == 1) || (i_iter == max_iter)
+    if (minus_bseq == 0) || (i_iter == max_iter)
         b_remaze = 0; % out of the while loop
     end
     
@@ -114,21 +111,29 @@ title('Rectangular maze');
 xlabel('x [mm]');
 ylabel('y [mm]');
 
-% Labeling entrance and exit
-x_entrance = re_Dx(1);
-y_entrance = re_Dy(1) -  median(diff(Yp1(:, 1)));
-x_exit = re_Dx(size(re_Dx,2));
-y_exit = re_Dy(size(re_Dy,2)) -  median(diff(Yp1(:, 1)));
+if length > width
+    % Labeling entrance and exit
+    x_entrance = re_Dx(1);
+    y_entrance = re_Dy(1) -  median(diff(Yp1(:, 1)));
+    x_exit = re_Dx(size(re_Dx,2));
+    y_exit = re_Dy(size(re_Dy,2)) -  median(diff(Yp1(:, 1)));
+end
+if length <= width
+    % Labeling entrance and exit
+    x_entrance = re_Dx(1) -  median(diff(Xp1(1, :)));
+    y_entrance = re_Dy(1);
+    x_exit = re_Dx(size(re_Dx,2))  -  median(diff(Xp1(1, :)));
+    y_exit = re_Dy(size(re_Dy,2));
+end
 
-hold on;
-plot([x_entrance * 1e-3, re_Dx(1) * 1e-3], [y_entrance * 1e-3, re_Dy(1) * 1e-3], 'bo--');
-plot([x_exit * 1e-3, re_Dx(size(re_Dx,2)) * 1e-3], [y_exit * 1e-3, re_Dy(size(re_Dy,2)) * 1e-3], 'mo--');
-text(x_entrance * 1e-3, y_entrance * 1e-3,'ENT');
-text(x_exit * 1e-3, y_exit * 1e-3,'EX');
-xlabel('x [mm]');
-ylabel('y [mm]');
-hold off;
-toc
+    hold on;
+    plot([x_entrance * 1e-3, re_Dx(1) * 1e-3], [y_entrance * 1e-3, re_Dy(1) * 1e-3], 'bo--');
+    plot([x_exit * 1e-3, re_Dx(size(re_Dx,2)) * 1e-3], [y_exit * 1e-3, re_Dy(size(re_Dy,2)) * 1e-3], 'mo--');
+    text(x_entrance * 1e-3, y_entrance * 1e-3,'ENT');
+    text(x_exit * 1e-3, y_exit * 1e-3,'EX');
+    xlabel('x [mm]');
+    ylabel('y [mm]');
+    hold off;
 
 %% save data
 xp = re_Dx;
@@ -142,7 +147,7 @@ order_dp = re_Sn;
 % xlabel('x [mm]');
 % ylabel('y [mm]');
 
-save([outDir mfilename '_dp.mat'], ...
+save([outDir mfilename '.mat'], ...
     'xp', 'yp',  ...
     'order_dp' ...
     );
