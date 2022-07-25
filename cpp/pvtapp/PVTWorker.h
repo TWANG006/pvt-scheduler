@@ -21,6 +21,10 @@ signals:
 		double res,
 		double min_z,
 		double max_z,
+		double min_x,
+		double max_x,
+		double min_y,
+		double max_y,
 		const QVector<double>& X,
 		const QVector<double>& Y,
 		const QVector<double>& Z
