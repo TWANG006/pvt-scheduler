@@ -124,6 +124,13 @@ void pvtapp::init_connections()
     connect(ui.h5_treeWidget, &QTreeWidget::itemExpanded, this, &pvtapp::on_itemExpanded);
     connect(ui.h5_treeWidget, &QTreeWidget::itemCollapsed, this, &pvtapp::on_itemCollapsed);
     connect(ui.h5_treeWidget, &QTreeWidget::itemClicked, this, &pvtapp::on_itemClicked);
+    connect(ui.actionToggle_TIF_view, &QAction::toggled, ui.tif_dockWidget, &QDockWidget::setVisible);
+    connect(ui.tif_dockWidget, &QDockWidget::visibilityChanged, ui.actionToggle_TIF_view, &QAction::setChecked);
+    connect(ui.actionToggle_File_view, &QAction::toggled, ui.file_dockWidget, &QDockWidget::setVisible);
+    connect(ui.file_dockWidget, &QDockWidget::visibilityChanged, ui.actionToggle_File_view, &QAction::setChecked);
+    connect(ui.actionToggle_Tool_path_view, &QAction::toggled, ui.path_dockWidget, &QDockWidget::setVisible);
+    connect(ui.path_dockWidget, &QDockWidget::visibilityChanged, ui.actionToggle_Tool_path_view, &QAction::setChecked);
+
     connect(m_ptrPVTWorker, &PVTWorker::err_msg, this, &pvtapp::err_msg);
     connect(this, &pvtapp::load_tif, m_ptrPVTWorker, &PVTWorker::load_tif);
     connect(m_ptrPVTWorker, &PVTWorker::update_tif_plot, this, &pvtapp::update_tif_plot);
