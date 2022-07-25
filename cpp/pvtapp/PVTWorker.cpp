@@ -138,6 +138,10 @@ void PVTWorker::load_tif(const QString& file_name, const QString& fullPath)
 			m_Xtif(0, 1) - m_Xtif(0, 0),
 			m_Ztif.minCoeff(),
 			m_Ztif.maxCoeff(),
+			m_Xtif.minCoeff(),
+			m_Xtif.maxCoeff(),
+			m_Ytif.minCoeff(),
+			m_Ytif.maxCoeff(),
 			QVector<double>(m_Xtif.data(), m_Xtif.data() + sz),
 			QVector<double>(m_Ytif.data(), m_Ytif.data() + sz),
 			QVector<double>(m_Ztif.data(), m_Ztif.data() + sz)

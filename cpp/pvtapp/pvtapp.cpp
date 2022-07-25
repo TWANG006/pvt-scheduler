@@ -43,13 +43,13 @@ void pvtapp::err_msg(const QString & msg, const QString& cap)
     );
 }
 
-void pvtapp::update_tif_plot(int rows, int cols, double res, double min_z, double max_z, const QVector<double>& X, const QVector<double>& Y, const QVector<double>& Z)
+void pvtapp::update_tif_plot(int rows, int cols, double res, double min_z, double max_z, double min_x, double max_x, double min_y, double max_y,const QVector<double>& X, const QVector<double>& Y, const QVector<double>& Z)
 {
     // 1. Set the size
     m_tifColormap->data()->setSize(cols, rows);
 
-    double x_s = X[0] * 1e3, x_e = X[cols - 1] * 1e3;
-    double y_e = Y[0] * 1e3, y_s = Y[(rows - 1) * cols] * 1e3;
+    double x_s = min_x * 1e3, x_e = max_x * 1e3;
+    double y_s = min_y * 1e3, y_e = max_y * 1e3;
     double v = std::max(x_e - x_s, y_e - y_s) * 0.5;
 
     m_tifColormap->data()->setRange(QCPRange(x_s, x_e), QCPRange(y_s, y_e));
