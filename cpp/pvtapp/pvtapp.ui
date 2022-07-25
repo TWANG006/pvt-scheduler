@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1377</width>
-    <height>874</height>
+    <width>1230</width>
+    <height>883</height>
    </rect>
   </property>
   <property name="font">
@@ -20,7 +20,7 @@
    <string>pvtapp</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="central_gridLayout" rowstretch="1,0,0">
+   <layout class="QGridLayout" name="central_gridLayout" rowstretch="1,1,0,0">
     <property name="leftMargin">
      <number>2</number>
     </property>
@@ -36,162 +36,7 @@
     <property name="spacing">
      <number>2</number>
     </property>
-    <item row="0" column="0">
-     <widget class="QGroupBox" name="surf_groupBox">
-      <property name="title">
-       <string>Surface error map</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout" rowstretch="0,1" columnstretch="1,1">
-       <property name="leftMargin">
-        <number>2</number>
-       </property>
-       <property name="topMargin">
-        <number>2</number>
-       </property>
-       <property name="rightMargin">
-        <number>2</number>
-       </property>
-       <property name="bottomMargin">
-        <number>2</number>
-       </property>
-       <property name="spacing">
-        <number>2</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QPushButton" name="load_surf_button">
-         <property name="font">
-          <font>
-           <family>Times New Roman</family>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Load initial surface</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <layout class="QHBoxLayout" name="tool_path_horizontalLayout_2" stretch="0,1,0,0,1,0">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="surf_pv_label">
-           <property name="font">
-            <font>
-             <family>Times New Roman</family>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;PV =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="surf_pv_value_box">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="font">
-            <font>
-             <family>Times New Roman</family>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-           <property name="buttonSymbols">
-            <enum>QAbstractSpinBox::NoButtons</enum>
-           </property>
-           <property name="maximum">
-            <double>999999.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.010000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="surf_pv_unit_label">
-           <property name="font">
-            <font>
-             <family>Times New Roman</family>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;nm, &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="surf_rms_label">
-           <property name="font">
-            <font>
-             <family>Times New Roman</family>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;RMS =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="surf_rms_value_box">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="font">
-            <font>
-             <family>Times New Roman</family>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-           <property name="buttonSymbols">
-            <enum>QAbstractSpinBox::NoButtons</enum>
-           </property>
-           <property name="maximum">
-            <double>999999.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.010000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="path_h_unit_label_2">
-           <property name="font">
-            <font>
-             <family>Times New Roman</family>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;nm&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QCustomPlot" name="surf_plot" native="true"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="0">
+    <item row="2" column="0">
      <widget class="QGroupBox" name="pvt_calc_groupBox">
       <property name="font">
        <font>
@@ -268,7 +113,7 @@
           </font>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;m/s&lt;span style=&quot; vertical-align:super;&quot;&gt;2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;m/s&lt;span style=&quot; vertical-align:super;&quot;&gt;2&lt;/span&gt;, &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -358,7 +203,7 @@
       </layout>
      </widget>
     </item>
-    <item row="2" column="0">
+    <item row="3" column="0">
      <widget class="QGroupBox" name="pvt_sim_groupBox">
       <property name="font">
        <font>
@@ -487,6 +332,316 @@
       </layout>
      </widget>
     </item>
+    <item row="0" column="0">
+     <widget class="QGroupBox" name="surf_groupBox">
+      <property name="title">
+       <string>Initial surface error map</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout" rowstretch="0,1" columnstretch="1,1">
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>2</number>
+       </property>
+       <property name="bottomMargin">
+        <number>2</number>
+       </property>
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QPushButton" name="load_surf_button">
+         <property name="font">
+          <font>
+           <family>Times New Roman</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Load initial surface</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <layout class="QHBoxLayout" name="surf_horizontalLayout" stretch="0,1,0,0,1,0">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="surf_pv_label">
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;PV =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="surf_pv_value_box">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::NoButtons</enum>
+           </property>
+           <property name="maximum">
+            <double>999999.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="surf_pv_unit_label">
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;nm, &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="surf_rms_label">
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;RMS =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="surf_rms_value_box">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::NoButtons</enum>
+           </property>
+           <property name="maximum">
+            <double>999999.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="surf_rms_unit_label">
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;nm&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QCustomPlot" name="surf_plot" native="true"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="res_groupBox">
+      <property name="title">
+       <string>Residual surface error map</string>
+      </property>
+      <layout class="QGridLayout" name="residual_gridLayout" rowstretch="0,1" columnstretch="1,1">
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>2</number>
+       </property>
+       <property name="bottomMargin">
+        <number>2</number>
+       </property>
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <item row="0" column="1">
+        <layout class="QHBoxLayout" name="res_horizontalLayout" stretch="0,1,0,0,1,0">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="ref_pv_label">
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;PV =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="res_pv_value_box">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::NoButtons</enum>
+           </property>
+           <property name="maximum">
+            <double>999999.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="res_pv_unit_label">
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;nm, &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="res_rms_label">
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;RMS =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="res_rms_value_box">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::NoButtons</enum>
+           </property>
+           <property name="maximum">
+            <double>999999.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="res_rms_unit_label">
+           <property name="font">
+            <font>
+             <family>Times New Roman</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;nm&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QCustomPlot" name="res_plot" native="true"/>
+       </item>
+       <item row="0" column="0">
+        <spacer name="res_horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -494,7 +649,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1377</width>
+     <width>1230</width>
      <height>21</height>
     </rect>
    </property>
@@ -548,6 +703,12 @@
    </property>
   </widget>
   <widget class="QDockWidget" name="file_dockWidget">
+   <property name="minimumSize">
+    <size>
+     <width>300</width>
+     <height>200</height>
+    </size>
+   </property>
    <property name="font">
     <font>
      <family>Times New Roman</family>
@@ -600,7 +761,7 @@
    <property name="minimumSize">
     <size>
      <width>350</width>
-     <height>290</height>
+     <height>300</height>
     </size>
    </property>
    <property name="font">
@@ -706,7 +867,7 @@
           </font>
          </property>
          <property name="text">
-          <string>nm/s</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;nm/s, &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -783,7 +944,7 @@
    <property name="minimumSize">
     <size>
      <width>350</width>
-     <height>290</height>
+     <height>300</height>
     </size>
    </property>
    <property name="font">
@@ -845,7 +1006,7 @@
           </font>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;width =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;W =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -886,7 +1047,7 @@
           </font>
          </property>
          <property name="text">
-          <string>mm</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;mm, &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -899,7 +1060,7 @@
           </font>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;height =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;H =&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -960,6 +1121,12 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dt_dockWidget">
+   <property name="minimumSize">
+    <size>
+     <width>350</width>
+     <height>300</height>
+    </size>
+   </property>
    <property name="allowedAreas">
     <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
@@ -1074,16 +1241,88 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="velocity_dockWidget">
+   <property name="minimumSize">
+    <size>
+     <width>350</width>
+     <height>300</height>
+    </size>
+   </property>
    <property name="allowedAreas">
     <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>Velocities</string>
+    <string>Feedrates</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="velocity_dock_contents"/>
+   <widget class="QWidget" name="velocity_dock_contents">
+    <layout class="QGridLayout" name="feed_gridLayout" rowstretch="0,1" columnstretch="1,1">
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
+     <property name="bottomMargin">
+      <number>2</number>
+     </property>
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="load_feed_button">
+       <property name="text">
+        <string>Load feedrates</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <spacer name="feed_horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>169</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="0" colspan="2">
+      <widget class="QCustomPlot" name="feed_plot" native="true">
+       <property name="font">
+        <font>
+         <family>Times New Roman</family>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="video_dockWidget">
+   <property name="minimumSize">
+    <size>
+     <width>350</width>
+     <height>200</height>
+    </size>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Video</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="video_dock_contents"/>
   </widget>
   <action name="action_Open">
    <property name="icon">
