@@ -2,6 +2,7 @@ clear;
 % close all;
 clc;
 addpath(genpath('../functions'));
+data_dir = '../../data/sim_data/';
 
 %% generate a very simple 5-point 2d path
 px = [1e-3, 2e-3, 3.5e-3, 5e-3, 1e-3];
@@ -77,3 +78,20 @@ subplot(1, 4, 4);
 plot(ax_s + ay_s, 'LineWidth', 2);
 title('Accelerations');
 axis square;
+
+
+%%
+h5create([data_dir mfilename '.h5'], '/px', size(px));
+h5write([data_dir mfilename '.h5'], '/px', px);
+h5create([data_dir mfilename '.h5'], '/py', size(py));
+h5write([data_dir mfilename '.h5'], '/py', py);
+h5create([data_dir mfilename '.h5'], '/vx', size(vx'));
+h5write([data_dir mfilename '.h5'], '/vx', vx');
+h5create([data_dir mfilename '.h5'], '/vy', size(vy'));
+h5write([data_dir mfilename '.h5'], '/vy', vy');
+h5create([data_dir mfilename '.h5'], '/dpx', size(px));
+h5write([data_dir mfilename '.h5'], '/dpx', px);
+h5create([data_dir mfilename '.h5'], '/dpy', size(py));
+h5write([data_dir mfilename '.h5'], '/dpy', py);
+h5create([data_dir mfilename '.h5'], '/dt', size(t));
+h5write([data_dir mfilename '.h5'], '/dt', t);

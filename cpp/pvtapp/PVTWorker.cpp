@@ -2,6 +2,7 @@
 #include "eigen3-hdf5.hpp"
 #include <QVector>
 #include <iostream>
+#include <numeric>
 
 PVTWorker::PVTWorker(QObject* parent)
 	: QObject(parent)
@@ -219,6 +220,60 @@ void PVTWorker::load_surf(const QString& file_name, const QString& full_path)
 			QString("%1 \n %2").arg(file_name).arg(QString(err.getDetailMsg().c_str())),
 			QString("File loading error")
 		);
+	}
+}
+
+void PVTWorker::schedule_pvt(const double& ax_max, const double& vx_max, const double& ay_max, const double& vy_max, bool is_smooth_v)
+{
+	// check if the required data for Scheduler are all loaded
+	if ((m_px.size() == 0 || m_py.size() == 0 || m_dt.size() == 0)) {
+		emit err_msg("Please load the Positions and Dwell time first.");
+	}
+	else {
+		// calculate the PVT's T
+		if (m_dt.size() == m_px.size() || m_dt.size() == m_px.size() - 1) {
+			if (m_dt.size() == m_px.size() && m_px.size() == m_py.size()) {
+				m_t = m_dt;
+				std::cout << m_t.transpose() << std::endl;
+			}
+			else {
+				m_t = VectorXd(m_dt.size() + 1);
+				m_t << 0, m_dt;
+				std::partial_sum(m_t.begin(), m_t.end(), m_t.begin(), std::plus<double>());
+			}
+
+			// schedule PVT in x
+			auto PVTx = m_scheduler(m_px, m_t, vx_max, ax_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
+			auto PVTy = m_scheduler(m_py, m_t, vy_max, ay_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
+
+			// assign to the members
+			m_Cx = PVTx.Coeffs;
+			m_vx = PVTx.V;
+			m_Cy = PVTy.Coeffs;
+			m_vy = PVTy.V;
+
+			std::cout << m_vx.transpose() << std::endl;
+			std::cout << m_vy.transpose() << std::endl;
+
+			// calculate the total dwell time in [min]
+			VectorXd feed_rates(((m_vx.array().square() + m_vy.array().square()).sqrt() * 1e3).matrix());
+
+			// change to mm
+			VectorXd px_mm(m_px * 1e3);
+			VectorXd py_mm(m_py * 1e3);
+
+			// emit the update dt plot signal
+			emit update_feed_plot(
+				feed_rates.maxCoeff(),
+				feed_rates.minCoeff(),
+				QVector<double>(px_mm.data(), px_mm.data() + px_mm.size()),
+				QVector<double>(py_mm.data(), py_mm.data() + py_mm.size()),
+				QVector<double>(feed_rates.data(), feed_rates.data() + feed_rates.size())
+			);
+		}
+		else {
+			emit err_msg("Positions and Times should have the same number of elements.");
+		}
 	}
 }
 

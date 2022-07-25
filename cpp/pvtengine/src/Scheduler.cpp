@@ -3,7 +3,6 @@
 #include <qpOASES.hpp>
 #include "Calculator.h"
 
-
 Scheduler::Scheduler(const VectorXd& P, const VectorXd& T, const double& vmax, const double& amax, const double& v0, const double& vt, const double& a0, const double& at)
 	: m_P(P)
 	, m_T(T)
@@ -71,7 +70,7 @@ bool Scheduler::clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth
 
 	// 1. convert to QP objective: H = C^TC, g = -C^Td
 	MatrixXXd H(C.transpose() * C);
-	VectorXd g(-1 * C.transpose() * d);
+	VectorXd g( - 1 * C.transpose() * d);
 
 	// 2. build the lb and ub
 	VectorXd lb, ub;
@@ -255,7 +254,8 @@ bool Scheduler::solve_qp(VectorXd& qpSol, MatrixXXd& H, VectorXd& g, MatrixXXd& 
 		int nC = (int)A.rows();              // number of constriants
 		qpOASES::QProblem qp(nV, nC);        // general QP
 		qpOASES::Options options;            // default options
-		options.printLevel = qpOASES::PL_LOW;// no output
+		options.setToReliable();
+		options.printLevel = qpOASES::PL_MEDIUM;// no output
 		qp.setOptions(options);
 
 		// initialization
@@ -273,7 +273,8 @@ bool Scheduler::solve_qp(VectorXd& qpSol, MatrixXXd& H, VectorXd& g, MatrixXXd& 
 	else { // if not using the smoothness constraints
 		qpOASES::QProblemB qp(nV);            // initialize the bounded problem
 		qpOASES::Options options;             // default options
-		options.printLevel = qpOASES::PL_LOW;// no output
+		options.setToReliable();
+		options.printLevel = qpOASES::PL_MEDIUM;// no output
 		qp.setOptions(options);
 
 		if (qpOASES::SUCCESSFUL_RETURN != qp.init(H.data(), g.data(), lb.data(), ub.data(), nWSR, NULL, NULL)) {

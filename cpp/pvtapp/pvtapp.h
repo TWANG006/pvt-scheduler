@@ -24,6 +24,13 @@ signals:
     void load_dt(const QString& file_name, const QString& full_path);
     void load_vxvy(const QString& file_name, const QString& full_path);
     void load_surf(const QString& file_name, const QString& full_path);
+    void schedule_pvt(
+        const double& ax_max,
+        const double& vx_max,
+        const double& ay_max,
+        const double& vy_max,
+        bool is_smooth_v = true
+    );
 
 public slots:
     void err_msg(const QString& msg, const QString& cap = "Error");
@@ -107,6 +114,7 @@ private slots:
     void on_load_dt_button_clicked();
     void on_load_feed_button_clicked();
     void on_load_surf_button_clicked();
+    void on_pvt_calc_button_clicked();
 
 private:
     Ui::pvtappClass ui;

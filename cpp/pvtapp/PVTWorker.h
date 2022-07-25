@@ -4,6 +4,7 @@
 #include <QObject>
 #include "H5Cpp.h"
 #include "pvtengine.h"
+#include "Scheduler.h"
 
 class PVTWorker : public QObject
 {
@@ -72,6 +73,13 @@ public slots:
 	void load_dt(const QString& file_name, const QString& full_path);
 	void load_vxvy(const QString& file_name, const QString& full_path);
 	void load_surf(const QString& file_name, const QString& full_path);
+	void schedule_pvt(
+		const double& ax_max,
+		const double& vx_max,
+		const double& ay_max,
+		const double& vy_max,
+		bool is_smooth_v = true
+	);
 
 private:
 	void get_path_name(
@@ -86,6 +94,9 @@ private:
 	VectorXd   m_py;  /*!< PVT's p in y*/
 	VectorXd   m_vx;  /*!< PVT's v in x*/
 	VectorXd   m_vy;  /*!< PVT's v in y*/
+	VectorXd   m_t;   /*!< PVT's t*/
+	MatrixXXd  m_Cx;  /*!< PVT's coefficients in x*/
+	MatrixXXd  m_Cy;  /*!< PVT's coefficients in y*/
 	MatrixXXd  m_Xtif;/*!< TIF x coordinate grid*/
 	MatrixXXd  m_Ytif;/*!< TIF y coordinate grid*/
 	MatrixXXd  m_Ztif;/*!< TIF*/
@@ -95,6 +106,8 @@ private:
 	VectorXd   m_dpx; /*!< dwell point x coordinates*/
 	VectorXd   m_dpy; /*!< dwell point y coordiantes*/
 	VectorXd   m_dt;  /*!< dwell time and the dwell points*/
+
+	Scheduler m_scheduler;
 };
 
 #endif // !PVT_WORKER_H

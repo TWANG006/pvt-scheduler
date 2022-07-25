@@ -253,6 +253,8 @@ void pvtapp::init_connections()
     connect(m_ptrPVTWorker, &PVTWorker::update_dt_plot, this, &pvtapp::update_dt_plot);
     connect(this, &pvtapp::load_vxvy, m_ptrPVTWorker, &PVTWorker::load_vxvy);
     connect(m_ptrPVTWorker, &PVTWorker::update_feed_plot, this, &pvtapp::update_feed_plot);
+
+    connect(this, &pvtapp::schedule_pvt, m_ptrPVTWorker, &PVTWorker::schedule_pvt);
 }
 
 void pvtapp::init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget)
@@ -621,6 +623,28 @@ void pvtapp::on_load_surf_button_clicked()
             err_msg(tr("X, Y or Z is not found in the selected path: \n %1")
                 .arg(m_h5FullPath)
             );
+        }
+    }
+}
+
+void pvtapp::on_pvt_calc_button_clicked()
+{
+    if (m_h5FileName.isEmpty()) {
+        err_msg("Please select a valid file first.");
+    }
+    else {
+        // obtain the parameters
+        double ax_max = ui.axmax_value_box->value();
+        double vx_max = ui.vxmax_value_box->value();
+        double ay_max = ui.aymax_value_box->value();
+        double vy_max = ui.vymax_value_box->value();
+        bool is_smooth_v = ui.smooth_v_checkBox->isChecked();
+
+        if (ax_max < 1e-10 || vx_max < 1e-10 || ay_max < 1e-10 || vy_max < 1e-10) {
+            err_msg("Max accelerations and velocities cannot be 0.");
+        }
+        else {
+            emit schedule_pvt(ax_max, vx_max, ay_max, vy_max, is_smooth_v);
         }
     }
 }

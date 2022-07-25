@@ -29,10 +29,9 @@ TEST(misc_test, meshgrid_test)
 
 TEST(misc_test, eigen_mul)
 {
-	MatrixX2d A{
-		{1, 2},
-		{3, 4},
-	};
+	MatrixXXd matBinData1 = MatrixXXd::Random(2000, 2004);
+	MatrixXXd matBinData2 = MatrixXXd::Random(1000, 1000);
+	MatrixXXd matBinData3 = matBinData1.transpose() * matBinData1;
 
-	std::cout << A * 2 << std::endl;
+	std::cout << matBinData3.size() << std::endl;
 }

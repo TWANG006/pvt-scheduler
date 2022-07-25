@@ -8,7 +8,6 @@
 #define PVTENGINE_API __declspec(dllimport)
 #endif
 
-
 #include <Eigen/Dense>
 
 
