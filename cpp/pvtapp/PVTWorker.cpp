@@ -107,6 +107,54 @@ void PVTWorker::load_dt(const QString& file_name, const QString& full_path)
 	}
 }
 
+void PVTWorker::load_vxvy(const QString& file_name, const QString& full_path)
+{
+	// get the h5 file and data path names
+	QString path_name;
+	get_path_name(full_path, file_name, path_name);
+
+	try
+	{
+		// open the h5 file
+		m_h5.openFile(file_name.toStdString(), H5F_ACC_RDONLY);
+
+		// load the path
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/px").toStdString(), m_px);
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/py").toStdString(), m_py);
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/vx").toStdString(), m_vx);
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/vy").toStdString(), m_vy);
+
+		// close the file
+		m_h5.close();
+
+		// calculate the total dwell time in [min]
+		VectorXd feed_rates(((m_vx.array().square() + m_vy.array().square()).sqrt() * 1e3).matrix());
+
+		// change to mm
+		VectorXd px_mm(m_px * 1e3);
+		VectorXd py_mm(m_py * 1e3);
+
+		// emit the update dt plot signal
+		emit update_feed_plot(
+			feed_rates.maxCoeff(),
+			feed_rates.minCoeff(),
+			QVector<double>(px_mm.data(), px_mm.data() + px_mm.size()),
+			QVector<double>(py_mm.data(), py_mm.data() + py_mm.size()),
+			QVector<double>(feed_rates.data(), feed_rates.data() + feed_rates.size())
+		);
+	}
+	catch (const H5::FileIException& err)
+	{
+		// close the file handle
+		m_h5.close();
+
+		emit err_msg(
+			QString("%1 \n %2").arg(file_name).arg(QString(err.getDetailMsg().c_str())),
+			QString("File loading error")
+		);
+	}
+}
+
 void PVTWorker::get_path_name(const QString& filePath, const QString& file_name, QString& path_name)
 {
 	path_name = filePath.right(filePath.length() - file_name.length());

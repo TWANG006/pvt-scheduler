@@ -22,6 +22,7 @@ signals:
     void load_tif(const QString& file_name, const QString& full_path);
     void load_path(const QString& file_name, const QString& full_path);
     void load_dt(const QString& file_name, const QString& full_path);
+    void load_vxvy(const QString& file_name, const QString& full_path);
 
 public slots:
     void err_msg(const QString& msg, const QString& cap = "Error");
@@ -53,13 +54,21 @@ public slots:
         const QVector<double>& dpy,
         const QVector<double>& dt
     );
+    void update_feed_plot(
+        double max_feed,
+        double min_feed,
+        const QVector<double>& px,
+        const QVector<double>& py,
+        const QVector<double>& feed
+    );
 
 private:
     void init_ui();
     void init_connections();
     void init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget);
     void init_lineplot(QCustomPlot*& line_plot);
-    void init_scatterplot(QCustomPlot*& scatter_plot);
+    void init_dtplot(QCustomPlot*& dt_plot);
+    void init_feedplot(QCustomPlot*& feed_plot);
 
     // H5 related
     void open_h5file(const QString& file_name);
@@ -80,6 +89,7 @@ private slots:
     void on_load_tif_button_clicked();
     void on_load_path_button_clicked();
     void on_load_dt_button_clicked();
+    void on_load_feed_button_clicked();
 
 private:
     Ui::pvtappClass ui;
@@ -94,6 +104,8 @@ private:
     QCPCurve* m_pathCurve;
     QCPColorCurve* m_dtColorCurve;
     QCPColorScale* m_dtScale;
+    QCPColorCurve* m_feedColorCurve;
+    QCPColorScale* m_feedScale;
 };
 
 #endif // !PVT_APP_H

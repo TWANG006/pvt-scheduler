@@ -43,11 +43,19 @@ signals:
 		const QVector<double>& dpy,
 		const QVector<double>& dt
 	);
+	void update_feed_plot(
+		double max_feed,
+		double min_feed,
+		const QVector<double>& px,
+		const QVector<double>& py,
+		const QVector<double>& feed
+	);
 
 public slots:
 	void load_tif(const QString& file_name, const QString& full_path);
 	void load_path(const QString& file_name, const QString& full_path);
 	void load_dt(const QString& file_name, const QString& full_path);
+	void load_vxvy(const QString& file_name, const QString& full_path);
 
 private:
 	void get_path_name(
@@ -60,6 +68,8 @@ private:
 	H5::H5File m_h5;  /*!< the H5 file handle*/
 	VectorXd   m_px;  /*!< PVT's p in x*/
 	VectorXd   m_py;  /*!< PVT's p in y*/
+	VectorXd   m_vx;  /*!< PVT's v in x*/
+	VectorXd   m_vy;  /*!< PVT's v in y*/
 	MatrixXXd  m_Xtif;/*!< TIF x coordinate grid*/
 	MatrixXXd  m_Ytif;/*!< TIF y coordinate grid*/
 	MatrixXXd  m_Ztif;/*!< TIF*/

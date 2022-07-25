@@ -12,6 +12,8 @@ pvtapp::pvtapp(QWidget* parent)
     , m_pathCurve(nullptr)
     , m_dtColorCurve(nullptr)
     , m_dtScale(nullptr)
+    , m_feedColorCurve(nullptr)
+    , m_feedScale(nullptr)
 {
     ui.setupUi(this);
 
@@ -111,12 +113,32 @@ void pvtapp::update_dt_plot(double total_dt, double max_dt, double min_dt, const
     ui.total_dt_value_box->setValue(total_dt);
 }
 
+void pvtapp::update_feed_plot(double max_feed, double min_feed, const QVector<double>& px, const QVector<double>& py, const QVector<double>& feed)
+{
+    // generate gradient
+    QCPColorGradient jetG(QCPColorGradient::gpJet);
+
+    // colors
+    QVector<QRgb> colors(feed.size(), 0);
+
+    // generate colors for each scatter point
+    jetG.colorize(feed.data(), QCPRange(min_feed, max_feed), colors.data(), feed.size());
+
+    // set data
+    m_feedColorCurve->setData(px, py, colors);
+    m_feedColorCurve->rescaleAxes();
+    m_feedScale->setDataRange(QCPRange(min_feed, max_feed));
+    m_feedScale->rescaleDataRange(true);
+    ui.feed_plot->replot();
+}
+
 void pvtapp::init_ui()
 {
     ui.h5_treeWidget->setHeaderHidden(false);
     init_qcpcolormap(m_tifColormap, ui.tif_plot);
     init_lineplot(ui.path_plot);
-    init_scatterplot(ui.dt_plot);
+    init_dtplot(ui.dt_plot);
+    init_feedplot(ui.feed_plot);
 }
 
 void pvtapp::init_connections()
@@ -138,6 +160,8 @@ void pvtapp::init_connections()
     connect(m_ptrPVTWorker, &PVTWorker::update_path_plot, this, &pvtapp::update_path_plot);
     connect(this, &pvtapp::load_dt, m_ptrPVTWorker, &PVTWorker::load_dt);
     connect(m_ptrPVTWorker, &PVTWorker::update_dt_plot, this, &pvtapp::update_dt_plot);
+    connect(this, &pvtapp::load_vxvy, m_ptrPVTWorker, &PVTWorker::load_vxvy);
+    connect(m_ptrPVTWorker, &PVTWorker::update_feed_plot, this, &pvtapp::update_feed_plot);
 }
 
 void pvtapp::init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget)
@@ -194,7 +218,7 @@ void pvtapp::init_lineplot(QCustomPlot*& line_plot)
     line_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
 }
 
-void pvtapp::init_scatterplot(QCustomPlot*& scatter_plot)
+void pvtapp::init_dtplot(QCustomPlot*& scatter_plot)
 {
     // add the color curve graph
     m_dtColorCurve = new QCPColorCurve(scatter_plot->xAxis, scatter_plot->yAxis);
@@ -230,6 +254,44 @@ void pvtapp::init_scatterplot(QCustomPlot*& scatter_plot)
     QCPMarginGroup* marginGroup = new QCPMarginGroup(scatter_plot);
     scatter_plot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
     m_dtScale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+}
+
+void pvtapp::init_feedplot(QCustomPlot*& feed_plot)
+{
+    // add the color curve graph
+    m_feedColorCurve = new QCPColorCurve(feed_plot->xAxis, feed_plot->yAxis);
+
+    // set the line style to scatter points
+    m_feedColorCurve->setLineStyle(QCPCurve::lsNone);
+    m_feedColorCurve->setScatterStyle(QCPScatterStyle::ssDisc);
+
+    // configure right and top axis to show ticks but no labels
+    feed_plot->xAxis2->setVisible(true);
+    feed_plot->xAxis2->setTickLabels(false);
+    feed_plot->yAxis2->setVisible(true);
+    feed_plot->yAxis2->setTickLabels(false);
+
+    // make left and bottom axes always transfer their ranges to right and top axes:
+    connect(feed_plot->xAxis, SIGNAL(rangeChanged(QCPRange)), feed_plot->xAxis2, SLOT(setRange(QCPRange)));
+    connect(feed_plot->yAxis, SIGNAL(rangeChanged(QCPRange)), feed_plot->yAxis2, SLOT(setRange(QCPRange)));
+
+    // rescale the graph so that it its the visible area
+    m_feedColorCurve->rescaleAxes();
+
+    // Allow user to drag axis ranges with mouse, zoom with mouse wheel and select graphs by clicking:
+    feed_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+
+    // set colorbar
+    m_feedScale = new QCPColorScale(feed_plot);
+    feed_plot->plotLayout()->addElement(0, 1, m_feedScale);
+    m_feedScale->setGradient(QCPColorGradient(QCPColorGradient::gpJet));
+    m_feedScale->setType(QCPAxis::atRight);
+    m_feedScale->setRangeDrag(false);
+    m_feedScale->setRangeZoom(false);
+    m_feedScale->setLabel("[mm/s]");
+    QCPMarginGroup* marginGroup = new QCPMarginGroup(feed_plot);
+    feed_plot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+    m_feedScale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 }
 
 void pvtapp::open_h5file(const QString& file_name)
@@ -413,6 +475,33 @@ void pvtapp::on_load_dt_button_clicked()
         }
         else {
             err_msg(tr("dpx, dpy or dt is not found in the selected path: \n %1")
+                .arg(m_h5FullPath)
+            );
+        }
+    }
+}
+
+void pvtapp::on_load_feed_button_clicked()
+{
+    if (m_h5FullPath.isEmpty()) {
+        err_msg("Please select where the Dwell Time is from the above H5 file.");
+    }
+    else {
+        bool is_vx = false, is_vy = false, is_px = false, is_py = false;
+        auto selected_items = ui.h5_treeWidget->selectedItems();
+        for (auto& item : selected_items) {
+            for (int i = 0; i < item->childCount(); i++) {
+                if (item->child(i)->text(0).contains("px")) { is_px = true; }
+                if (item->child(i)->text(0).contains("py")) { is_py = true; }
+                if (item->child(i)->text(0).contains("vx")) { is_vx = true; }
+                if (item->child(i)->text(0).contains("vy")) { is_vy = true; }
+            }
+        }
+        if (is_vx && is_vy && is_px && is_py) {
+            emit load_vxvy(m_h5FileName, m_h5FullPath);
+        }
+        else {
+            err_msg(tr("px, py, vx or vy is not found in the selected path: \n %1")
                 .arg(m_h5FullPath)
             );
         }
