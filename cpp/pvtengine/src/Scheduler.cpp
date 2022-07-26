@@ -70,7 +70,7 @@ bool Scheduler::clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth
 
 	// 1. convert to QP objective: H = C^TC, g = -C^Td
 	MatrixXXd H(C.transpose() * C);
-	VectorXd g( - 1 * C.transpose() * d);
+	VectorXd g(-1 * C.transpose() * d);
 
 	// 2. build the lb and ub
 	VectorXd lb, ub;
@@ -106,18 +106,18 @@ bool Scheduler::clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth
 	if (isSuccessful) {
 		V.resize(qpSol(seq(4, last, 6)).size() + 1);
 		V << m_v0, qpSol(seq(4, last, 6));
-	}
+		
+		// 7 recalculate the coeffs
+		Coeffs = MatrixX4d::Zero(num_v, 4);
 
-	// 7 recalculate the coeffs
-	Coeffs = MatrixX4d::Zero(num_v, 4);
-
-	#pragma omp parallel for
-	for (int_t i = 0; i < V.size() - 1; i++) {
-		Coeffs.row(i) = pvt_coefficients(
-			m_P(i), m_P(i + 1),
-			V(i), V(i + 1),
-			m_T(i), m_T(i + 1)
-		);
+		#pragma omp parallel for
+		for (int_t i = 0; i < V.size() - 1; i++) {
+			Coeffs.row(i) = pvt_coefficients(
+				m_P(i), m_P(i + 1),
+				V(i), V(i + 1),
+				m_T(i), m_T(i + 1)
+			);
+		}
 	}
 
 	return isSuccessful;
@@ -195,8 +195,8 @@ void Scheduler::build_lbub(VectorXd& lb, VectorXd& ub)
 	// number of velocities to be calculated
 	auto num_v = m_T.size() - 1;
 
-	lb = VectorXd::Constant(6 * num_v, -qpOASES::INFTY);
-	ub = VectorXd::Constant(6 * num_v, qpOASES::INFTY);
+	/*lb = VectorXd::Constant(6 * num_v, -1e16);
+	ub = VectorXd::Constant(6 * num_v, 1e16);
 
 	for (int i = 1; i < m_T.size(); i++) {
 		bool isNeg = m_P(i) - m_P(i - 1) < 0;
@@ -211,17 +211,17 @@ void Scheduler::build_lbub(VectorXd& lb, VectorXd& ub)
 		}
 		lb((i - 1) * 6 + 5) = -m_amax;
 		ub((i - 1) * 6 + 5) = m_amax;
-	}
+	}*/
 
-	//// build the lb
-	//lb = VectorXd::Constant(6 * num_v, -qpOASES::INFTY);
-	//lb(seq(4, last, 6)).setConstant(-m_vmax);
-	//lb(seq(5, last, 6)).setConstant(-m_amax);
+	// build the lb
+	lb = VectorXd::Constant(6 * num_v, -1e16);
+	lb(seq(4, last, 6)).setConstant(-m_vmax);
+	lb(seq(5, last, 6)).setConstant(-m_amax);
 
-	//// build the ub
-	//ub = VectorXd::Constant(6 * num_v, qpOASES::INFTY);
-	//ub(seq(4, last, 6)).setConstant(m_vmax);
-	//ub(seq(5, last, 6)).setConstant(m_amax);
+	// build the ub
+	ub = VectorXd::Constant(6 * num_v, 1e16);
+	ub(seq(4, last, 6)).setConstant(m_vmax);
+	ub(seq(5, last, 6)).setConstant(m_amax);
 }
 
 void Scheduler::build_lbAubA(MatrixXXd& A, VectorXd& lbA, VectorXd& ubA)
@@ -265,15 +265,15 @@ void Scheduler::build_lbAubA(MatrixXXd& A, VectorXd& lbA, VectorXd& ubA)
 bool Scheduler::solve_qp(VectorXd& qpSol, MatrixXXd& H, VectorXd& g, MatrixXXd& A, VectorXd& lbA, VectorXd& ubA, VectorXd& lb, VectorXd& ub, bool isVsmooth)
 {
 	int nV = (int)g.size();// number of variables
-	int nWSR = 1000000;    // max worker set recalculation
+	int nWSR = 1000;    // max worker set recalculation
 	qpSol = VectorXd::Zero(nV);
 		
 	if (isVsmooth) { // if using the smoothness constriants
 		int nC = (int)A.rows();              // number of constriants
 		qpOASES::QProblem qp(nV, nC);        // general QP
 		qpOASES::Options options;            // default options
-		options.setToDefault();
-		options.printLevel = qpOASES::PL_LOW;// no output
+		options.setToMPC();
+		options.printLevel = qpOASES::PL_MEDIUM;// no output
 		qp.setOptions(options);
 
 		// initialization
@@ -291,8 +291,8 @@ bool Scheduler::solve_qp(VectorXd& qpSol, MatrixXXd& H, VectorXd& g, MatrixXXd& 
 	else { // if not using the smoothness constraints
 		qpOASES::QProblemB qp(nV);            // initialize the bounded problem
 		qpOASES::Options options;             // default options
-		options.setToDefault();
-		options.printLevel = qpOASES::PL_LOW;// no output
+		options.setToMPC();
+		options.printLevel = qpOASES::PL_MEDIUM;// no output
 		qp.setOptions(options);
 
 		if (qpOASES::SUCCESSFUL_RETURN != qp.init(H.data(), g.data(), lb.data(), ub.data(), nWSR, NULL, NULL)) {

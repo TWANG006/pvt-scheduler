@@ -30,6 +30,7 @@ Yca = (max(Yca(:)) - Yca) * surf_mpp;
 Xca = Xca - nanmean(Xca(:));
 Yca = Yca - nanmean(Yca(:));
 Zca = Zca - nanmin(Zca(:));
+r0 = 0.5 * (max(Xca(:)) - min(Xca(:)));
 
 % display the initial surf
 fsfig('');
@@ -80,13 +81,16 @@ figure;
 %     i1...
 % );
 
-[Dx, Dy, xp, yp] = maze_path(5, 0.5);
-xp1 = Dx * 1e-3;
-yp1 = Dy * 1e-3;
+[px, py, xp, yp] = maze_path(round((r1+r0)*1e3), 0.5);
+
+px = px * 1e-3;
+py = py * 1e-3;
+xp = xp(1:end-1) * 1e-3;
+yp = yp(1:end-1) * 1e-3;
 
 % display
 fsfig('');
-plot(xp1, yp1, 'r-*');axis xy tight equal;
+plot(xp, yp, 'r-*');axis xy tight equal;
 
 %% Save the cleaned data
 outFile = [outDir mfilename '_rect_60mm_tif_' ...
@@ -96,5 +100,5 @@ save(outFile, ...
     'X', 'Y', 'Z', ...
     'Xca', 'Yca', 'Zca', ...
     'Xtif1', 'Ytif1', 'Ztif1', 'tif1Params', ...
-    'xp1', 'yp1' ...
+    'xp', 'yp', 'px', 'py' ...
 );

@@ -234,7 +234,6 @@ void PVTWorker::schedule_pvt(const double& ax_max, const double& vx_max, const d
 		if (m_dt.size() == m_px.size() || m_dt.size() == m_px.size() - 1) {
 			if (m_dt.size() == m_px.size() && m_px.size() == m_py.size()) {
 				m_t = m_dt;
-				std::cout << m_t.transpose() << std::endl;
 			}
 			else {
 				m_t = VectorXd(m_dt.size() + 1);
