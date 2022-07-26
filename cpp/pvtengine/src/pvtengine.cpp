@@ -34,3 +34,19 @@ PVTENGINE_API double RMS(const VectorXd& Z)
 {
 	return sqrt(((Z.array() - Z.mean()).square().sum() / (Z.size() - 1)));
 }
+
+PVTENGINE_API MatrixXXd remove_polynomials(VectorXd& coeffs, const MatrixXXd& X, const MatrixXXd& Y, const MatrixXXd& Z, int_t p)
+{
+	auto id = Z.array().isNaN();
+	VectorXd x = id.select(0, X);
+	VectorXd z = id.select(0, Z);
+	std::cout << x << std::endl;
+	std::cout << z << std::endl;
+
+	return MatrixXXd();
+}
+
+MatrixXXd remove_polynomials(const MatrixXXd& X, const MatrixXXd& Y, const MatrixXXd& Z, int_t p)
+{
+	return MatrixXXd();
+}

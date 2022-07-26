@@ -62,4 +62,12 @@ PVTENGINE_API double RMS(const MatrixXXd& Z);
 
 PVTENGINE_API double RMS(const VectorXd& Z);
 
+PVTENGINE_API MatrixXXd remove_polynomials(
+	VectorXd& coeffs,
+	const MatrixXXd& X,
+	const MatrixXXd& Y,
+	const MatrixXXd& Z,
+	int_t p = 1
+);
+
 #endif // !PVTENGINE_

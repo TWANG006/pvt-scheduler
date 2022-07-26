@@ -2,6 +2,18 @@
 #include "pvtengine.h"
 #include "osqp++.h"
 
+TEST(misc_test, remove)
+{
+	VectorXd x{ {1, 2}, };
+	VectorXd y{ {1, 2}, };
+	MatrixXXd X, Y;
+	meshgrid(x, y, X, Y);
+
+	MatrixXXd Z{ {1, NAN}, {1, 1}, };
+	VectorXd coeffs;
+	remove_polynomials(coeffs, X, Y, Z, 1);
+}
+
 TEST(misc_test, meshgrid_test)
 {
 	int Nx = 10;
