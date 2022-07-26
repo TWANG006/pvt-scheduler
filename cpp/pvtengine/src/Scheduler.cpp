@@ -195,15 +195,33 @@ void Scheduler::build_lbub(VectorXd& lb, VectorXd& ub)
 	// number of velocities to be calculated
 	auto num_v = m_T.size() - 1;
 
-	// build the lb
 	lb = VectorXd::Constant(6 * num_v, -qpOASES::INFTY);
-	lb(seq(4, last, 6)).setConstant(-m_vmax);
-	lb(seq(5, last, 6)).setConstant(-m_amax);
-
-	// build the ub
 	ub = VectorXd::Constant(6 * num_v, qpOASES::INFTY);
-	ub(seq(4, last, 6)).setConstant(m_vmax);
-	ub(seq(5, last, 6)).setConstant(m_amax);
+
+	for (int i = 1; i < m_T.size(); i++) {
+		bool isNeg = m_P(i) - m_P(i - 1) < 0;
+
+		if (isNeg) {
+			lb((i - 1) * 6 + 4) = -m_vmax;
+			ub((i - 1) * 6 + 4) = 0;
+		}
+		else {
+			lb((i - 1) * 6 + 4) = 0;
+			ub((i - 1) * 6 + 4) = m_vmax;
+		}
+		lb((i - 1) * 6 + 5) = -m_amax;
+		ub((i - 1) * 6 + 5) = m_amax;
+	}
+
+	//// build the lb
+	//lb = VectorXd::Constant(6 * num_v, -qpOASES::INFTY);
+	//lb(seq(4, last, 6)).setConstant(-m_vmax);
+	//lb(seq(5, last, 6)).setConstant(-m_amax);
+
+	//// build the ub
+	//ub = VectorXd::Constant(6 * num_v, qpOASES::INFTY);
+	//ub(seq(4, last, 6)).setConstant(m_vmax);
+	//ub(seq(5, last, 6)).setConstant(m_amax);
 }
 
 void Scheduler::build_lbAubA(MatrixXXd& A, VectorXd& lbA, VectorXd& ubA)
@@ -254,8 +272,8 @@ bool Scheduler::solve_qp(VectorXd& qpSol, MatrixXXd& H, VectorXd& g, MatrixXXd& 
 		int nC = (int)A.rows();              // number of constriants
 		qpOASES::QProblem qp(nV, nC);        // general QP
 		qpOASES::Options options;            // default options
-		options.setToReliable();
-		options.printLevel = qpOASES::PL_MEDIUM;// no output
+		options.setToDefault();
+		options.printLevel = qpOASES::PL_LOW;// no output
 		qp.setOptions(options);
 
 		// initialization
@@ -273,8 +291,8 @@ bool Scheduler::solve_qp(VectorXd& qpSol, MatrixXXd& H, VectorXd& g, MatrixXXd& 
 	else { // if not using the smoothness constraints
 		qpOASES::QProblemB qp(nV);            // initialize the bounded problem
 		qpOASES::Options options;             // default options
-		options.setToReliable();
-		options.printLevel = qpOASES::PL_MEDIUM;// no output
+		options.setToDefault();
+		options.printLevel = qpOASES::PL_LOW;// no output
 		qp.setOptions(options);
 
 		if (qpOASES::SUCCESSFUL_RETURN != qp.init(H.data(), g.data(), lb.data(), ub.data(), nWSR, NULL, NULL)) {
