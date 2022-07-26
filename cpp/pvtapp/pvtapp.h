@@ -31,6 +31,7 @@ signals:
         const double& vy_max,
         bool is_smooth_v = true
     );
+    void simulate_pvt(const double& tau);
 
 public slots:
     void err_msg(const QString& msg, const QString& cap = "Error");
@@ -84,6 +85,21 @@ public slots:
         const QVector<double>& Y,
         const QVector<double>& Z
     );
+    void update_res_plot(
+        const int& rows,
+        const int& cols,
+        const double& max_x,
+        const double& min_x,
+        const double& max_y,
+        const double& min_y,
+        const double& max_z,
+        const double& min_z,
+        const double& rms_z,
+        const double& res,
+        const QVector<double>& X,
+        const QVector<double>& Y,
+        const QVector<double>& Z
+    );
 
 private:
     void init_ui();
@@ -115,6 +131,7 @@ private slots:
     void on_load_feed_button_clicked();
     void on_load_surf_button_clicked();
     void on_pvt_calc_button_clicked();
+    void on_pvt_sim_button_clicked();
 
 private:
     Ui::pvtappClass ui;

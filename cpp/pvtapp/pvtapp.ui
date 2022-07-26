@@ -378,7 +378,7 @@
           <set>Qt::AlignCenter</set>
          </property>
          <property name="readOnly">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::NoButtons</enum>
@@ -393,7 +393,7 @@
           <double>0.001000000000000</double>
          </property>
          <property name="value">
-          <double>0.001000000000000</double>
+          <double>0.050000000000000</double>
          </property>
         </widget>
        </item>

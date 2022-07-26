@@ -12,7 +12,7 @@ vt = 0;  at = 0;
 n_positions = length(t) - 1;
 
 [C, d] = build_Cd(p, t, a0, v0, at, vt);
-[lb, ub] = build_lbub(p, length(t) - 1, v_max, a_max);
+[lb, ub] = build_lbub(length(t) - 1, v_max, a_max);
 if is_c1_smooth == true
     [Aeq, beq] = build_Aeqbeq(t);
 end
@@ -33,7 +33,6 @@ v0 = v(1); a0 = a(1);
 vt = v(end);  at = a(end);
 
 [C, d] = build_Cd(p, t, a0, v0, at, vt);
-[lb, ub] = build_lbub(p, length(t) - 1, v_max, a_max);
 if is_c1_smooth == true
     res = lsqlin(C, d, [], [], Aeq, beq, lb, ub, [], options);
 else
@@ -46,13 +45,11 @@ a = [a0; res(6: 6: end)];
 c = zeros(n_positions, 4);
 
 for n = 1: n_positions
-    %     c(n, :) = res((1: 4) + (n - 1) * 6);
     c(n, :) = pvt_coefficients(...
         p(n), p(n + 1), ...
         v(n), v(n + 1), ...
         t(n), t(n + 1) ...
-    );
-    
+    );    
 end
 
 % res_0 = res * 0;

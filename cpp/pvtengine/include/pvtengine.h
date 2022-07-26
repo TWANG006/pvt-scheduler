@@ -29,7 +29,7 @@ using Eigen::seqN;
 using Eigen::all;
 using Eigen::last;
 using Eigen::lastN;
-
+const double kInfinity = std::numeric_limits<double>::infinity();
 
 //! PVT struct
 struct PVTC {

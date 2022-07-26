@@ -215,6 +215,42 @@ void pvtapp::update_surf_plot(
     ui.surf_res_value_box->setValue(1e3 * res);
 }
 
+void pvtapp::update_res_plot(const int& rows, const int& cols, const double& max_x, const double& min_x, const double& max_y, const double& min_y, const double& max_z, const double& min_z, const double& rms_z, const double& res, const QVector<double>& X, const QVector<double>& Y, const QVector<double>& Z)
+{
+    // 1. Set the size
+    m_resColormap->data()->setSize(cols, rows);
+
+    double x_s = min_x * 1e3, x_e = max_x * 1e3;
+    double y_s = min_y * 1e3, y_e = max_y * 1e3;
+    double v = std::max(x_e - x_s, y_e - y_s) * 0.5;
+
+    m_resColormap->data()->setRange(QCPRange(x_s, x_e), QCPRange(y_s, y_e));
+
+    // 2. Feed the data
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            auto id = ELT2D(cols, j, i);
+            m_resColormap->data()->setData(X[id] * 1e3, Y[id] * 1e3, Z[id] * 1e9);
+        }
+    }
+
+    // 3. Rescale the color range
+    m_resColormap->setDataRange(QCPRange(min_z * 1e9, max_z * 1e9));
+
+    // 4. rescale the key (x) and value (y) axes so the whole color map is visible:
+    ui.res_plot->xAxis->setRange(0.5 * (x_e - x_s) + x_s - v, 0.5 * (x_e - x_s) + x_s + v);
+    ui.res_plot->yAxis->setRange(0.5 * (y_e - y_s) + y_s - v, 0.5 * (y_e - y_s) + y_s + v);
+
+    ui.res_plot->replot();
+
+    // update the params
+    ui.res_pv_value_box->setValue(1e9 * (max_z - min_z));
+    ui.res_rms_value_box->setValue(1e9 * rms_z);
+    ui.res_res_value_box->setValue(1e3 * res);
+}
+
 void pvtapp::init_ui()
 {
     ui.h5_treeWidget->setHeaderHidden(false);
@@ -253,7 +289,8 @@ void pvtapp::init_connections()
     connect(m_ptrPVTWorker, &PVTWorker::update_dt_plot, this, &pvtapp::update_dt_plot);
     connect(this, &pvtapp::load_vxvy, m_ptrPVTWorker, &PVTWorker::load_vxvy);
     connect(m_ptrPVTWorker, &PVTWorker::update_feed_plot, this, &pvtapp::update_feed_plot);
-
+    connect(this, &pvtapp::simulate_pvt, m_ptrPVTWorker, &PVTWorker::simulate_pvt);
+    connect(m_ptrPVTWorker, &PVTWorker::update_res_plot, this, &pvtapp::update_res_plot);
     connect(this, &pvtapp::schedule_pvt, m_ptrPVTWorker, &PVTWorker::schedule_pvt);
 }
 
@@ -580,7 +617,7 @@ void pvtapp::on_load_feed_button_clicked()
         err_msg("Please select where the Dwell Time is from the above H5 file.");
     }
     else {
-        bool is_vx = false, is_vy = false, is_px = false, is_py = false;
+        bool is_vx = false, is_vy = false, is_px = false, is_py = false, is_Cx = false, is_Cy = false;
         auto selected_items = ui.h5_treeWidget->selectedItems();
         for (auto& item : selected_items) {
             for (int i = 0; i < item->childCount(); i++) {
@@ -588,13 +625,15 @@ void pvtapp::on_load_feed_button_clicked()
                 if (item->child(i)->text(0).contains("py")) { is_py = true; }
                 if (item->child(i)->text(0).contains("vx")) { is_vx = true; }
                 if (item->child(i)->text(0).contains("vy")) { is_vy = true; }
+                if (item->child(i)->text(0).contains("Cx")) { is_Cx = true; }
+                if (item->child(i)->text(0).contains("Cy")) { is_Cy = true; }
             }
         }
-        if (is_vx && is_vy && is_px && is_py) {
+        if (is_vx && is_vy && is_px && is_py && is_Cx && is_Cy) {
             emit load_vxvy(m_h5FileName, m_h5FullPath);
         }
         else {
-            err_msg(tr("px, py, vx or vy is not found in the selected path: \n %1")
+            err_msg(tr("px, py, vx, vy, Cx or Cy is not found in the selected path: \n %1")
                 .arg(m_h5FullPath)
             );
         }
@@ -646,6 +685,17 @@ void pvtapp::on_pvt_calc_button_clicked()
         else {
             emit schedule_pvt(ax_max, vx_max, ay_max, vy_max, is_smooth_v);
         }
+    }
+}
+
+void pvtapp::on_pvt_sim_button_clicked()
+{
+    if (m_h5FileName.isEmpty()) {
+        err_msg("Please select a valid file first.");
+    }
+	else {
+		double tau = ui.dt_value_box->value();
+		emit simulate_pvt(tau);
     }
 }
 

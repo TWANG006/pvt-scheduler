@@ -66,6 +66,21 @@ signals:
 		const QVector<double>& Y,
 		const QVector<double>& Z
 	);
+	void update_res_plot(
+		const int& rows,
+		const int& cols,
+		const double& max_x,
+		const double& min_x,
+		const double& max_y,
+		const double& min_y,
+		const double& max_z,
+		const double& min_z,
+		const double& rms_z,
+		const double& res,
+		const QVector<double>& X,
+		const QVector<double>& Y,
+		const QVector<double>& Z
+	);
 
 public slots:
 	void load_tif(const QString& file_name, const QString& full_path);
@@ -80,6 +95,7 @@ public slots:
 		const double& vy_max,
 		bool is_smooth_v = true
 	);
+	void simulate_pvt(const double& tau);
 
 private:
 	void get_path_name(
@@ -90,19 +106,15 @@ private:
 
 private:
 	H5::H5File m_h5;  /*!< the H5 file handle*/
-	VectorXd   m_px;  /*!< PVT's p in x*/
-	VectorXd   m_py;  /*!< PVT's p in y*/
-	VectorXd   m_vx;  /*!< PVT's v in x*/
-	VectorXd   m_vy;  /*!< PVT's v in y*/
-	VectorXd   m_t;   /*!< PVT's t*/
-	MatrixXXd  m_Cx;  /*!< PVT's coefficients in x*/
-	MatrixXXd  m_Cy;  /*!< PVT's coefficients in y*/
+	PVTC       m_xPVTC;
+	PVTC       m_yPVTC;
 	MatrixXXd  m_Xtif;/*!< TIF x coordinate grid*/
 	MatrixXXd  m_Ytif;/*!< TIF y coordinate grid*/
 	MatrixXXd  m_Ztif;/*!< TIF*/
 	MatrixXXd  m_X;   /*!< Initial surf X grid*/
 	MatrixXXd  m_Y;   /*!< Initial surf Y grid*/
-	MatrixXXd  m_Z;   /*!< Initial surf Z grid*/
+	MatrixXXd  m_Z;   /*!< Initial surf Z*/
+	MatrixXXd  m_Zres;/*!< residual surf Z*/
 	VectorXd   m_dpx; /*!< dwell point x coordinates*/
 	VectorXd   m_dpy; /*!< dwell point y coordiantes*/
 	VectorXd   m_dt;  /*!< dwell time and the dwell points*/

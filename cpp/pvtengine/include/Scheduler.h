@@ -94,6 +94,12 @@ private:
 		bool isVsmooth = false/*!< [in]if V are C1 smooth*/
 	);
 
+	//! Solve the V and Coeffs using the osap lib
+	bool clls_with_osqp(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth = false);
+
+	//! Build the lb <= Ax <= ub, the osap-like constraints
+	void build_lbAub(MatrixXXd& A, VectorXd& lb, VectorXd& ub, bool isVsmooth = false);
+
 private:
 	VectorXd m_P;        /*!< Positions*/
 	VectorXd m_T;        /*!< Times*/

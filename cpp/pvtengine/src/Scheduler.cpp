@@ -2,6 +2,7 @@
 #include "Scheduler.h"
 #include <qpOASES.hpp>
 #include "Calculator.h"
+#include "osqp++.h"
 
 Scheduler::Scheduler(const VectorXd& P, const VectorXd& T, const double& vmax, const double& amax, const double& v0, const double& vt, const double& a0, const double& at)
 	: m_P(P)
@@ -123,6 +124,110 @@ bool Scheduler::clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth
 	return isSuccessful;
 }
 
+bool Scheduler::clls_with_osqp(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth)
+{
+	auto num_v = m_T.size() - 1;
+
+	// 0. build the CLLS objective
+	MatrixXXd C;
+	VectorXd  d;
+	build_Cd(C, d);
+
+	// 1. convert to QP objective: H = C^TC, g = -C^Td
+	MatrixXXd H(C.transpose() * C);
+	VectorXd g(-1 * C.transpose() * d);
+
+	// 2. build the constratins
+	MatrixXXd A;
+	VectorXd lb, ub;
+	build_lbAub(A, lb, ub);
+
+	// 3. first solve
+	osqp::OsqpInstance instance;
+	instance.objective_matrix = H.sparseView();
+	instance.objective_vector = g;
+	instance.constraint_matrix = A.sparseView();
+	instance.lower_bounds = lb;
+	instance.upper_bounds = ub;
+	osqp::OsqpSolver solver;
+	osqp::OsqpSettings settings;
+	auto status = solver.Init(instance, settings);
+	auto exit_code = solver.Solve();
+	VectorXd qpSol = solver.primal_solution();
+	
+	m_v0 = qpSol(4);
+	m_a0 = qpSol(5);
+	m_vt = qpSol(last - 1);
+	m_at = qpSol(last);
+
+	// rebuild the objective
+	build_Cd(C, d);
+	H = C.transpose() * C;
+	g = -1 * C.transpose() * d;
+	instance.objective_matrix = H.sparseView();
+	instance.objective_vector = g;
+
+	//5. refined solve
+	solver.Init(instance, settings);
+	solver.Solve();
+	qpSol = solver.primal_solution();
+
+	V.resize(qpSol(seq(4, last, 6)).size() + 1);
+	V << m_v0, qpSol(seq(4, last, 6));
+
+	// 7 recalculate the coeffs
+	Coeffs = MatrixX4d::Zero(num_v, 4);
+
+	#pragma omp parallel for
+	for (int_t i = 0; i < V.size() - 1; i++) {
+		Coeffs.row(i) = pvt_coefficients(
+			m_P(i), m_P(i + 1),
+			V(i), V(i + 1),
+			m_T(i), m_T(i + 1)
+		);
+	}
+
+	return true;
+}
+
+void Scheduler::build_lbAub(MatrixXXd& A, VectorXd& lb, VectorXd& ub, bool isVsmooth)
+{
+	auto num_v = m_T.size() - 1;
+
+	// box bounding
+	VectorXd lb_bound = VectorXd::Constant(6 * num_v, -kInfinity);
+	lb_bound(seq(4, last, 6)).setConstant(-m_vmax);
+	lb_bound(seq(5, last, 6)).setConstant(-m_amax);
+
+	VectorXd ub_bound = VectorXd::Constant(6 * num_v, kInfinity);
+	ub_bound(seq(4, last, 6)).setConstant(m_vmax);
+	ub_bound(seq(5, last, 6)).setConstant(m_amax);
+
+	MatrixXXd A_bound = MatrixXXd::Identity(6 * num_v, 6 * num_v);
+
+	// equality contraints
+	if (!isVsmooth) {
+		A = A_bound;
+		lb = lb_bound;
+		ub = ub_bound;
+	}
+	else {
+		MatrixXXd A_eq;
+		VectorXd lbA, ubA;
+		build_lbAubA(A_eq, lbA, ubA);
+
+		A = MatrixXXd(A_eq.rows() + A_bound.rows(), A_eq.cols());
+		A << A_bound,
+			 A_eq;
+
+		lb = VectorXd(lbA.size() + lb_bound.size());
+		lb << lb_bound, lbA;
+
+		ub = VectorXd(ubA.size() + ub_bound.size());
+		ub << ub_bound, ubA;
+	}
+}
+
 void Scheduler::build_Cd(MatrixXXd& C, VectorXd& d)
 {
 	// get the number of v's needed to be calculated
@@ -214,12 +319,12 @@ void Scheduler::build_lbub(VectorXd& lb, VectorXd& ub)
 	}*/
 
 	// build the lb
-	lb = VectorXd::Constant(6 * num_v, -1e16);
+	lb = VectorXd::Constant(6 * num_v, -kInfinity);
 	lb(seq(4, last, 6)).setConstant(-m_vmax);
 	lb(seq(5, last, 6)).setConstant(-m_amax);
 
 	// build the ub
-	ub = VectorXd::Constant(6 * num_v, 1e16);
+	ub = VectorXd::Constant(6 * num_v, kInfinity);
 	ub(seq(4, last, 6)).setConstant(m_vmax);
 	ub(seq(5, last, 6)).setConstant(m_amax);
 }

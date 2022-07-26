@@ -3,6 +3,8 @@
 #include <QVector>
 #include <iostream>
 #include <numeric>
+#include <Sampler.h>
+#include <Simulator.h>
 
 PVTWorker::PVTWorker(QObject* parent)
 	: QObject(parent)
@@ -25,23 +27,23 @@ void PVTWorker::load_path(const QString& file_name, const QString& full_path)
 		m_h5.openFile(file_name.toStdString(), H5F_ACC_RDONLY);
 
 		// load the path
-		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/px").toStdString(), m_px);
-		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/py").toStdString(), m_py);
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/px").toStdString(), m_xPVTC.P);
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/py").toStdString(), m_yPVTC.P);
 		
 		// close the file
 		m_h5.close();
 
-		if (!(m_px.size() == m_py.size())) {
+		if (!(m_yPVTC.P.size() == m_xPVTC.P.size())) {
 			emit err_msg("px and py should be in the same size.");
 		}
 		else {
 			// calculate the range in x and y
-			auto width = m_px.maxCoeff() - m_px.minCoeff();
-			auto height = m_py.maxCoeff() - m_py.minCoeff();
+			auto width = m_xPVTC.P.maxCoeff() - m_xPVTC.P.minCoeff();
+			auto height = m_yPVTC.P.maxCoeff() - m_yPVTC.P.minCoeff();
 
 			// convert to mm
-			VectorXd px_mm(m_px * 1e3);
-			VectorXd py_mm(m_py * 1e3);
+			VectorXd px_mm(m_xPVTC.P * 1e3);
+			VectorXd py_mm(m_yPVTC.P * 1e3);
 
 			// update the path plot
 			emit update_path_plot(
@@ -129,24 +131,29 @@ void PVTWorker::load_vxvy(const QString& file_name, const QString& full_path)
 		m_h5.openFile(file_name.toStdString(), H5F_ACC_RDONLY);
 
 		// load the path
-		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/px").toStdString(), m_px);
-		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/py").toStdString(), m_py);
-		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/vx").toStdString(), m_vx);
-		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/vy").toStdString(), m_vy);
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/t").toStdString(), m_xPVTC.T);
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/px").toStdString(), m_xPVTC.P);
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/py").toStdString(), m_yPVTC.P);
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/vx").toStdString(), m_xPVTC.V);
+		EigenHDF5::load<VectorXd>(m_h5, (path_name + "/vy").toStdString(), m_yPVTC.V);
+		EigenHDF5::load<MatrixX4d>(m_h5, (path_name + "/Cx").toStdString(), m_xPVTC.Coeffs);
+		EigenHDF5::load<MatrixX4d>(m_h5, (path_name + "/Cy").toStdString(), m_yPVTC.Coeffs);
 
 		// close the file
 		m_h5.close();
 
-		if (!(m_px.size() == m_py.size() && m_py.size() == m_vx.size() && m_vx.size() == m_vy.size())) {
-			emit err_msg("px, py, vx and vy should be in the same size.");
+		if (!(m_xPVTC.T.size() == m_xPVTC.P.size() && m_xPVTC.P.size() == m_yPVTC.P.size() && m_yPVTC.P.size() == m_xPVTC.V.size() && m_xPVTC.V.size() == m_yPVTC.V.size())) {
+			emit err_msg("px, py, vx, vy and t should be in the same size.");
 		}
 		else {
+			m_yPVTC.T = m_xPVTC.T;
+
 			// calculate the total dwell time in [min]
-			VectorXd feed_rates(((m_vx.array().square() + m_vy.array().square()).sqrt() * 1e3).matrix());
+			VectorXd feed_rates(((m_xPVTC.V.array().square() + m_yPVTC.V.array().square()).sqrt() * 1e3).matrix());
 
 			// change to mm
-			VectorXd px_mm(m_px * 1e3);
-			VectorXd py_mm(m_py * 1e3);
+			VectorXd px_mm(m_xPVTC.P * 1e3);
+			VectorXd py_mm(m_yPVTC.P * 1e3);
 
 			// emit the update dt plot signal
 			emit update_feed_plot(
@@ -226,40 +233,33 @@ void PVTWorker::load_surf(const QString& file_name, const QString& full_path)
 void PVTWorker::schedule_pvt(const double& ax_max, const double& vx_max, const double& ay_max, const double& vy_max, bool is_smooth_v)
 {
 	// check if the required data for Scheduler are all loaded
-	if ((m_px.size() == 0 || m_py.size() == 0 || m_dt.size() == 0)) {
+	if ((m_xPVTC.P.size() == 0 || m_yPVTC.P.size() == 0 || m_xPVTC.T.size() == 0)) {
 		emit err_msg("Please load the Positions and Dwell time first.");
 	}
 	else {
 		// calculate the PVT's T
-		if (m_dt.size() == m_px.size() || m_dt.size() == m_px.size() - 1) {
-			if (m_dt.size() == m_px.size() && m_px.size() == m_py.size()) {
-				m_t = m_dt;
+		if (m_dt.size() == m_xPVTC.P.size() || m_dt.size() == m_xPVTC.P.size() - 1) {
+			if (m_dt.size() == m_xPVTC.P.size() && m_xPVTC.P.size() == m_yPVTC.P.size()) {
+				m_xPVTC.T = m_dt;
+				m_yPVTC.T = m_dt;
 			}
 			else {
-				m_t = VectorXd(m_dt.size() + 1);
-				m_t << 0, m_dt;
-				std::partial_sum(m_t.begin(), m_t.end(), m_t.begin(), std::plus<double>());
+				m_xPVTC.T = VectorXd(m_dt.size() + 1);
+				m_xPVTC.T << 0, m_dt;
+				std::partial_sum(m_xPVTC.T.begin(), m_xPVTC.T.end(), m_xPVTC.T.begin(), std::plus<double>());
+				m_yPVTC.T = m_xPVTC.T;
 			}
 
 			// schedule PVT in x
-			auto PVTx = m_scheduler(m_px, m_t, vx_max, ax_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
-			auto PVTy = m_scheduler(m_py, m_t, vy_max, ay_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
-
-			// assign to the members
-			m_Cx = PVTx.Coeffs;
-			m_vx = PVTx.V;
-			m_Cy = PVTy.Coeffs;
-			m_vy = PVTy.V;
-
-			std::cout << m_vx.transpose() << std::endl;
-			std::cout << m_vy.transpose() << std::endl;
+			m_xPVTC = m_scheduler(m_xPVTC.P, m_xPVTC.T, vx_max, ax_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
+			m_yPVTC = m_scheduler(m_yPVTC.P, m_yPVTC.T, vy_max, ay_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
 
 			// calculate the total dwell time in [min]
-			VectorXd feed_rates(((m_vx.array().square() + m_vy.array().square()).sqrt() * 1e3).matrix());
+			VectorXd feed_rates(((m_xPVTC.V.array().square() + m_yPVTC.V.array().square()).sqrt() * 1e3).matrix());
 
 			// change to mm
-			VectorXd px_mm(m_px * 1e3);
-			VectorXd py_mm(m_py * 1e3);
+			VectorXd px_mm(m_xPVTC.P * 1e3);
+			VectorXd py_mm(m_yPVTC.P * 1e3);
 
 			// emit the update dt plot signal
 			emit update_feed_plot(
@@ -273,6 +273,46 @@ void PVTWorker::schedule_pvt(const double& ax_max, const double& vx_max, const d
 		else {
 			emit err_msg("Positions and Times should have the same number of elements.");
 		}
+	}
+}
+
+void PVTWorker::simulate_pvt(const double& tau)
+{
+	// check if the required data for Scheduler are all loaded
+	if ((m_xPVTC.P.size() == 0 || m_yPVTC.P.size() == 0 || m_xPVTC.P.size() != m_yPVTC.P.size() ||
+		 m_xPVTC.T.size() == 0 || m_yPVTC.T.size() == 0 || m_xPVTC.T.size() != m_yPVTC.T.size() ||
+		 m_xPVTC.V.size() == 0 || m_yPVTC.V.size() == 0 || m_xPVTC.V.size() != m_yPVTC.V.size() ||
+		 m_xPVTC.Coeffs.size() == 0 || m_yPVTC.Coeffs.size() == 0 || m_xPVTC.Coeffs.size() != m_yPVTC.Coeffs.size())) {
+		emit err_msg("Please load the Positions, Velocities and Times first.");
+	}
+	else if (m_X.size() == 0 || m_Y.size() == 0 || m_Z.size() == 0) {
+		emit err_msg("Please load the initial surface.");
+	}
+	else if (m_Xtif.size() == 0 || m_Ytif.size() == 0 || m_Ztif.size() == 0) {
+		emit err_msg("Please load a TIF.");
+	}
+	else {
+		Sampler sampler;
+		PVA xPVA = sampler(tau, m_xPVTC);
+		PVA yPVA = sampler(tau, m_yPVTC);
+		Simulator simulator(m_Xtif, m_Ytif.colwise().reverse(), m_Ztif.colwise().reverse(), m_X, m_Y, m_Z);
+		m_Zres = m_Z - simulator(xPVA, yPVA);
+
+		emit update_res_plot(
+			m_X.rows(),
+			m_X.cols(),
+			m_X.maxCoeff(),
+			m_X.minCoeff(),
+			m_Y.maxCoeff(),
+			m_Y.minCoeff(),
+			m_Zres.maxCoeff(),
+			m_Zres.minCoeff(),
+			RMS(m_Zres),
+			m_X(0, 1) - m_X(0, 0),
+			QVector<double>(m_X.data(), m_X.data() + m_X.size()),
+			QVector<double>(m_Y.data(), m_Y.data() + m_Y.size()),
+			QVector<double>(m_Zres.data(), m_Zres.data() + m_Zres.size())
+		);
 	}
 }
 
