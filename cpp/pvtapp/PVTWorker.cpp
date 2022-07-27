@@ -233,7 +233,7 @@ void PVTWorker::load_surf(const QString& file_name, const QString& full_path)
 void PVTWorker::schedule_pvt(const double& ax_max, const double& vx_max, const double& ay_max, const double& vy_max, bool is_smooth_v)
 {
 	// check if the required data for Scheduler are all loaded
-	if ((m_xPVTC.P.size() == 0 || m_yPVTC.P.size() == 0 || m_xPVTC.T.size() == 0)) {
+	if ((m_xPVTC.P.size() == 0 || m_yPVTC.P.size() == 0 || m_dt.size() == 0)) {
 		emit err_msg("Please load the Positions and Dwell time first.");
 	}
 	else {

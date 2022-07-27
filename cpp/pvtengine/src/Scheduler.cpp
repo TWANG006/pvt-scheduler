@@ -68,14 +68,18 @@ bool Scheduler::clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth
 	MatrixXXd C;
 	VectorXd  d;
 	build_Cd(C, d);
+	//std::cout << C << std::endl << std::endl;
+	//std::cout << d.transpose() << std::endl << std::endl;
 
 	// 1. convert to QP objective: H = C^TC, g = -C^Td
 	MatrixXXd H(C.transpose() * C);
-	VectorXd g(-1 * C.transpose() * d);
+	VectorXd g(-1 * d.transpose() * C);
 
 	// 2. build the lb and ub
 	VectorXd lb, ub;
 	build_lbub(lb, ub);
+	//std::cout << lb.transpose() << std::endl << std::endl;
+	//std::cout << ub.transpose() << std::endl << std::endl;
 
 	// 3. build the lbA and ubA, if necessary S
 	MatrixXXd A;
@@ -83,6 +87,10 @@ bool Scheduler::clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth
 	if (isVsmooth) {
 		build_lbAubA(A, lbA, ubA);
 	}
+	//std::cout << A << std::endl << std::endl;
+	//std::cout << lbA.transpose() << std::endl << std::endl;
+	//std::cout << ubA.transpose() << std::endl << std::endl;
+
 
 	// 4. solve the QP for the 1st time
 	VectorXd qpSol;
@@ -135,7 +143,7 @@ bool Scheduler::clls_with_osqp(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth)
 
 	// 1. convert to QP objective: H = C^TC, g = -C^Td
 	MatrixXXd H(C.transpose() * C);
-	VectorXd g(-1 * C.transpose() * d);
+	VectorXd g(-1 * d.transpose() * C);
 
 	// 2. build the constratins
 	MatrixXXd A;
@@ -151,6 +159,8 @@ bool Scheduler::clls_with_osqp(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth)
 	instance.upper_bounds = ub;
 	osqp::OsqpSolver solver;
 	osqp::OsqpSettings settings;
+	settings.adaptive_rho = true;
+	settings.polish = true;
 	auto status = solver.Init(instance, settings);
 	auto exit_code = solver.Solve();
 	VectorXd qpSol = solver.primal_solution();
@@ -163,7 +173,7 @@ bool Scheduler::clls_with_osqp(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth)
 	// rebuild the objective
 	build_Cd(C, d);
 	H = C.transpose() * C;
-	g = -1 * C.transpose() * d;
+	g = -1 * d.transpose() * C;
 	instance.objective_matrix = H.sparseView();
 	instance.objective_vector = g;
 
@@ -370,15 +380,16 @@ void Scheduler::build_lbAubA(MatrixXXd& A, VectorXd& lbA, VectorXd& ubA)
 bool Scheduler::solve_qp(VectorXd& qpSol, MatrixXXd& H, VectorXd& g, MatrixXXd& A, VectorXd& lbA, VectorXd& ubA, VectorXd& lb, VectorXd& ub, bool isVsmooth)
 {
 	int nV = (int)g.size();// number of variables
-	int nWSR = 1000;    // max worker set recalculation
+	int nWSR = 1000000;    // max worker set recalculation
 	qpSol = VectorXd::Zero(nV);
 		
 	if (isVsmooth) { // if using the smoothness constriants
 		int nC = (int)A.rows();              // number of constriants
-		qpOASES::QProblem qp(nV, nC);        // general QP
+		qpOASES::QProblem qp(nV, nC, qpOASES::HST_SEMIDEF);        // general QP
 		qpOASES::Options options;            // default options
-		options.setToMPC();
-		options.printLevel = qpOASES::PL_MEDIUM;// no output
+		options.setToReliable();
+		options.enableRegularisation = qpOASES::BT_TRUE;
+		options.printLevel = qpOASES::PL_LOW;// no output
 		qp.setOptions(options);
 
 		// initialization
@@ -394,10 +405,11 @@ bool Scheduler::solve_qp(VectorXd& qpSol, MatrixXXd& H, VectorXd& g, MatrixXXd& 
 		}
 	}
 	else { // if not using the smoothness constraints
-		qpOASES::QProblemB qp(nV);            // initialize the bounded problem
+		qpOASES::QProblemB qp(nV, qpOASES::HST_SEMIDEF);            // initialize the bounded problem
 		qpOASES::Options options;             // default options
-		options.setToMPC();
-		options.printLevel = qpOASES::PL_MEDIUM;// no output
+		options.setToReliable();
+		options.enableRegularisation = qpOASES::BT_TRUE;
+		options.printLevel = qpOASES::PL_LOW;// no output
 		qp.setOptions(options);
 
 		if (qpOASES::SUCCESSFUL_RETURN != qp.init(H.data(), g.data(), lb.data(), ub.data(), nWSR, NULL, NULL)) {
