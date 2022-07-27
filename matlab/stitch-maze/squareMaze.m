@@ -52,6 +52,7 @@ function M = squareMaze(n)
 %         end
     end
     PM=M-VISITED;
-    set(gcf,'color','w');
-    image(PM);
-    axis equal off;
+%     set(gcf,'color','w');
+%     image(PM);
+%     axis equal off;
+end
