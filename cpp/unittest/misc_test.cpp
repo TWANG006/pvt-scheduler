@@ -10,6 +10,7 @@ TEST(misc_test, remove)
 	meshgrid(x, y, X, Y);
 
 	MatrixXXd Z{ {1, NAN}, {1, 1}, };
+	std::cout << Z << std::endl;
 	VectorXd coeffs;
 	remove_polynomials(coeffs, X, Y, Z, 1);
 }

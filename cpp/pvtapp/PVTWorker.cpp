@@ -296,7 +296,8 @@ void PVTWorker::simulate_pvt(const double& tau)
 		PVA xPVA = sampler(tau, m_xPVTC);
 		PVA yPVA = sampler(tau, m_yPVTC);
 		Simulator simulator(m_Xtif, m_Ytif.colwise().reverse(), m_Ztif.colwise().reverse(), m_X, m_Y, m_Z);
-		m_Zres = m_Z - simulator(xPVA, yPVA);
+		VectorXd coeffs;
+		m_Zres = remove_polynomials(coeffs, m_X, m_Y, m_Z - simulator(xPVA, yPVA), 1);
 
 		emit update_res_plot(
 			m_X.rows(),
