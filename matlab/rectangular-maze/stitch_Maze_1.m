@@ -14,6 +14,7 @@ outDir = '../../data/sim_data/';
 
 xp1 = fliplr(xp);
 yp1 = fliplr(yp);
+
 order_dp1 = m*n - order_dp + 1;
 
 xp1 = [xp1(1), xp1, xp1(m*n)];
@@ -114,9 +115,9 @@ end
 % end
 
 
-plot(xp_all,yp_all,'*-','linewidth',2);  
+plot(xp_all,yp_all,'b*-','linewidth',2);  
 hold on
-plot(dp_x,dp_y,'o','linewidth',2);  
+plot(dp_x,dp_y,'ro','linewidth',2);  
 hold off;
 axis equal;
 set(gca,'xcolor', 'none');
@@ -126,10 +127,10 @@ set(gca,'ycolor', 'none');
 xp = xp_all;
 yp = yp_all;
 
-save([outDir mfilename '_dp.mat'], ...
-    'xp', 'yp', ... % path points
-    'dp_x', 'dp_y'  ... % dwell points
-    );
+% save([outDir mfilename '_dp.mat'], ...
+%     'xp', 'yp', ... % path points
+%     'dp_x', 'dp_y'  ... % dwell points
+%     );
 
 
 toc

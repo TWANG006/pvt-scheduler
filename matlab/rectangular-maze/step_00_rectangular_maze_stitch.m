@@ -4,9 +4,9 @@ close all;
 tic
 %% input parameters.
 
-length = 34; %unit:[mm]. max(length, width) must be even.
-width = 26; 
-max_iter = 10000; % maximum number of cycles
+length = 14; %unit:[mm]. max(length, width) must be even.
+width = 10; 
+max_iter = 1000; % maximum number of cycles
 
 b_remaze = 1; 
 i_iter = 0;

@@ -107,12 +107,12 @@ if Dy(1) == Dy(size(Dy,2))
 end
 
 
-plot(Dx,Dy,'*-','linewidth',2);  
-% hold on
-% plot(xp,yp,'o','linewidth',2);  
-% hold off;
-% axis equal;
-% set(gca,'xcolor', 'none');
-% set(gca,'ycolor', 'none');
+% plot(Dx,Dy,'*-','linewidth',2);  %%
+% % hold on
+% % plot(xp,yp,'o','linewidth',2);  
+% % hold off;
+% % axis equal;
+% % set(gca,'xcolor', 'none');
+% % set(gca,'ycolor', 'none');
 
 end

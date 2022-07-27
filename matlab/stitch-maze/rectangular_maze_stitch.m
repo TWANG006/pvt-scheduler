@@ -1,24 +1,22 @@
-% Rectangular maze path
-clear; clc;
-close all;
-tic
+function [xp, yp, order_dp] = rectangular_maze_stitch(length, width)
 %% input parameters.
-length = 10; %unit:[mm]. max(length, width) must be even.
-width = 6; 
-max_iter = 1; % maximum number of cycles
+
+% length = 14; %unit:[mm]. max(length, width) must be even.
+% width = 10; 
+max_iter = 1000; % maximum number of cycles
 
 b_remaze = 1; 
 i_iter = 0;
+min_bseq = 10000000; 
 
 while b_remaze
     half_dp = max(length, width);
-    [Dx, Dy, X_dp, Y_dp, S] = maze_path(0.5*half_dp, 0.5); % call square maze algorithm.
+    [Dx, Dy, X_dp, ~, ~] = maze_path(0.5*half_dp, 0.5); % call square maze algorithm.
     
     % dwell points. (Xp, Yp)
     [Xp, Yp] = meshgrid(0 : 0.5*size(X_dp,2)-1, 0 : 0.5*size(X_dp,1)-1);
     surf_mpp = 2 * median(diff(X_dp(1, :)));
     Xp = Xp * surf_mpp;
-    % Yp = (max(Yp(:)) - Yp) * surf_mpp;
     Yp = Yp * surf_mpp;
     Xp = Xp - nanmean(Xp(:));
     Yp = Yp - nanmean(Yp(:));
@@ -92,35 +90,19 @@ while b_remaze
     i_iter = i_iter + 1; % number of iterations
     
     b_seq = u_diff + d_diff + l_diff + r_diff;
-    if sum(sum(b_seq)) == 2*m1*n1 - 2  || i_iter == max_iter
+    minus_bseq = (2*m1*n1 - 2) - sum(sum(b_seq));
+    min_bseq = min(min_bseq, minus_bseq);
+    if (minus_bseq == 0) && (re_Sn(1,1) == m1*n1) && (re_Sn(1,2) == 1) || (i_iter == max_iter)
         b_remaze = 0; % out of the while loop
     end
     
 end
 
+xp = re_Dx;
+yp = re_Dy;
+xp = xp - min(xp);
+yp = yp - min(yp);
+order_dp = re_Sn;
 
-%% display
-figure;
-plot(re_Dx * 1e-3, re_Dy * 1e-3, 'r-*');axis xy tight equal;
-axis equal;
-set(gca,'xcolor', 'none');
-set(gca,'ycolor', 'none');
-title('Rectangular maze');
-xlabel('x [mm]');
-ylabel('y [mm]');
+end
 
-% Labeling entrance and exit
-x_entrance = re_Dx(1);
-y_entrance = re_Dy(1) -  median(diff(Yp1(:, 1)));
-x_exit = re_Dx(size(re_Dx,2));
-y_exit = re_Dy(size(re_Dy,2)) -  median(diff(Yp1(:, 1)));
-
-hold on;
-plot([x_entrance * 1e-3, re_Dx(1) * 1e-3], [y_entrance * 1e-3, re_Dy(1) * 1e-3], 'bo--');
-plot([x_exit * 1e-3, re_Dx(size(re_Dx,2)) * 1e-3], [y_exit * 1e-3, re_Dy(size(re_Dy,2)) * 1e-3], 'mo--');
-text(x_entrance * 1e-3, y_entrance * 1e-3,'ENT');
-text(x_exit * 1e-3, y_exit * 1e-3,'EX');
-xlabel('x [mm]');
-ylabel('y [mm]');
-hold off;
-toc
