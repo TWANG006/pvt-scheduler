@@ -52,6 +52,11 @@ public:
 		const MatrixXXd& Y /*!< [in] Y coordinate grid*/
 	) const;
 
+	MatrixXXd multi_thread_interp (
+		const MatrixXXd& X,/*!< [in] X coordinate grid*/
+		const MatrixXXd& Y /*!< [in] Y coordinate grid*/
+	) const;
+
 protected:
 	//! Build the bicubic interpolation LUT
 	void build_bicubic_interpolant();

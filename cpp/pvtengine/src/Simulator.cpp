@@ -52,6 +52,30 @@ MatrixXXd Simulator::operator()(const PVA& xPV, const PVA& yPV)
 	return Zrem;
 }
 
+void Simulator::operator()(const double& px0, const double& px1, const double& py0, const double& py1, const double& vx0, const double& vx1, const double& vy0, const double& vy1, MatrixXXd& Zrem, double& x_dp, double& y_dp)
+{
+	// calculate the dwell point
+	x_dp = 0.5 * (px0 + px1);
+	y_dp = 0.5 * (py0 + py1);
+
+	// calculate the dwell time as the p_avg / v_avg
+	auto t_dp = 0.0;
+	if (abs(px0 - px1) < abs(py0 - py1)) {
+		t_dp = std::abs((py0 - py1) / (0.5 * (vy0 + vy1)));
+	}
+	else {
+		t_dp = std::abs((px0 - px1) / (0.5 * (vx0 + vx1)));
+	}
+
+	// calculate the distance from each point on the surface to the dwell
+	// point (x_dp, y_dp)
+	auto Xk = (m_X.array() - x_dp).matrix();
+	auto Yk = (m_Y.array() - y_dp).matrix();
+
+	// calculate the removal
+	Zrem = m_interp.multi_thread_interp(Xk, Yk) * t_dp;
+}
+
 void Simulator::removal_per_pvt_segment(const double& px0, const double& px1, const double& py0, const double& py1, const double& vx0, const double& vx1, const double& vy0, const double& vy1, MatrixXXd& Zrem, double& x_dp, double& y_dp)
 {
 	// calculate the dwell point

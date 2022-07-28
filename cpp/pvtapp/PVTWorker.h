@@ -100,6 +100,7 @@ public slots:
 		bool is_smooth_v = true
 	);
 	void simulate_pvt(const double& tau);
+	void simulate_pvt_and_make_video(const double& tau, const QString& vid_file_name);
 
 private:
 	void get_path_name(

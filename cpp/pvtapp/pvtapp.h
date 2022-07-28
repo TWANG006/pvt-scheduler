@@ -32,6 +32,7 @@ signals:
         bool is_smooth_v = true
     );
     void simulate_pvt(const double& tau);
+    void simulate_pvt_and_make_video(const double& tau, const QString& vid_file_name);
 
 public slots:
     void err_msg(const QString& msg, const QString& cap = "Error");
@@ -136,6 +137,7 @@ private slots:
     void on_load_surf_button_clicked();
     void on_pvt_calc_button_clicked();
     void on_pvt_sim_button_clicked();
+    void on_pvt_vid_button_clicked();
 
 private:
     Ui::pvtappClass ui;

@@ -309,6 +309,7 @@ void pvtapp::update_res_plot(
     //QCPAxis* y = ui.res_plot->yAxis;
     //x->setScaleRatio(y, 1.0);
     //ui.res_plot->replot();
+    //ui.res_plot->savePng("cao.png");
 }
 
 void pvtapp::init_ui()
@@ -352,6 +353,7 @@ void pvtapp::init_connections()
     connect(this, &pvtapp::simulate_pvt, m_ptrPVTWorker, &PVTWorker::simulate_pvt);
     connect(m_ptrPVTWorker, &PVTWorker::update_res_plot, this, &pvtapp::update_res_plot);
     connect(this, &pvtapp::schedule_pvt, m_ptrPVTWorker, &PVTWorker::schedule_pvt);
+	connect(this, &pvtapp::simulate_pvt_and_make_video, m_ptrPVTWorker, &PVTWorker::simulate_pvt_and_make_video);
 }
 
 void pvtapp::init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget)
@@ -759,6 +761,22 @@ void pvtapp::on_pvt_sim_button_clicked()
     }
 }
 
+void pvtapp::on_pvt_vid_button_clicked()
+{
+    // get the output video file name
+    QString vid_file_name = QFileDialog::getSaveFileName(
+        this, 
+        tr("Compute and save the simulation to a video."),
+        "",
+        tr("Video (*.mp4 *.wmv *.mpeg *.flv)")
+    );
+
+    if (!vid_file_name.isNull()) {
+        double tau = ui.dt_value_box->value();
+        emit simulate_pvt_and_make_video(tau, vid_file_name);
+    }
+}
+
 void pvtapp::end_thread(QThread& thrd)
 {
     if (thrd.isRunning()) {
@@ -806,7 +824,7 @@ void pvtapp::on_action_Open_triggered()
     );
 
     // try to open the file if it exists
-    if (!m_h5FileName.isEmpty()) {
+    if (!m_h5FileName.isNull()) {
         open_h5file(m_h5FileName);
     }
 }

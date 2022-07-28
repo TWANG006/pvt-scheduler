@@ -37,6 +37,23 @@ MatrixXXd Interpolator::operator()(const MatrixXXd& X, const MatrixXXd& Y) const
 	return Z;
 }
 
+MatrixXXd Interpolator::multi_thread_interp(const MatrixXXd& X, const MatrixXXd& Y) const
+{
+	auto Ny = X.rows();
+	auto Nx = X.cols();
+
+	MatrixXXd Z(Ny, Nx);
+
+	#pragma omp parallel for
+	for (int_t i = 0; i < Ny; i++) {
+		for (int_t j = 0; j < Nx; j++) {
+			Z(i, j) = interp(X(i, j), Y(i, j));
+		}
+	}
+
+	return Z;
+}
+
 
 void Interpolator::build_bicubic_interpolant()
 {

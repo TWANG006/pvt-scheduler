@@ -49,6 +49,20 @@ public:
 		const PVA& yPV /*!< [in] PVT in y axis*/
 	);
 
+	void operator()(
+		const double& px0,/*!< [in] starting px*/
+		const double& px1,/*!< [in] ending px*/
+		const double& py0,/*!< [in] starting py*/
+		const double& py1,/*!< [in] ending py*/
+		const double& vx0,/*!< [in] starting vx*/
+		const double& vx1,/*!< [in] ending vx*/
+		const double& vy0,/*!< [in] starting vy*/
+		const double& vy1,/*!< [in] ending vy*/
+		MatrixXXd& Zrem,  /*!< [out] removed material*/
+		double& x_dp,     /*!< [out] dwell point x coordinate*/
+		double& y_dp      /*!< [out] dwell point y coordinate*/
+	);
+
 	//! calculate removal for each PVT segment
 	void removal_per_pvt_segment(
 		const double& px0,/*!< [in] starting px*/

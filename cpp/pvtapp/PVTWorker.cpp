@@ -329,6 +329,26 @@ void PVTWorker::simulate_pvt(const double& tau)
 	}
 }
 
+void PVTWorker::simulate_pvt_and_make_video(const double& tau, const QString& vid_file_name)
+{
+	// check if the required data for Scheduler are all loaded
+	if ((m_xPVTC.P.size() == 0 || m_yPVTC.P.size() == 0 || m_xPVTC.P.size() != m_yPVTC.P.size() ||
+		m_xPVTC.T.size() == 0 || m_yPVTC.T.size() == 0 || m_xPVTC.T.size() != m_yPVTC.T.size() ||
+		m_xPVTC.V.size() == 0 || m_yPVTC.V.size() == 0 || m_xPVTC.V.size() != m_yPVTC.V.size() ||
+		m_xPVTC.Coeffs.size() == 0 || m_yPVTC.Coeffs.size() == 0 || m_xPVTC.Coeffs.size() != m_yPVTC.Coeffs.size())) {
+		emit err_msg("Please load the Positions, Velocities and Times first.");
+	}
+	else if (m_X.size() == 0 || m_Y.size() == 0 || m_Z.size() == 0) {
+		emit err_msg("Please load the initial surface.");
+	}
+	else if (m_Xtif.size() == 0 || m_Ytif.size() == 0 || m_Ztif.size() == 0) {
+		emit err_msg("Please load a TIF.");
+	}
+	else {
+
+	}
+}
+
 void PVTWorker::get_path_name(const QString& filePath, const QString& file_name, QString& path_name)
 {
 	path_name = filePath.right(filePath.length() - file_name.length());
