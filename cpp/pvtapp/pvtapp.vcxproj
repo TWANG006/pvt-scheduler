@@ -69,25 +69,25 @@
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
       <AdditionalOptions>/DMKL_LP64 /Zc:__cplusplus /permissive- %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>../pvtengine/include/;$(HDF5_DIR_64)\include\;$(EIGEN_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../pvtengine/include/;$(HDF5_DIR_64)\include\;$(EIGEN_DIR);$(OPENCV_DIR)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OpenMPSupport>true</OpenMPSupport>
       <PreprocessorDefinitions>EIGEN_USE_MKL_ALL;H5_BUILT_AS_DYNAMIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Platform)\$(Configuration)\;$(HDF5_DIR_64)\lib\;$(QTDIR)\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Platform)\$(Configuration)\;$(HDF5_DIR_64)\lib\;$(QTDIR)\lib\;$(OPENCV_DIR)\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>pvtengine.lib;hdf5.lib;hdf5_cpp.lib;Qt6PrintSupport.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../pvtengine/include/;$(HDF5_DIR_64)\include\;$(EIGEN_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../pvtengine/include/;$(HDF5_DIR_64)\include\;$(EIGEN_DIR);$(OPENCV_DIR)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OpenMPSupport>true</OpenMPSupport>
       <AdditionalOptions>/DMKL_LP64 /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>EIGEN_USE_MKL_ALL;H5_BUILT_AS_DYNAMIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>$(Qt_STDCPP_)</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Platform)\$(Configuration)\;$(HDF5_DIR_64)\lib\;$(QTDIR)\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Platform)\$(Configuration)\;$(HDF5_DIR_64)\lib\;$(QTDIR)\lib\;$(OPENCV_DIR)\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>pvtengine.lib;hdf5_D.lib;hdf5_cpp_D.lib;Qt6PrintSupportd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

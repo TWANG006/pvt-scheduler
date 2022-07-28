@@ -383,9 +383,9 @@ void PVTWorker::simulate_pvt_and_make_video(const double& tau, const QString& vi
 			// create and save each frame
 		}
 
+		// show the final residual after generating the video
 		VectorXd coeffs;
 		m_Zres = remove_polynomials(coeffs, m_X, m_Y, m_Z - Zrem, 1);
-
 		emit update_res_plot(
 			m_X.rows(),
 			m_X.cols(),
