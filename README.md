@@ -35,7 +35,7 @@ C++ module is necessary if the number of dwell points is large and the demanded 
 1. Windows + Visual Studio 2022: this is the default configuration that can be directly used, if the following 3rd-party libraries are downloaded and the system environmental variables are set.
   - `$(EIGEN_DIR)`: e.g. `D:\Codes\Source\3rds\eigen-3.4.0\`, this can be downloaded from [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
   - `$(MATLAB_ROOT)`: e.g. `C:\Program Files\MATLAB\R2018a\`
-  - The following libraries can be directly download here, which have been compiled using Visual Studio 2022.
+  - The following libraries can be directly download [here](https://1drv.ms/u/s!Auz9JrLySuJUiNpnkbVkB_oH1oudow?e=7D3Tea), which have been compiled using Visual Studio 2022.
     - `$(HDF5_DIR_64)`: e.g. `D:\Codes\Source\3rds\HDF5\1.12.2\`
     - `$(ABLS_ROOT)`: e.g. `D:\Codes\Source\3rds\absl\`
     - `$(QPOASES_DIR)`: e.g. `D:\Codes\Source\3rds\qpOASES\`
