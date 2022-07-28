@@ -37,7 +37,7 @@ C++ module is necessary if the number of dwell points is large and the demanded 
   - `$(MATLAB_ROOT)`: e.g. `C:\Program Files\MATLAB\R2018a\`
   - The following libraries can be directly download [here](https://1drv.ms/u/s!Auz9JrLySuJUiNpnkbVkB_oH1oudow?e=7D3Tea), which have been compiled using Visual Studio 2022.
     - `$(HDF5_DIR_64)`: e.g. `D:\Codes\Source\3rds\HDF5\1.12.2\`
-    - `$(ABLS_ROOT)`: e.g. `D:\Codes\Source\3rds\absl\`
+    - `$(ABSL_ROOT)`: e.g. `D:\Codes\Source\3rds\absl\`
     - `$(QPOASES_DIR)`: e.g. `D:\Codes\Source\3rds\qpOASES\`
     - `$(OSQP_CPP_ROOT)`: e.g. `D:\Codes\Source\3rds\osqp-cpp\`
     - `$(OSQP_ROOT)`: e.g. `D:\Codes\Source\3rds\osqp\`
