@@ -26,15 +26,17 @@ C++ module is necessary if the number of dwell points is large and the demanded 
 2. [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page): for convenient matrix and vector manipulations.
 3. [qpOASES](https://github.com/coin-or/qpOASES.git): for the QP solver used in the velocity optimization. A Visual Studio 2022, dynamically linked version is also available at [TWANG006/qpOASES](https://github.com/TWANG006/qpOASES.git).
 4. [OSQP-CPP](https://github.com/google/osqp-cpp.git): an alternative QP solver to qpOASES that is a wrapper of the [OSQP](https://github.com/osqp/osqp.git). The speed is faster than qpOASES. But both qpOASES and OSQP are less accurate and slower than MATLAB's QP solver. So if you have MATLAB, you can make a shared MATLAB session by `matlab.engine.shareEngine('engine_name')` then use it in the given C++ PVT engine. 
-5. [ABSL](https://github.com/abseil/abseil-cpp.git): required by OSQP-CPP. 
-6. [QT6](https://www.qt.io/download): for GUI, which is optional.
-7. [QCustomPlot](https://www.qcustomplot.com/): for plotting and anmiation.
+5. [ABSL](https://github.com/abseil/abseil-cpp.git): required by OSQP-CPP.
+6. [HDF5](https://www.hdfgroup.org/solutions/hdf5/): for I/O.
+7. [QT6](https://www.qt.io/download): for GUI, which is optional.
+8. [QCustomPlot](https://www.qcustomplot.com/): for plotting and anmiation.
 
 ## Compilation
 1. Windows + Visual Studio 2022: this is the default configuration that can be directly used, if the following 3rd-party libraries are downloaded and the system environmental variables are set.
   - `$(EIGEN_DIR)`: e.g. `D:\Codes\Source\3rds\eigen-3.4.0\`, this can be downloaded from [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
   - `$(MATLAB_ROOT)`: e.g. `C:\Program Files\MATLAB\R2018a\`
   - The following libraries can be directly download here, which have been compiled using Visual Studio 2022.
+    - `$(HDF5_DIR_64)`: e.g. `D:\Codes\Source\3rds\HDF5\1.12.2\`
     - `$(ABLS_ROOT)`: e.g. `D:\Codes\Source\3rds\absl\`
     - `$(QPOASES_DIR)`: e.g. `D:\Codes\Source\3rds\qpOASES\`
     - `$(OSQP_CPP_ROOT)`: e.g. `D:\Codes\Source\3rds\osqp-cpp\`
