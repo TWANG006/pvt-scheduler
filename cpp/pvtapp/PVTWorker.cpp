@@ -345,7 +345,62 @@ void PVTWorker::simulate_pvt_and_make_video(const double& tau, const QString& vi
 		emit err_msg("Please load a TIF.");
 	}
 	else {
+		// sampling
+		Sampler sampler;
+		PVA xPVA = sampler(tau, m_xPVTC);
+		PVA yPVA = sampler(tau, m_yPVTC);
 
+		// initialize the simulator
+		Simulator simulator(m_Xtif, m_Ytif.colwise().reverse(), m_Ztif.colwise().reverse(), m_X, m_Y, m_Z);
+
+		// initialize the Zremoval to 0's
+		MatrixXXd Zrem(m_Z.rows(), m_Z.cols());
+		Zrem.fill(0.0);
+		MatrixXXd Zrem_per_iter(m_Z.rows(), m_Z.cols());
+		double x_dp_per_iter = 0.0, y_dp_per_iter = 0.0;
+
+		// get the number of segment and notify the ui's progress bar
+		auto num_seg = xPVA.P.size() - 1;
+		emit update_progress_range(0, num_seg);
+
+		// simulate and generate video frames one-by-one
+		for (int_t i = 0; i < num_seg; i++) {
+			simulator.removal_per_pvt_segment(
+				xPVA.P(i), xPVA.P(i + 1),
+				yPVA.P(i), yPVA.P(i + 1),
+				xPVA.V(i), xPVA.V(i + 1),
+				yPVA.V(i), yPVA.V(i + 1),
+				Zrem_per_iter,
+				x_dp_per_iter,
+				y_dp_per_iter
+			);
+			// accumulate the removal
+			Zrem += Zrem_per_iter;
+			emit update_progress(i + 1);
+
+			// update plot every 20 frames
+
+			// create and save each frame
+		}
+
+		VectorXd coeffs;
+		m_Zres = remove_polynomials(coeffs, m_X, m_Y, m_Z - Zrem, 1);
+
+		emit update_res_plot(
+			m_X.rows(),
+			m_X.cols(),
+			m_X.maxCoeff(),
+			m_X.minCoeff(),
+			m_Y.maxCoeff(),
+			m_Y.minCoeff(),
+			m_Zres.maxCoeff(),
+			m_Zres.minCoeff(),
+			RMS(m_Zres),
+			m_X(0, 1) - m_X(0, 0),
+			QVector<double>(m_X.data(), m_X.data() + m_X.size()),
+			QVector<double>(m_Y.data(), m_Y.data() + m_Y.size()),
+			QVector<double>(m_Zres.data(), m_Zres.data() + m_Zres.size())
+		);
 	}
 }
 

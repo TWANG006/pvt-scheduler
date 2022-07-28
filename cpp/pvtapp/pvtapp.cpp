@@ -354,6 +354,8 @@ void pvtapp::init_connections()
     connect(m_ptrPVTWorker, &PVTWorker::update_res_plot, this, &pvtapp::update_res_plot);
     connect(this, &pvtapp::schedule_pvt, m_ptrPVTWorker, &PVTWorker::schedule_pvt);
 	connect(this, &pvtapp::simulate_pvt_and_make_video, m_ptrPVTWorker, &PVTWorker::simulate_pvt_and_make_video);
+    connect(m_ptrPVTWorker, &PVTWorker::update_progress_range, ui.video_progressBar, &QProgressBar::setRange);
+    connect(m_ptrPVTWorker, &PVTWorker::update_progress, ui.video_progressBar, &QProgressBar::setValue);
 }
 
 void pvtapp::init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget)

@@ -85,6 +85,11 @@ signals:
 		const QVector<double>& Y,
 		const QVector<double>& Z
 	);
+	void update_progress_range(
+		const int& min_value,
+		const int& max_value
+	);
+	void update_progress(const int& value);
 
 public slots:
 	void load_tif(const QString& file_name, const QString& full_path);
