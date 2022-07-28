@@ -37,6 +37,8 @@ signals:
 		const QVector<double>& py
 	);
 	void update_dt_plot(
+		const double& width,
+		const double& height,
 		const double& total_dt,
 		const double& max_dt,
 		const double& min_dt,
@@ -45,6 +47,8 @@ signals:
 		const QVector<double>& dt
 	);
 	void update_feed_plot(
+		const double& width,
+		const double& height,
 		double max_feed,
 		double min_feed,
 		const QVector<double>& px,

@@ -56,6 +56,8 @@ public slots:
         const QVector<double>& py
     );
     void update_dt_plot(
+        const double& width,
+        const double& height,
         const double& total_dt,
         const double& max_dt,
         const double& min_dt,
@@ -64,6 +66,8 @@ public slots:
         const QVector<double>& dt
     );
     void update_feed_plot(
+        const double& width,
+        const double& height,
         const double& max_feed,
         const double& min_feed,
         const QVector<double>& px,

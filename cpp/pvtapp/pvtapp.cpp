@@ -105,7 +105,12 @@ void pvtapp::update_path_plot(
     // update the plots
     m_pathCurve->setData(px, py);
     m_pathCurve->rescaleAxes();
-    ui.path_plot->xAxis->setScaleRatio(ui.path_plot->yAxis, 1.0);
+	if (width <= height) {
+		ui.path_plot->xAxis->setScaleRatio(ui.path_plot->yAxis, 1.0);
+    }
+    else {
+        ui.path_plot->yAxis->setScaleRatio(ui.path_plot->xAxis, 1.0);
+    }
     ui.path_plot->replot();
 
     // update the params
@@ -114,6 +119,8 @@ void pvtapp::update_path_plot(
 }
 
 void pvtapp::update_dt_plot(
+    const double& width,
+    const double& height,
     const double&          total_dt,
     const double&          max_dt,
     const double&          min_dt,
@@ -136,13 +143,20 @@ void pvtapp::update_dt_plot(
     m_dtColorCurve->rescaleAxes();
     m_dtScale->setDataRange(QCPRange(min_dt, max_dt));
     m_dtScale->rescaleDataRange(true);
-    ui.dt_plot->xAxis->setScaleRatio(ui.dt_plot->yAxis, 1.0);
+    if (width <= height) {
+        ui.dt_plot->xAxis->setScaleRatio(ui.dt_plot->yAxis, 1.0);
+    }
+    else {
+        ui.dt_plot->yAxis->setScaleRatio(ui.dt_plot->xAxis, 1.0);
+    }
     ui.dt_plot->replot();
 
     ui.total_dt_value_box->setValue(total_dt);
 }
 
 void pvtapp::update_feed_plot(
+    const double& width,
+    const double& height,
     const double&          max_feed,
     const double&          min_feed,
     const QVector<double>& px,
@@ -164,8 +178,12 @@ void pvtapp::update_feed_plot(
     m_feedColorCurve->rescaleAxes();
     m_feedScale->setDataRange(QCPRange(min_feed, max_feed));
     m_feedScale->rescaleDataRange(true);
-
-    ui.feed_plot->xAxis->setScaleRatio(ui.feed_plot->yAxis, 1.0);
+    if (width <= height) {
+        ui.feed_plot->xAxis->setScaleRatio(ui.feed_plot->yAxis, 1.0);
+    }
+    else {
+        ui.feed_plot->yAxis->setScaleRatio(ui.feed_plot->xAxis, 1.0);
+    }
     ui.feed_plot->replot();
 }
 
@@ -211,7 +229,12 @@ void pvtapp::update_surf_plot(
     ui.surf_plot->xAxis->setRange(0.5 * (x_e - x_s) + x_s - v, 0.5 * (x_e - x_s) + x_s + v);
     ui.surf_plot->yAxis->setRange(0.5 * (y_e - y_s) + y_s - v, 0.5 * (y_e - y_s) + y_s + v);
 
-    ui.surf_plot->xAxis->setScaleRatio(ui.surf_plot->yAxis, 1.0);
+    if (x_e - x_s <= y_e - y_s) {
+        ui.surf_plot->xAxis->setScaleRatio(ui.surf_plot->yAxis, 1.0);
+    }
+    else {
+        ui.surf_plot->yAxis->setScaleRatio(ui.surf_plot->xAxis, 1.0);
+    }
 
     ui.surf_plot->replot();
 
@@ -262,6 +285,14 @@ void pvtapp::update_res_plot(
     // 4. rescale the key (x) and value (y) axes so the whole color map is visible:
     ui.res_plot->xAxis->setRange(0.5 * (x_e - x_s) + x_s - v, 0.5 * (x_e - x_s) + x_s + v);
     ui.res_plot->yAxis->setRange(0.5 * (y_e - y_s) + y_s - v, 0.5 * (y_e - y_s) + y_s + v);
+    
+    if (x_e - x_s <= y_e - y_s) {
+        ui.res_plot->xAxis->setScaleRatio(ui.res_plot->yAxis, 1.0);
+    }
+    else {
+        ui.res_plot->yAxis->setScaleRatio(ui.res_plot->xAxis, 1.0);
+    }
+    
     ui.res_plot->replot();
 
     // update the params
@@ -269,15 +300,15 @@ void pvtapp::update_res_plot(
     ui.res_rms_value_box->setValue(1e9 * rms_z);
     ui.res_res_value_box->setValue(1e3 * res);
 
-    // trial
-    auto circle = new QCPItemEllipse(ui.res_plot);
-    circle->setPen(QPen(Qt::black));
-    circle->topLeft->setCoords(-10.5, -10.5);
-    circle->bottomRight->setCoords(-4.5, -4.5);
-    QCPAxis* x = ui.res_plot->xAxis;
-    QCPAxis* y = ui.res_plot->yAxis;
-    x->setScaleRatio(y, 1.0);
-    ui.res_plot->replot();
+    //// trial
+    //auto circle = new QCPItemEllipse(ui.res_plot);
+    //circle->setPen(QPen(Qt::black));
+    //circle->topLeft->setCoords(-10.5, -10.5);
+    //circle->bottomRight->setCoords(-4.5, -4.5);
+    //QCPAxis* x = ui.res_plot->xAxis;
+    //QCPAxis* y = ui.res_plot->yAxis;
+    //x->setScaleRatio(y, 1.0);
+    //ui.res_plot->replot();
 }
 
 void pvtapp::init_ui()
@@ -338,7 +369,7 @@ void pvtapp::init_qcpcolormap(QCPColorMap*& colormap, QCustomPlot*& widget)
     scale->setType(QCPAxis::atRight);
     scale->setRangeDrag(false);
     scale->setRangeZoom(false);
-    scale->setLabel("height [nm]");
+    scale->setLabel("[nm]");
     colormap->setColorScale(scale);
     QCPColorGradient cg(QCPColorGradient::gpJet);
     cg.setNanHandling(QCPColorGradient::nhTransparent);

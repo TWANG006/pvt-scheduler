@@ -98,6 +98,8 @@ void PVTWorker::load_dt(const QString& file_name, const QString& full_path)
 
 			// emit the update dt plot signal
 			emit update_dt_plot(
+				dpx_mm.maxCoeff() - dpx_mm.minCoeff(),
+				dpy_mm.maxCoeff() - dpy_mm.minCoeff(),
 				total_dt,
 				m_dt.maxCoeff(),
 				m_dt.minCoeff(),
@@ -157,6 +159,8 @@ void PVTWorker::load_vxvy(const QString& file_name, const QString& full_path)
 
 			// emit the update dt plot signal
 			emit update_feed_plot(
+				px_mm.maxCoeff() - px_mm.minCoeff(),
+				py_mm.maxCoeff() - py_mm.minCoeff(),
 				feed_rates.maxCoeff(),
 				feed_rates.minCoeff(),
 				QVector<double>(px_mm.data(), px_mm.data() + px_mm.size()),
@@ -265,6 +269,8 @@ void PVTWorker::schedule_pvt(const double& ax_max, const double& vx_max, const d
 
 				// emit the update dt plot signal
 				emit update_feed_plot(
+					px_mm.maxCoeff() - px_mm.minCoeff(),
+					py_mm.maxCoeff() - py_mm.minCoeff(),
 					feed_rates.maxCoeff(),
 					feed_rates.minCoeff(),
 					QVector<double>(px_mm.data(), px_mm.data() + px_mm.size()),
