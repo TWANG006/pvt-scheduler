@@ -20,7 +20,7 @@ vy_max = 150e-3;
 tau = 1/60;
 
 
-%% calculate pvt for x and y seperately
+% % %% calculate pvt for x and y seperately
 [vx, ax, cx] = pvt_scheduler(px, t, ax_max, vx_max, true);
 [vy, ay, cy] = pvt_scheduler(py, t, ay_max, vy_max, true);
 

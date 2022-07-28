@@ -68,7 +68,7 @@ public:
 		bool isVsmooth = false /*!< [in] if V are C1 smooth*/
 	);
 
-private:
+protected:
 	//! Solve the V and Coeffs using the qpOASES lib
 	bool clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth = false);
 	
@@ -99,6 +99,9 @@ private:
 
 	//! Build the lb <= Ax <= ub, the osap-like constraints
 	void build_lbAub(MatrixXXd& A, VectorXd& lb, VectorXd& ub, bool isVsmooth = false);
+
+	//! Solve the V and Coeffs using MATLAB
+	bool clls_with_matlab(VectorXd& V, MatrixX4d& Coeffs, std::string& strError, bool isVsmooth = false);
 
 private:
 	VectorXd m_P;        /*!< Positions*/

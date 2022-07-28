@@ -3,6 +3,15 @@
 #include <qpOASES.hpp>
 #include "Calculator.h"
 #include "osqp++.h"
+#include "MatlabEngine.hpp"
+#include "MatlabDataArray.hpp"
+
+// matlab data API
+using MATLABEngine = matlab::engine::MATLABEngine;
+using ArrayFactory = matlab::data::ArrayFactory;
+using DoubleArray = matlab::data::TypedArray<double>;
+using Array = matlab::data::Array;
+using String = matlab::engine::String;
 
 Scheduler::Scheduler(const VectorXd& P, const VectorXd& T, const double& vmax, const double& amax, const double& v0, const double& vt, const double& a0, const double& at)
 	: m_P(P)
@@ -33,12 +42,19 @@ PVTC Scheduler::operator()(const VectorXd& P, const VectorXd& T, const double& v
 	// call the QP rountines
 	VectorXd  V;
 	MatrixX4d Coeffs;
-	if (true == clls_with_qpOASES(V, Coeffs, isVsmooth)) {
+	std::string str_error;
+	if (true == clls_with_matlab(V, Coeffs, str_error, isVsmooth)) {
 		return PVTC{ m_P, V, m_T, Coeffs };
 	}
 	else {
 		return PVTC();
 	}
+	/*if (true == clls_with_qpOASES(V, Coeffs, isVsmooth)) {
+		return PVTC{ m_P, V, m_T, Coeffs };
+	}
+	else {
+		return PVTC();
+	}*/
 }
 
 PVTC Scheduler::operator()(const double& v0, const double& vt, const double& a0, const double& at, bool isVsmooth)
@@ -52,12 +68,19 @@ PVTC Scheduler::operator()(const double& v0, const double& vt, const double& a0,
 	// call the QP rountines
 	VectorXd  V;
 	MatrixX4d Coeffs;
-	if (true == clls_with_qpOASES(V, Coeffs, isVsmooth)) {
+	std::string str_error;
+	if (true == clls_with_matlab(V, Coeffs, str_error, isVsmooth)) {
 		return PVTC{ m_P, V, m_T, Coeffs };
 	}
 	else {
 		return PVTC();
 	}
+	/*if (true == clls_with_qpOASES(V, Coeffs, isVsmooth)) {
+		return PVTC{ m_P, V, m_T, Coeffs };
+	}
+	else {
+		return PVTC();
+	}*/
 }
 
 bool Scheduler::clls_with_qpOASES(VectorXd& V, MatrixX4d& Coeffs, bool isVsmooth)
@@ -236,6 +259,69 @@ void Scheduler::build_lbAub(MatrixXXd& A, VectorXd& lb, VectorXd& ub, bool isVsm
 		ub = VectorXd(ubA.size() + ub_bound.size());
 		ub << ub_bound, ubA;
 	}
+}
+
+bool Scheduler::clls_with_matlab(VectorXd& V, MatrixX4d& Coeffs, std::string& strError, bool isVsmooth)
+{
+	std::unique_ptr<MATLABEngine> matlabPtr;
+	typedef std::basic_stringbuf<char16_t> StringBuf;
+	std::shared_ptr<StringBuf> matlab_error = std::make_shared<StringBuf>();
+
+	// try to find a shared matlab session
+	try {
+		std::vector<String> names = matlab::engine::findMATLAB();
+
+		// is not found a shared session, then create one
+		if (names.empty()) {
+			matlabPtr = matlab::engine::startMATLAB();
+		} 
+		else {
+			matlabPtr = matlab::engine::connectMATLAB(names[0]);
+		}
+	}
+	catch (const matlab::engine::EngineException& error) {
+		strError = std::string(error.what());
+		return false;
+	}
+
+	// test if the session connection is successful
+	if (!matlabPtr) {
+		strError = std::string("Unable to start a MATLAB session.");
+		return false;
+	}
+
+	// try to call the matlab "pvt_scheduler.m"
+	try
+	{
+		// create the input arguments 
+		ArrayFactory factory;
+		std::vector<Array> args(
+			{
+				factory.createArray<double>({uint32_t(m_P.size()), 1}, m_P.data(), m_P.data() + m_P.size()),
+				factory.createArray<double>({uint32_t(m_T.size()), 1}, m_T.data(), m_T.data() + m_T.size()),
+				factory.createScalar<double>(m_amax),
+				factory.createScalar<double>(m_vmax),
+				factory.createScalar<bool>(isVsmooth)
+			}
+		);
+		
+		// call the function and obtain the results
+		std::vector<Array> result = matlabPtr->feval(u"pvt_scheduler", 3, args, matlab_error);
+
+		// obtain the results
+		V = Eigen::Map<VectorXd>(static_cast<matlab::data::TypedArray<double>>(result[0]).release().get(), result[0].getNumberOfElements());
+		auto Coeffs_ = static_cast<DoubleArray>(result[2]);
+		Coeffs = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 4, Eigen::ColMajor>>(Coeffs_.release().get(), result[2].getNumberOfElements() / 4, 4);
+	}
+	catch (...)
+	{
+		String error_ = matlab_error.get()->str();
+		strError = std::string(matlab::engine::convertUTF16StringToUTF8String(error_));
+
+		return false;
+	}
+
+	return true;
 }
 
 void Scheduler::build_Cd(MatrixXXd& C, VectorXd& d)

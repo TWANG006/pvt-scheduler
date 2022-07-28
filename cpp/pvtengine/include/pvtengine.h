@@ -10,7 +10,6 @@
 
 #include <Eigen/Dense>
 
-
 // Eigen API aliases
 using int_t = Eigen::Index;
 using Matrix44d = Eigen::Matrix<double, 4, 4, Eigen::RowMajor>;
