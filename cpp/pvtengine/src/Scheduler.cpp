@@ -27,7 +27,7 @@ Scheduler::Scheduler(const VectorXd& P, const VectorXd& T, const double& vmax, c
 Scheduler::~Scheduler()
 {}
 
-PVTC Scheduler::operator()(const VectorXd& P, const VectorXd& T, const double& vmax, const double& amax, const double& v0, const double& vt, const double& a0, const double& at, bool isVsmooth)
+PVTC Scheduler::operator()(std::string& str_error, const VectorXd& P, const VectorXd& T, const double& vmax, const double& amax, const double& v0, const double& vt, const double& a0, const double& at, bool isVsmooth)
 {
 	// update the member variables
 	m_P = P;
@@ -42,7 +42,6 @@ PVTC Scheduler::operator()(const VectorXd& P, const VectorXd& T, const double& v
 	// call the QP rountines
 	VectorXd  V;
 	MatrixX4d Coeffs;
-	std::string str_error;
 	if (true == clls_with_matlab(V, Coeffs, str_error, isVsmooth)) {
 		return PVTC{ m_P, V, m_T, Coeffs };
 	}
@@ -57,7 +56,7 @@ PVTC Scheduler::operator()(const VectorXd& P, const VectorXd& T, const double& v
 	}*/
 }
 
-PVTC Scheduler::operator()(const double& v0, const double& vt, const double& a0, const double& at, bool isVsmooth)
+PVTC Scheduler::operator()(std::string& str_error, const double& v0, const double& vt, const double& a0, const double& at, bool isVsmooth)
 {
 	// update the member variables
 	m_v0 = v0;
@@ -68,7 +67,6 @@ PVTC Scheduler::operator()(const double& v0, const double& vt, const double& a0,
 	// call the QP rountines
 	VectorXd  V;
 	MatrixX4d Coeffs;
-	std::string str_error;
 	if (true == clls_with_matlab(V, Coeffs, str_error, isVsmooth)) {
 		return PVTC{ m_P, V, m_T, Coeffs };
 	}
@@ -290,34 +288,39 @@ bool Scheduler::clls_with_matlab(VectorXd& V, MatrixX4d& Coeffs, std::string& st
 		return false;
 	}
 
+	// create the input arguments 
+	ArrayFactory factory;
+	std::vector<Array> args(
+		{
+			factory.createArray<double>({uint32_t(m_P.size()), 1}, m_P.data(), m_P.data() + m_P.size()),
+			factory.createArray<double>({uint32_t(m_T.size()), 1}, m_T.data(), m_T.data() + m_T.size()),
+			factory.createScalar<double>(m_amax),
+			factory.createScalar<double>(m_vmax),
+			factory.createScalar<bool>(isVsmooth)
+		}
+	);
+
+	std::vector<Array> result;
 	// try to call the matlab "pvt_scheduler.m"
 	try
 	{
-		// create the input arguments 
-		ArrayFactory factory;
-		std::vector<Array> args(
-			{
-				factory.createArray<double>({uint32_t(m_P.size()), 1}, m_P.data(), m_P.data() + m_P.size()),
-				factory.createArray<double>({uint32_t(m_T.size()), 1}, m_T.data(), m_T.data() + m_T.size()),
-				factory.createScalar<double>(m_amax),
-				factory.createScalar<double>(m_vmax),
-				factory.createScalar<bool>(isVsmooth)
-			}
-		);
-		
 		// call the function and obtain the results
-		std::vector<Array> result = matlabPtr->feval(u"pvt_scheduler", 3, args, matlab_error);
+		result = matlabPtr->feval(u"pvt_scheduler", 3, args, matlab_error);
+	}
+	catch (...)
+	{
+		strError = "Cannot find pvt_scheduler.m in the MATLAB path.";
+		return false;
+	}
 
+	if (!result.empty()) {
 		// obtain the results
 		V = Eigen::Map<VectorXd>(static_cast<matlab::data::TypedArray<double>>(result[0]).release().get(), result[0].getNumberOfElements());
 		auto Coeffs_ = static_cast<DoubleArray>(result[2]);
 		Coeffs = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 4, Eigen::ColMajor>>(Coeffs_.release().get(), result[2].getNumberOfElements() / 4, 4);
 	}
-	catch (...)
-	{
-		String error_ = matlab_error.get()->str();
-		strError = std::string(matlab::engine::convertUTF16StringToUTF8String(error_));
-
+	else {
+		strError = "Calling pvt_scheduler.m failed. Check the current path of MATLAB.";
 		return false;
 	}
 

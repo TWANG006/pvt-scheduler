@@ -251,24 +251,30 @@ void PVTWorker::schedule_pvt(const double& ax_max, const double& vx_max, const d
 			}
 
 			// schedule PVT in x
-			m_xPVTC = m_scheduler(m_xPVTC.P, m_xPVTC.T, vx_max, ax_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
-			m_yPVTC = m_scheduler(m_yPVTC.P, m_yPVTC.T, vy_max, ay_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
+			std::string str_error;
+			m_xPVTC = m_scheduler(str_error, m_xPVTC.P, m_xPVTC.T, vx_max, ax_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
+			m_yPVTC = m_scheduler(str_error, m_yPVTC.P, m_yPVTC.T, vy_max, ay_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
 
-			// calculate the total dwell time in [min]
-			VectorXd feed_rates(((m_xPVTC.V.array().square() + m_yPVTC.V.array().square()).sqrt() * 1e3).matrix());
+			if (str_error.size() < 1) {
+				// calculate the total dwell time in [min]
+				VectorXd feed_rates(((m_xPVTC.V.array().square() + m_yPVTC.V.array().square()).sqrt() * 1e3).matrix());
 
-			// change to mm
-			VectorXd px_mm(m_xPVTC.P * 1e3);
-			VectorXd py_mm(m_yPVTC.P * 1e3);
+				// change to mm
+				VectorXd px_mm(m_xPVTC.P * 1e3);
+				VectorXd py_mm(m_yPVTC.P * 1e3);
 
-			// emit the update dt plot signal
-			emit update_feed_plot(
-				feed_rates.maxCoeff(),
-				feed_rates.minCoeff(),
-				QVector<double>(px_mm.data(), px_mm.data() + px_mm.size()),
-				QVector<double>(py_mm.data(), py_mm.data() + py_mm.size()),
-				QVector<double>(feed_rates.data(), feed_rates.data() + feed_rates.size())
-			);
+				// emit the update dt plot signal
+				emit update_feed_plot(
+					feed_rates.maxCoeff(),
+					feed_rates.minCoeff(),
+					QVector<double>(px_mm.data(), px_mm.data() + px_mm.size()),
+					QVector<double>(py_mm.data(), py_mm.data() + py_mm.size()),
+					QVector<double>(feed_rates.data(), feed_rates.data() + feed_rates.size())
+				);
+			}
+			else {
+				emit err_msg(QString::fromStdString(str_error));
+			}
 		}
 		else {
 			emit err_msg("Positions and Times should have the same number of elements.");

@@ -43,6 +43,7 @@ public:
 	* \return the PVT struct
 	*/
 	PVTC operator () (
+		std::string& str_error,/*!< [out] error message*/
 		const VectorXd& P,     /*!< [in] Positions*/
 		const VectorXd& T,     /*!< [in] Times*/
 		const double& vmax,    /*!< [in] max.speed*/
@@ -61,6 +62,7 @@ public:
 	* \return the PVT struct
 	*/
 	PVTC operator () (
+		std::string& str_error,/*!< [out] error message*/
 		const double& v0 = 0.0,/*!< [in] Initial velocity*/
 		const double& vt = 0.0,/*!< [in] End velocity*/
 		const double& a0 = 0.0,/*!< [in] Initial acceleration*/
