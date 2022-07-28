@@ -87,7 +87,7 @@ void pvtapp::update_tif_plot(
     // 4. rescale the key (x) and value (y) axes so the whole color map is visible:
     ui.tif_plot->xAxis->setRange(0.5 * (x_e - x_s) + x_s - v, 0.5 * (x_e - x_s) + x_s + v);
     ui.tif_plot->yAxis->setRange(0.5 * (y_e - y_s) + y_s - v, 0.5 * (y_e - y_s) + y_s + v);
-
+    ui.tif_plot->xAxis->setScaleRatio(ui.tif_plot->yAxis, 1.0);
     ui.tif_plot->replot();
 
     // update the params
@@ -105,6 +105,7 @@ void pvtapp::update_path_plot(
     // update the plots
     m_pathCurve->setData(px, py);
     m_pathCurve->rescaleAxes();
+    ui.path_plot->xAxis->setScaleRatio(ui.path_plot->yAxis, 1.0);
     ui.path_plot->replot();
 
     // update the params
@@ -135,6 +136,7 @@ void pvtapp::update_dt_plot(
     m_dtColorCurve->rescaleAxes();
     m_dtScale->setDataRange(QCPRange(min_dt, max_dt));
     m_dtScale->rescaleDataRange(true);
+    ui.dt_plot->xAxis->setScaleRatio(ui.dt_plot->yAxis, 1.0);
     ui.dt_plot->replot();
 
     ui.total_dt_value_box->setValue(total_dt);
@@ -162,6 +164,8 @@ void pvtapp::update_feed_plot(
     m_feedColorCurve->rescaleAxes();
     m_feedScale->setDataRange(QCPRange(min_feed, max_feed));
     m_feedScale->rescaleDataRange(true);
+
+    ui.feed_plot->xAxis->setScaleRatio(ui.feed_plot->yAxis, 1.0);
     ui.feed_plot->replot();
 }
 
@@ -207,6 +211,8 @@ void pvtapp::update_surf_plot(
     ui.surf_plot->xAxis->setRange(0.5 * (x_e - x_s) + x_s - v, 0.5 * (x_e - x_s) + x_s + v);
     ui.surf_plot->yAxis->setRange(0.5 * (y_e - y_s) + y_s - v, 0.5 * (y_e - y_s) + y_s + v);
 
+    ui.surf_plot->xAxis->setScaleRatio(ui.surf_plot->yAxis, 1.0);
+
     ui.surf_plot->replot();
 
     // update the params
@@ -215,7 +221,21 @@ void pvtapp::update_surf_plot(
     ui.surf_res_value_box->setValue(1e3 * res);
 }
 
-void pvtapp::update_res_plot(const int& rows, const int& cols, const double& max_x, const double& min_x, const double& max_y, const double& min_y, const double& max_z, const double& min_z, const double& rms_z, const double& res, const QVector<double>& X, const QVector<double>& Y, const QVector<double>& Z)
+void pvtapp::update_res_plot(
+    const int& rows,
+    const int& cols,
+    const double& max_x,
+    const double& min_x,
+    const double& max_y,
+    const double& min_y,
+    const double& max_z,
+    const double& min_z,
+    const double& rms_z,
+    const double& res,
+    const QVector<double>& X,
+    const QVector<double>& Y,
+    const QVector<double>& Z
+)
 {
     // 1. Set the size
     m_resColormap->data()->setSize(cols, rows);
@@ -242,13 +262,22 @@ void pvtapp::update_res_plot(const int& rows, const int& cols, const double& max
     // 4. rescale the key (x) and value (y) axes so the whole color map is visible:
     ui.res_plot->xAxis->setRange(0.5 * (x_e - x_s) + x_s - v, 0.5 * (x_e - x_s) + x_s + v);
     ui.res_plot->yAxis->setRange(0.5 * (y_e - y_s) + y_s - v, 0.5 * (y_e - y_s) + y_s + v);
-
     ui.res_plot->replot();
 
     // update the params
     ui.res_pv_value_box->setValue(1e9 * (max_z - min_z));
     ui.res_rms_value_box->setValue(1e9 * rms_z);
     ui.res_res_value_box->setValue(1e3 * res);
+
+    // trial
+    auto circle = new QCPItemEllipse(ui.res_plot);
+    circle->setPen(QPen(Qt::black));
+    circle->topLeft->setCoords(-10.5, -10.5);
+    circle->bottomRight->setCoords(-4.5, -4.5);
+    QCPAxis* x = ui.res_plot->xAxis;
+    QCPAxis* y = ui.res_plot->yAxis;
+    x->setScaleRatio(y, 1.0);
+    ui.res_plot->replot();
 }
 
 void pvtapp::init_ui()
