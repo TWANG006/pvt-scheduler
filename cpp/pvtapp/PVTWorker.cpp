@@ -8,7 +8,12 @@
 
 PVTWorker::PVTWorker(QObject* parent)
 	: QObject(parent)
+	, m_vid_plt(nullptr)
+	, m_path_plt(nullptr)
+	, m_tif_circ(nullptr)
+	, m_surf_map(nullptr)
 {
+	
 }
 
 PVTWorker::~PVTWorker()
@@ -346,6 +351,9 @@ void PVTWorker::simulate_pvt_and_make_video(const double& tau, const QString& vi
 		emit err_msg("Please load a TIF.");
 	}
 	else {
+		// init video plt
+		init_vid_plt();
+
 		// sampling
 		Sampler sampler;
 		PVA xPVA = sampler(tau, m_xPVTC);
@@ -408,6 +416,46 @@ void PVTWorker::simulate_pvt_and_make_video(const double& tau, const QString& vi
 void PVTWorker::get_path_name(const QString& filePath, const QString& file_name, QString& path_name)
 {
 	path_name = filePath.right(filePath.length() - file_name.length());
+}
+
+void PVTWorker::init_vid_plt()
+{
+	// init the hidden plot
+	m_vid_plt.reset(new QCustomPlot());
+	m_vid_plt->xAxis2->setVisible(true);
+	m_vid_plt->xAxis2->setTickLabels(false);
+	m_vid_plt->yAxis2->setVisible(true);
+	m_vid_plt->yAxis2->setTickLabels(false);
+	connect(m_vid_plt->xAxis, SIGNAL(rangeChanged(QCPRange)), m_vid_plt->xAxis2, SLOT(setRange(QCPRange)));
+	connect(m_vid_plt->yAxis, SIGNAL(rangeChanged(QCPRange)), m_vid_plt->yAxis2, SLOT(setRange(QCPRange)));
+
+	// init the colormap
+	m_surf_map = new QCPColorMap(m_vid_plt->xAxis, m_vid_plt->yAxis);
+	QCPColorScale* scale = new QCPColorScale(m_vid_plt.get());
+	m_vid_plt->plotLayout()->addElement(0, 1, scale);
+	scale->setType(QCPAxis::atRight);
+	scale->setRangeDrag(false);
+	scale->setRangeZoom(false);
+	scale->setLabel("[nm]");
+	m_surf_map->setColorScale(scale);
+	QCPColorGradient cg(QCPColorGradient::gpJet);
+	cg.setNanHandling(QCPColorGradient::nhTransparent);
+	m_surf_map->setGradient(cg);
+	QCPMarginGroup* marginGroup = new QCPMarginGroup(m_vid_plt.get());
+	m_vid_plt->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+	scale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+
+	// init the path plot
+	m_path_plt = new QCPCurve(m_vid_plt->xAxis, m_vid_plt->yAxis);
+	m_path_plt->setPen(QPen(QColor(40, 110, 255)));
+	m_path_plt->setLineStyle(QCPCurve::lsLine);
+	m_path_plt->setScatterStyle(QCPScatterStyle::ssDisc);
+
+	// init the tif circ
+	m_tif_circ = new QCPItemEllipse(m_vid_plt.get());
+
+	// rescale the graph so that it its the visible area
+	m_vid_plt->rescaleAxes();
 }
 
 void PVTWorker::load_tif(const QString& file_name, const QString& fullPath)

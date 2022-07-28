@@ -5,6 +5,7 @@
 #include "H5Cpp.h"
 #include "pvtengine.h"
 #include "Scheduler.h"
+#include "qcustomplot.h"
 
 class PVTWorker : public QObject
 {
@@ -113,6 +114,7 @@ private:
 		const QString& file_name,
 		QString& path_name
 	);
+	void init_vid_plt();
 
 private:
 	H5::H5File m_h5;  /*!< the H5 file handle*/
@@ -128,6 +130,12 @@ private:
 	VectorXd   m_dpx; /*!< dwell point x coordinates*/
 	VectorXd   m_dpy; /*!< dwell point y coordiantes*/
 	VectorXd   m_dt;  /*!< dwell time and the dwell points*/
+
+	/* for video generation functionalities */
+	std::unique_ptr<QCustomPlot> m_vid_plt;
+	QCPCurve* m_path_plt;
+	QCPColorMap* m_surf_map;
+	QCPItemEllipse* m_tif_circ;
 };
 
 #endif // !PVT_WORKER_H
