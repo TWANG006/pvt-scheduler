@@ -128,8 +128,6 @@ private:
 	VectorXd   m_dpx; /*!< dwell point x coordinates*/
 	VectorXd   m_dpy; /*!< dwell point y coordiantes*/
 	VectorXd   m_dt;  /*!< dwell time and the dwell points*/
-
-	Scheduler m_scheduler;
 };
 
 #endif // !PVT_WORKER_H

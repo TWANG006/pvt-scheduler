@@ -255,9 +255,10 @@ void PVTWorker::schedule_pvt(const double& ax_max, const double& vx_max, const d
 			}
 
 			// schedule PVT in x
+			Scheduler scheduler;
 			std::string str_error;
-			m_xPVTC = m_scheduler(str_error, m_xPVTC.P, m_xPVTC.T, vx_max, ax_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
-			m_yPVTC = m_scheduler(str_error, m_yPVTC.P, m_yPVTC.T, vy_max, ay_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
+			m_xPVTC = scheduler(str_error, m_xPVTC.P, m_xPVTC.T, vx_max, ax_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
+			m_yPVTC = scheduler(str_error, m_yPVTC.P, m_yPVTC.T, vy_max, ay_max, 0.0, 0.0, 0.0, 0.0, is_smooth_v);
 
 			if (str_error.size() < 1) {
 				// calculate the total dwell time in [min]
