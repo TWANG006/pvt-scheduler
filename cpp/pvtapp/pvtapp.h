@@ -113,6 +113,7 @@ private:
     void init_lineplot(QCustomPlot*& line_plot);
     void init_dtplot(QCustomPlot*& dt_plot);
     void init_feedplot(QCustomPlot*& feed_plot);
+    void init_accplot(QCustomPlot*& acc_plot);
 
     // H5 related
     void open_h5file(const QString& file_name);
@@ -157,6 +158,8 @@ private:
     QCPColorScale* m_dtScale;
     QCPColorCurve* m_feedColorCurve;
     QCPColorScale* m_feedScale;
+    QCPColorCurve* m_accColorCurve;
+    QCPColorScale* m_accScale;
 };
 
 #endif // !PVT_APP_H

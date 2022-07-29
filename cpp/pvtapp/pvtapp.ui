@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1230</width>
-    <height>883</height>
+    <width>1177</width>
+    <height>833</height>
    </rect>
   </property>
   <property name="font">
@@ -860,7 +860,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1230</width>
+     <width>1177</width>
      <height>21</height>
     </rect>
    </property>
@@ -918,7 +918,7 @@
    <property name="minimumSize">
     <size>
      <width>300</width>
-     <height>200</height>
+     <height>250</height>
     </size>
    </property>
    <property name="font">
@@ -973,7 +973,7 @@
    <property name="minimumSize">
     <size>
      <width>350</width>
-     <height>300</height>
+     <height>250</height>
     </size>
    </property>
    <property name="font">
@@ -1156,7 +1156,7 @@
    <property name="minimumSize">
     <size>
      <width>350</width>
-     <height>300</height>
+     <height>250</height>
     </size>
    </property>
    <property name="font">
@@ -1336,7 +1336,7 @@
    <property name="minimumSize">
     <size>
      <width>350</width>
-     <height>300</height>
+     <height>250</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -1456,7 +1456,7 @@
    <property name="minimumSize">
     <size>
      <width>350</width>
-     <height>300</height>
+     <height>250</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -1518,23 +1518,64 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="video_dockWidget">
+  <widget class="QDockWidget" name="acc_dockWidget">
    <property name="minimumSize">
     <size>
      <width>350</width>
-     <height>200</height>
+     <height>250</height>
     </size>
    </property>
    <property name="allowedAreas">
     <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>Video</string>
+    <string>Accelerations</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="video_dock_contents"/>
+   <widget class="QWidget" name="video_dock_contents">
+    <layout class="QGridLayout" name="acc_gridLayout" rowstretch="0,1" columnstretch="1,1">
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
+     <property name="bottomMargin">
+      <number>2</number>
+     </property>
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="load_acc_button">
+       <property name="text">
+        <string>Load accelerations</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <spacer name="acc_horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>169</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="0" colspan="2">
+      <widget class="QCustomPlot" name="acc_plot" native="true"/>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="action_Open">
    <property name="icon">

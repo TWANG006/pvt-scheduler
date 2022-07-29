@@ -16,6 +16,8 @@ pvtapp::pvtapp(QWidget* parent)
     , m_dtScale(nullptr)
     , m_feedColorCurve(nullptr)
     , m_feedScale(nullptr)
+    , m_accColorCurve(nullptr)
+    , m_accScale(nullptr)
 {
     ui.setupUi(this);
 
@@ -321,6 +323,7 @@ void pvtapp::init_ui()
     init_lineplot(ui.path_plot);
     init_dtplot(ui.dt_plot);
     init_feedplot(ui.feed_plot);
+    init_accplot(ui.acc_plot);
 }
 
 void pvtapp::init_connections()
@@ -486,6 +489,50 @@ void pvtapp::init_feedplot(QCustomPlot*& feed_plot)
     QCPMarginGroup* marginGroup = new QCPMarginGroup(feed_plot);
     feed_plot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
     m_feedScale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+}
+
+void pvtapp::init_accplot(QCustomPlot*& acc_plot)
+{
+    // add the color curve graph
+    m_accColorCurve = new QCPColorCurve(acc_plot->xAxis, acc_plot->yAxis);
+
+    // set the line style to scatter points
+    m_accColorCurve->setLineStyle(QCPCurve::lsNone);
+    m_accColorCurve->setScatterStyle(QCPScatterStyle::ssDisc);
+
+    // configure right and top axis to show ticks but no labels
+    acc_plot->xAxis2->setVisible(true);
+    acc_plot->xAxis2->setTickLabels(false);
+    acc_plot->yAxis2->setVisible(true);
+    acc_plot->yAxis2->setTickLabels(false);
+
+    // make left and bottom axes always transfer their ranges to right and top axes:
+    connect(acc_plot->xAxis, SIGNAL(rangeChanged(QCPRange)), acc_plot->xAxis2, SLOT(setRange(QCPRange)));
+    connect(acc_plot->yAxis, SIGNAL(rangeChanged(QCPRange)), acc_plot->yAxis2, SLOT(setRange(QCPRange)));
+
+    // rescale the graph so that it its the visible area
+    m_accColorCurve->rescaleAxes();
+
+    // Allow user to drag axis ranges with mouse, zoom with mouse wheel and select graphs by clicking:
+    acc_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+
+    // set colorbar
+    m_accScale = new QCPColorScale(acc_plot);
+    acc_plot->plotLayout()->addElement(0, 1, m_accScale);
+    m_accScale->setGradient(QCPColorGradient(QCPColorGradient::gpJet));
+    m_accScale->setType(QCPAxis::atRight);
+    m_accScale->setRangeDrag(false);
+    m_accScale->setRangeZoom(false);
+	const char s[] = {
+        's',                // s
+        0xC2, 0xB2,         // superscript two
+        0x00                // NUL terminator
+	};
+    QString str = QString::fromUtf8(s);
+    m_accScale->setLabel("[mm/" + QString::fromUtf8(s) + "]");
+    QCPMarginGroup* marginGroup = new QCPMarginGroup(acc_plot);
+    acc_plot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+    m_accScale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 }
 
 void pvtapp::open_h5file(const QString& file_name)
