@@ -138,6 +138,7 @@ private slots:
     void on_pvt_calc_button_clicked();
     void on_pvt_sim_button_clicked();
     void on_pvt_vid_button_clicked();
+    void on_stop_gen_vid_button_clicked();
 
 private:
     Ui::pvtappClass ui;

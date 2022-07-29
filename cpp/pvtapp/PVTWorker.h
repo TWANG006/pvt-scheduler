@@ -7,6 +7,7 @@
 #include "Scheduler.h"
 #include "qcustomplot.h"
 #include "opencv2/opencv.hpp"
+#include <QMutex>
 
 class PVTWorker : public QObject
 {
@@ -15,6 +16,17 @@ class PVTWorker : public QObject
 public:
 	PVTWorker(QObject* parent = nullptr);
 	~PVTWorker();
+	
+public:
+	void set_stop(bool isStopped)
+	{
+		QMutexLocker lock(&m_stop_mutex);
+		m_is_stopped = isStopped;
+	}
+	bool get_stop() const 
+	{
+		return m_is_stopped;
+	}
 
 signals:
 	void err_msg(const QString& msg, const QString& cap="Error");
@@ -157,6 +169,8 @@ private:
 	MatrixXXd                        m_Z_nm;      /*!< Y in mm*/
 	QVector<double>                  m_px_mm;     /*!< px in mm*/
 	QVector<double>                  m_py_mm;     /*!< py in mm*/
+	QMutex                           m_stop_mutex;
+	bool                             m_is_stopped = true;
 };
 
 #endif // !PVT_WORKER_H

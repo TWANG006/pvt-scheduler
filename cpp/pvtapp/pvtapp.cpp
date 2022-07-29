@@ -779,6 +779,11 @@ void pvtapp::on_pvt_vid_button_clicked()
     }
 }
 
+void pvtapp::on_stop_gen_vid_button_clicked()
+{
+    m_ptrPVTWorker->set_stop(true);
+}
+
 void pvtapp::end_thread(QThread& thrd)
 {
     if (thrd.isRunning()) {

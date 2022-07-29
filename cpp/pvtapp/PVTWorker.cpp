@@ -378,8 +378,10 @@ void PVTWorker::simulate_pvt_and_make_video(const double& tau, const QString& vi
 		auto frame_img = m_vid_plt->toPixmap().toImage();
 
 		if (init_vid_writer(frame_img.width(), frame_img.height(), round(1 / tau), vid_file_name)) {
+			set_stop(false);
+
 			// simulate and generate video frames one-by-one
-			for (int_t i = 0; i < num_seg; i++) {
+			for (int_t i = 0; i < num_seg && !get_stop(); i++) {
 				simulator.removal_per_pvt_segment(
 					xPVA.P(i), xPVA.P(i + 1),
 					yPVA.P(i), yPVA.P(i + 1),
@@ -414,6 +416,27 @@ void PVTWorker::simulate_pvt_and_make_video(const double& tau, const QString& vi
 
 				// write the frame
 				m_cv_vid->write(frame);
+
+				//// show the intermediate result every 10s
+				//if ((i * tau > 1) && (int_t(i * tau) % 10 == 0)) {
+				//	VectorXd coeffs;
+				//	m_Zres = remove_polynomials(coeffs, m_X, m_Y, m_Z - Zrem, 1);
+				//	emit update_res_plot(
+				//		Zres_tmp_nm.rows(),
+				//		Zres_tmp_nm.cols(),
+				//		m_maxx,
+				//		m_minx,
+				//		m_maxy,
+				//		m_miny,
+				//		m_maxz*1e-9,
+				//		m_minz*1e-9,
+				//		RMS(m_Zres),
+				//		m_X(0, 1) - m_X(0, 0),
+				//		QVector<double>(m_X.data(), m_X.data() + m_X.size()),
+				//		QVector<double>(m_Y.data(), m_Y.data() + m_Y.size()),
+				//		QVector<double>(m_Zres.data(), m_Zres.data() + m_Zres.size())
+				//	);
+				//}
 			}
 			m_cv_vid->release();
 
@@ -427,8 +450,8 @@ void PVTWorker::simulate_pvt_and_make_video(const double& tau, const QString& vi
 				m_X.minCoeff(),
 				m_Y.maxCoeff(),
 				m_Y.minCoeff(),
-				m_Zres.maxCoeff(),
-				m_Zres.minCoeff(),
+				m_maxz * 1e-9,
+				m_minz * 1e-9,
 				RMS(m_Zres),
 				m_X(0, 1) - m_X(0, 0),
 				QVector<double>(m_X.data(), m_X.data() + m_X.size()),
@@ -460,6 +483,8 @@ void PVTWorker::init_vid_plt()
 	m_maxy = m_Y.maxCoeff();
 	m_maxz = m_Z_nm.maxCoeff();
 	m_minz = m_Z_nm.minCoeff();
+	m_maxz = std::min(abs(m_minz), abs(m_maxz));
+	m_minz = -std::min(abs(m_minz), abs(m_maxz));
 
 	// init the hidden plot
 	m_vid_plt.reset(new QCustomPlot());
@@ -501,16 +526,12 @@ void PVTWorker::init_vid_plt()
 	m_tif_circ->setPen(QPen(QColor(60, 82, 45)));
 	draw_sim_tif(m_xPVTC.P(0) * 1e3, m_yPVTC.P(0) * 1e3);
 
-
 	// set title
 	m_vid_plt->plotLayout()->insertRow(0);
 	m_title = new QCPTextElement(m_vid_plt.get());
 	m_vid_plt->plotLayout()->addElement(0, 0, m_title);
 	m_title->setFont(QFont("sans", 17, QFont::Bold));
 	draw_title((m_maxz - m_minz), RMS(m_Z_nm));
-
-
-	m_vid_plt->savePng("test.png");
 }
 
 bool PVTWorker::init_vid_writer(const int& width, const int& height, const double& fps, const QString& file_name)
