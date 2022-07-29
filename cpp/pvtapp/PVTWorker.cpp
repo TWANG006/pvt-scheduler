@@ -5,9 +5,11 @@
 #include <numeric>
 #include <Sampler.h>
 #include <Simulator.h>
+#include "opencv2/opencv.hpp"
 
 PVTWorker::PVTWorker(QObject* parent)
 	: QObject(parent)
+	, m_cv_vid(nullptr)
 	, m_vid_plt(nullptr)
 	, m_path_plt(nullptr)
 	, m_tif_circ(nullptr)
@@ -373,44 +375,67 @@ void PVTWorker::simulate_pvt_and_make_video(const double& tau, const QString& vi
 		auto num_seg = xPVA.P.size() - 1;
 		emit update_progress_range(0, num_seg);
 
-		// simulate and generate video frames one-by-one
-		for (int_t i = 0; i < num_seg; i++) {
-			simulator.removal_per_pvt_segment(
-				xPVA.P(i), xPVA.P(i + 1),
-				yPVA.P(i), yPVA.P(i + 1),
-				xPVA.V(i), xPVA.V(i + 1),
-				yPVA.V(i), yPVA.V(i + 1),
-				Zrem_per_iter,
-				x_dp_per_iter,
-				y_dp_per_iter
+		auto frame_img = m_vid_plt->toPixmap().toImage();
+
+		if (init_vid_writer(frame_img.width(), frame_img.height(), round(1 / tau), vid_file_name)) {
+			// simulate and generate video frames one-by-one
+			for (int_t i = 0; i < num_seg; i++) {
+				simulator.removal_per_pvt_segment(
+					xPVA.P(i), xPVA.P(i + 1),
+					yPVA.P(i), yPVA.P(i + 1),
+					xPVA.V(i), xPVA.V(i + 1),
+					yPVA.V(i), yPVA.V(i + 1),
+					Zrem_per_iter,
+					x_dp_per_iter,
+					y_dp_per_iter
+				);
+
+				// accumulate the removal
+				Zrem += Zrem_per_iter;
+				emit update_progress(i + 1);
+
+				// plot the current frame
+				MatrixXXd Zres_tmp_nm = 1e9 * (m_Z - Zrem);
+				draw_sim_surf(Zres_tmp_nm, m_minz, m_maxz);
+				draw_sim_path();
+				draw_sim_tif(x_dp_per_iter * 1e3, y_dp_per_iter * 1e3);
+				draw_title(Zres_tmp_nm.maxCoeff() - Zres_tmp_nm.minCoeff(), RMS(Zres_tmp_nm));
+
+				// create the frame
+				frame_img = m_vid_plt->toPixmap().toImage();
+				auto frame = cv::Mat(
+					frame_img.height(),
+					frame_img.width(),
+					CV_8UC4,
+					(uchar*)frame_img.bits(),
+					frame_img.bytesPerLine()
+				).clone();
+				cv::cvtColor(frame, frame, CV_RGBA2RGB);
+
+				// write the frame
+				m_cv_vid->write(frame);
+			}
+			m_cv_vid->release();
+
+			// show the final residual after generating the video
+			VectorXd coeffs;
+			m_Zres = remove_polynomials(coeffs, m_X, m_Y, m_Z - Zrem, 1);
+			emit update_res_plot(
+				m_X.rows(),
+				m_X.cols(),
+				m_X.maxCoeff(),
+				m_X.minCoeff(),
+				m_Y.maxCoeff(),
+				m_Y.minCoeff(),
+				m_Zres.maxCoeff(),
+				m_Zres.minCoeff(),
+				RMS(m_Zres),
+				m_X(0, 1) - m_X(0, 0),
+				QVector<double>(m_X.data(), m_X.data() + m_X.size()),
+				QVector<double>(m_Y.data(), m_Y.data() + m_Y.size()),
+				QVector<double>(m_Zres.data(), m_Zres.data() + m_Zres.size())
 			);
-			// accumulate the removal
-			Zrem += Zrem_per_iter;
-			emit update_progress(i + 1);
-
-			// update plot every 20 frames
-
-			// create and save each frame
 		}
-
-		// show the final residual after generating the video
-		VectorXd coeffs;
-		m_Zres = remove_polynomials(coeffs, m_X, m_Y, m_Z - Zrem, 1);
-		emit update_res_plot(
-			m_X.rows(),
-			m_X.cols(),
-			m_X.maxCoeff(),
-			m_X.minCoeff(),
-			m_Y.maxCoeff(),
-			m_Y.minCoeff(),
-			m_Zres.maxCoeff(),
-			m_Zres.minCoeff(),
-			RMS(m_Zres),
-			m_X(0, 1) - m_X(0, 0),
-			QVector<double>(m_X.data(), m_X.data() + m_X.size()),
-			QVector<double>(m_Y.data(), m_Y.data() + m_Y.size()),
-			QVector<double>(m_Zres.data(), m_Zres.data() + m_Zres.size())
-		);
 	}
 }
 
@@ -424,6 +449,7 @@ void PVTWorker::init_vid_plt()
 	// prepare the coordintes
 	m_X_mm = m_X * 1e3;
 	m_Y_mm = m_Y * 1e3;
+	m_Z_nm = ((m_Z.array() - m_Z.mean()) * 1e9).matrix();
 	VectorXd pxmm = m_xPVTC.P * 1e3;
 	VectorXd pymm = m_yPVTC.P * 1e3;
 	m_px_mm = QVector<double>(pxmm.data(), pxmm.data() + pxmm.size());
@@ -432,13 +458,13 @@ void PVTWorker::init_vid_plt()
 	m_maxx = m_X.maxCoeff();
 	m_miny = m_Y.minCoeff();
 	m_maxy = m_Y.maxCoeff();
-	m_maxz = m_Z.maxCoeff();
-	m_minz = m_Z.minCoeff();
+	m_maxz = m_Z_nm.maxCoeff();
+	m_minz = m_Z_nm.minCoeff();
 
 	// init the hidden plot
 	m_vid_plt.reset(new QCustomPlot());
-	m_vid_plt->setMinimumHeight(900);
-	m_vid_plt->setMinimumWidth(1600);
+	//m_vid_plt->setMinimumHeight(900);
+	//m_vid_plt->setMinimumWidth(1600);
 	m_vid_plt->xAxis2->setVisible(true);
 	m_vid_plt->xAxis2->setTickLabels(false);
 	m_vid_plt->yAxis2->setVisible(true);
@@ -461,7 +487,7 @@ void PVTWorker::init_vid_plt()
 	QCPMarginGroup* marginGroup = new QCPMarginGroup(m_vid_plt.get());
 	m_vid_plt->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 	scale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
-	draw_sim_surf(m_Z, m_minz, m_maxz);
+	draw_sim_surf(m_Z_nm, m_minz, m_maxz);
 
 	// init the path plot
 	m_path_plt = new QCPCurve(m_vid_plt->xAxis, m_vid_plt->yAxis);
@@ -481,10 +507,58 @@ void PVTWorker::init_vid_plt()
 	m_title = new QCPTextElement(m_vid_plt.get());
 	m_vid_plt->plotLayout()->addElement(0, 0, m_title);
 	m_title->setFont(QFont("sans", 17, QFont::Bold));
-	draw_title(1e9 * (m_maxz - m_minz), 1e9 * RMS(m_Z));
+	draw_title((m_maxz - m_minz), RMS(m_Z_nm));
 
 
 	m_vid_plt->savePng("test.png");
+}
+
+bool PVTWorker::init_vid_writer(const int& width, const int& height, const double& fps, const QString& file_name)
+{
+	QFileInfo file_info(file_name);
+	QString file_extension = file_info.suffix();
+
+	if (QString::compare(file_extension, QLatin1String("mp4")) == 0) {
+		m_cv_vid.reset(new cv::VideoWriter(
+			file_name.toStdString(),
+			CV_FOURCC('D', 'I', 'V', 'X'),
+			fps,
+			cv::Size(width, height),
+			true
+		));
+	}
+	else if (QString::compare(file_extension, QLatin1String("flv")) == 0) {
+		m_cv_vid.reset(new cv::VideoWriter(
+			file_name.toStdString(),
+			CV_FOURCC('F', 'L', 'V', '1'),
+			fps,
+			cv::Size(width, height),
+			true
+		));
+	}
+	else if (QString::compare(file_extension, QLatin1String("wmv")) == 0) {
+		m_cv_vid.reset(new cv::VideoWriter(
+			file_name.toStdString(),
+			CV_FOURCC('W', 'M', 'V', '2'),
+			fps,
+			cv::Size(width, height),
+			true
+		));
+	}
+	else if (QString::compare(file_extension, QLatin1String("mpeg")) == 0) {
+		m_cv_vid.reset(new cv::VideoWriter(
+			file_name.toStdString(),
+			CV_FOURCC('P', 'I', 'M', '2'),
+			fps,
+			cv::Size(width, height),
+			true
+		));
+	}
+	else {
+		emit err_msg(tr("Unsupported video format (%1) selected.").arg(file_extension));
+		return false;
+	}
+	return true;
 }
 
 void PVTWorker::draw_sim_path()
@@ -498,8 +572,10 @@ void PVTWorker::draw_sim_path()
 	m_vid_plt->replot();
 }
 
-void PVTWorker::draw_sim_surf(const MatrixXXd& Zres, const double& minz, const double& maxz)
+void PVTWorker::draw_sim_surf(const MatrixXXd& Zres, const double& minz_nm, const double& maxz_nm)
 {
+	auto z_mean = Zres.mean();
+
 	// 1. Set the size
 	m_surf_map->data()->setSize(Zres.cols(), Zres.rows());
 	m_surf_map->data()->setRange(QCPRange(m_minx * 1e3, m_maxx * 1e3), QCPRange(m_miny * 1e3, m_maxy * 1e3));
@@ -509,12 +585,12 @@ void PVTWorker::draw_sim_surf(const MatrixXXd& Zres, const double& minz, const d
 	{
 		for (int j = 0; j < Zres.cols(); j++)
 		{
-			m_surf_map->data()->setData(m_X_mm(i, j), m_Y_mm(i, j), Zres(i, j) * 1e9);
+			m_surf_map->data()->setData(m_X_mm(i, j), m_Y_mm(i, j), Zres(i, j) - z_mean);
 		}
 	}
 	
 	// 3. Rescale the color range
-	m_surf_map->setDataRange(QCPRange(minz * 1e9, maxz * 1e9));
+	m_surf_map->setDataRange(QCPRange(minz_nm, maxz_nm));
 
 	m_vid_plt->xAxis->setScaleRatio(m_vid_plt->yAxis, 1.0);
 	m_vid_plt->replot();
@@ -530,7 +606,7 @@ void PVTWorker::draw_sim_tif(const double& x_dp, const double& y_dp)
 
 void PVTWorker::draw_title(const double& pv, const double& rms)
 {
-	m_title->setText(tr("Residual height error, PV = %1 nm, RMS = %2 nm")
+	m_title->setText(tr("PV = %1 nm, RMS = %2 nm")
 		.arg(pv)
 		.arg(rms)
 	);

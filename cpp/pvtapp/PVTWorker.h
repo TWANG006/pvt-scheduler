@@ -6,6 +6,7 @@
 #include "pvtengine.h"
 #include "Scheduler.h"
 #include "qcustomplot.h"
+#include "opencv2/opencv.hpp"
 
 class PVTWorker : public QObject
 {
@@ -115,44 +116,47 @@ private:
 		QString& path_name
 	);
 	void init_vid_plt();
+	bool init_vid_writer(const int& width, const int& height, const double& fps, const QString& file_name);
 	void draw_sim_path();
 	void draw_sim_surf(const MatrixXXd& Zres, const double& minz, const double& maxz);
 	void draw_sim_tif(const double& x_dp, const double& y_dp);
 	void draw_title(const double& pv, const double& rms);
 
 private:
-	H5::H5File m_h5;  /*!< the H5 file handle*/
-	PVTC       m_xPVTC;
-	PVTC       m_yPVTC;
-	MatrixXXd  m_Xtif;/*!< TIF x coordinate grid*/
-	MatrixXXd  m_Ytif;/*!< TIF y coordinate grid*/
-	MatrixXXd  m_Ztif;/*!< TIF*/
-	MatrixXXd  m_X;   /*!< Initial surf X grid*/
-	MatrixXXd  m_Y;   /*!< Initial surf Y grid*/
-	MatrixXXd  m_Z;   /*!< Initial surf Z*/
-	MatrixXXd  m_Zres;/*!< residual surf Z*/
-	VectorXd   m_dpx; /*!< dwell point x coordinates*/
-	VectorXd   m_dpy; /*!< dwell point y coordiantes*/
-	VectorXd   m_dt;  /*!< dwell time and the dwell points*/
+	H5::H5File m_h5;   /*!< the H5 file handle*/
+	PVTC       m_xPVTC;/*!< calculated PVT for x*/
+	PVTC       m_yPVTC;/*!< calculated PVT for y*/
+	MatrixXXd  m_Xtif; /*!< TIF x coordinate grid*/
+	MatrixXXd  m_Ytif; /*!< TIF y coordinate grid*/
+	MatrixXXd  m_Ztif; /*!< TIF*/
+	MatrixXXd  m_X;    /*!< Initial surf X grid*/
+	MatrixXXd  m_Y;    /*!< Initial surf Y grid*/
+	MatrixXXd  m_Z;    /*!< Initial surf Z*/
+	MatrixXXd  m_Zres; /*!< residual surf Z*/
+	VectorXd   m_dpx;  /*!< dwell point x coordinates*/
+	VectorXd   m_dpy;  /*!< dwell point y coordiantes*/
+	VectorXd   m_dt;   /*!< dwell time and the dwell points*/
 
 	/* for video generation functionalities */
-	std::unique_ptr<QCustomPlot> m_vid_plt;   /*!< the hidden plot*/
-	QCPCurve*                    m_path_plt;  /*!< path plot*/
-	QCPColorMap*                 m_surf_map;  /*!< surf plot*/
-	QCPItemEllipse*              m_tif_circ;  /*!< TIF schematic plot*/
-	QCPTextElement*              m_title;     /*!< Figure title*/
-	double                       m_rx = 0.0;  /*!< TIF half length in x*/
-	double                       m_ry = 0.0;  /*!< TIF half length in y*/
-	double                       m_minx = 0.0;/*!< min X*/
-	double                       m_maxx = 0.0;/*!< max X*/
-	double                       m_miny = 0.0;/*!< min Y*/
-	double                       m_maxy = 0.0;/*!< max Y*/
-	double                       m_minz = 0.0;/*!< min Z*/
-	double                       m_maxz = 0.0;/*!< max Z*/
-	MatrixXXd                    m_X_mm;      /*!< X in mm*/
-	MatrixXXd                    m_Y_mm;      /*!< Y in mm*/
-	QVector<double>              m_px_mm;     /*!< px in mm*/
-	QVector<double>              m_py_mm;     /*!< py in mm*/
+	std::unique_ptr<cv::VideoWriter> m_cv_vid; /*!< opencv video writer*/
+	std::unique_ptr<QCustomPlot>     m_vid_plt;/*!< the hidden plot*/
+	QCPCurve*                        m_path_plt;  /*!< path plot*/
+	QCPColorMap*                     m_surf_map;  /*!< surf plot*/
+	QCPItemEllipse*                  m_tif_circ;  /*!< TIF schematic plot*/
+	QCPTextElement*                  m_title;     /*!< Figure title*/
+	double                           m_rx = 0.0;  /*!< TIF half length in x*/
+	double                           m_ry = 0.0;  /*!< TIF half length in y*/
+	double                           m_minx = 0.0;/*!< min X*/
+	double                           m_maxx = 0.0;/*!< max X*/
+	double                           m_miny = 0.0;/*!< min Y*/
+	double                           m_maxy = 0.0;/*!< max Y*/
+	double                           m_minz = 0.0;/*!< min Z*/
+	double                           m_maxz = 0.0;/*!< max Z*/
+	MatrixXXd                        m_X_mm;      /*!< X in mm*/
+	MatrixXXd                        m_Y_mm;      /*!< Y in mm*/
+	MatrixXXd                        m_Z_nm;      /*!< Y in mm*/
+	QVector<double>                  m_px_mm;     /*!< px in mm*/
+	QVector<double>                  m_py_mm;     /*!< py in mm*/
 };
 
 #endif // !PVT_WORKER_H
