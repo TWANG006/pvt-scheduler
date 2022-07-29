@@ -115,6 +115,10 @@ private:
 		QString& path_name
 	);
 	void init_vid_plt();
+	void draw_sim_path();
+	void draw_sim_surf(const MatrixXXd& Zres, const double& minz, const double& maxz);
+	void draw_sim_tif(const double& x_dp, const double& y_dp);
+	void draw_title(const double& pv, const double& rms);
 
 private:
 	H5::H5File m_h5;  /*!< the H5 file handle*/
@@ -132,10 +136,23 @@ private:
 	VectorXd   m_dt;  /*!< dwell time and the dwell points*/
 
 	/* for video generation functionalities */
-	std::unique_ptr<QCustomPlot> m_vid_plt;
-	QCPCurve* m_path_plt;
-	QCPColorMap* m_surf_map;
-	QCPItemEllipse* m_tif_circ;
+	std::unique_ptr<QCustomPlot> m_vid_plt;   /*!< the hidden plot*/
+	QCPCurve*                    m_path_plt;  /*!< path plot*/
+	QCPColorMap*                 m_surf_map;  /*!< surf plot*/
+	QCPItemEllipse*              m_tif_circ;  /*!< TIF schematic plot*/
+	QCPTextElement*              m_title;     /*!< Figure title*/
+	double                       m_rx = 0.0;  /*!< TIF half length in x*/
+	double                       m_ry = 0.0;  /*!< TIF half length in y*/
+	double                       m_minx = 0.0;/*!< min X*/
+	double                       m_maxx = 0.0;/*!< max X*/
+	double                       m_miny = 0.0;/*!< min Y*/
+	double                       m_maxy = 0.0;/*!< max Y*/
+	double                       m_minz = 0.0;/*!< min Z*/
+	double                       m_maxz = 0.0;/*!< max Z*/
+	MatrixXXd                    m_X_mm;      /*!< X in mm*/
+	MatrixXXd                    m_Y_mm;      /*!< Y in mm*/
+	QVector<double>              m_px_mm;     /*!< px in mm*/
+	QVector<double>              m_py_mm;     /*!< py in mm*/
 };
 
 #endif // !PVT_WORKER_H

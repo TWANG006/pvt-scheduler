@@ -12,6 +12,7 @@ PVTWorker::PVTWorker(QObject* parent)
 	, m_path_plt(nullptr)
 	, m_tif_circ(nullptr)
 	, m_surf_map(nullptr)
+	, m_title(nullptr)
 {
 	
 }
@@ -420,15 +421,31 @@ void PVTWorker::get_path_name(const QString& filePath, const QString& file_name,
 
 void PVTWorker::init_vid_plt()
 {
+	// prepare the coordintes
+	m_X_mm = m_X * 1e3;
+	m_Y_mm = m_Y * 1e3;
+	VectorXd pxmm = m_xPVTC.P * 1e3;
+	VectorXd pymm = m_yPVTC.P * 1e3;
+	m_px_mm = QVector<double>(pxmm.data(), pxmm.data() + pxmm.size());
+	m_py_mm = QVector<double>(pymm.data(), pymm.data() + pymm.size());
+	m_minx = m_X.minCoeff();
+	m_maxx = m_X.maxCoeff();
+	m_miny = m_Y.minCoeff();
+	m_maxy = m_Y.maxCoeff();
+	m_maxz = m_Z.maxCoeff();
+	m_minz = m_Z.minCoeff();
+
 	// init the hidden plot
 	m_vid_plt.reset(new QCustomPlot());
+	m_vid_plt->setMinimumHeight(900);
+	m_vid_plt->setMinimumWidth(1600);
 	m_vid_plt->xAxis2->setVisible(true);
 	m_vid_plt->xAxis2->setTickLabels(false);
 	m_vid_plt->yAxis2->setVisible(true);
 	m_vid_plt->yAxis2->setTickLabels(false);
 	connect(m_vid_plt->xAxis, SIGNAL(rangeChanged(QCPRange)), m_vid_plt->xAxis2, SLOT(setRange(QCPRange)));
 	connect(m_vid_plt->yAxis, SIGNAL(rangeChanged(QCPRange)), m_vid_plt->yAxis2, SLOT(setRange(QCPRange)));
-
+	
 	// init the colormap
 	m_surf_map = new QCPColorMap(m_vid_plt->xAxis, m_vid_plt->yAxis);
 	QCPColorScale* scale = new QCPColorScale(m_vid_plt.get());
@@ -444,18 +461,81 @@ void PVTWorker::init_vid_plt()
 	QCPMarginGroup* marginGroup = new QCPMarginGroup(m_vid_plt.get());
 	m_vid_plt->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 	scale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+	draw_sim_surf(m_Z, m_minz, m_maxz);
 
 	// init the path plot
 	m_path_plt = new QCPCurve(m_vid_plt->xAxis, m_vid_plt->yAxis);
-	m_path_plt->setPen(QPen(QColor(40, 110, 255)));
+	m_path_plt->setPen(QPen(QColor(40, 110, 255, 128)));
 	m_path_plt->setLineStyle(QCPCurve::lsLine);
 	m_path_plt->setScatterStyle(QCPScatterStyle::ssDisc);
-
-	// init the tif circ
+	draw_sim_path();
+	
+	// init the tif circ to be at the starting point on the path
 	m_tif_circ = new QCPItemEllipse(m_vid_plt.get());
+	m_tif_circ->setPen(QPen(QColor(60, 82, 45)));
+	draw_sim_tif(m_xPVTC.P(0) * 1e3, m_yPVTC.P(0) * 1e3);
 
-	// rescale the graph so that it its the visible area
-	m_vid_plt->rescaleAxes();
+
+	// set title
+	m_vid_plt->plotLayout()->insertRow(0);
+	m_title = new QCPTextElement(m_vid_plt.get());
+	m_vid_plt->plotLayout()->addElement(0, 0, m_title);
+	m_title->setFont(QFont("sans", 17, QFont::Bold));
+	draw_title(1e9 * (m_maxz - m_minz), 1e9 * RMS(m_Z));
+
+
+	m_vid_plt->savePng("test.png");
+}
+
+void PVTWorker::draw_sim_path()
+{
+	m_path_plt->setData(
+		QVector<double>(m_px_mm.data(), m_px_mm.data() + m_px_mm.size()),
+		QVector<double>(m_py_mm.data(), m_py_mm.data() + m_py_mm.size())
+	);
+	m_path_plt->rescaleAxes();
+	m_vid_plt->xAxis->setScaleRatio(m_vid_plt->yAxis, 1.0);
+	m_vid_plt->replot();
+}
+
+void PVTWorker::draw_sim_surf(const MatrixXXd& Zres, const double& minz, const double& maxz)
+{
+	// 1. Set the size
+	m_surf_map->data()->setSize(Zres.cols(), Zres.rows());
+	m_surf_map->data()->setRange(QCPRange(m_minx * 1e3, m_maxx * 1e3), QCPRange(m_miny * 1e3, m_maxy * 1e3));
+
+	// 2. Feed the data
+	for (int i = 0; i < Zres.rows(); i++)
+	{
+		for (int j = 0; j < Zres.cols(); j++)
+		{
+			m_surf_map->data()->setData(m_X_mm(i, j), m_Y_mm(i, j), Zres(i, j) * 1e9);
+		}
+	}
+	
+	// 3. Rescale the color range
+	m_surf_map->setDataRange(QCPRange(minz * 1e9, maxz * 1e9));
+
+	m_vid_plt->xAxis->setScaleRatio(m_vid_plt->yAxis, 1.0);
+	m_vid_plt->replot();
+}
+
+void PVTWorker::draw_sim_tif(const double& x_dp, const double& y_dp)
+{
+	m_tif_circ->topLeft->setCoords(x_dp - m_rx * 1e3, y_dp + m_ry * 1e3);
+	m_tif_circ->bottomRight->setCoords(x_dp + m_rx * 1e3, y_dp - m_ry * 1e3);
+	m_vid_plt->xAxis->setScaleRatio(m_vid_plt->yAxis, 1.0);
+	m_vid_plt->replot();
+}
+
+void PVTWorker::draw_title(const double& pv, const double& rms)
+{
+	m_title->setText(tr("Residual height error, PV = %1 nm, RMS = %2 nm")
+		.arg(pv)
+		.arg(rms)
+	);
+	m_vid_plt->xAxis->setScaleRatio(m_vid_plt->yAxis, 1.0);
+	m_vid_plt->replot();
 }
 
 void PVTWorker::load_tif(const QString& file_name, const QString& fullPath)
@@ -480,6 +560,10 @@ void PVTWorker::load_tif(const QString& file_name, const QString& fullPath)
 			emit err_msg("Xtif, Ytif and Ztif should be in the same size.");
 		}
 		else{
+			// calculate the TIF dimensions
+			m_rx = 0.5 * (m_Xtif.maxCoeff() - m_Xtif.minCoeff());
+			m_ry = 0.5 * (m_Ytif.maxCoeff() - m_Ytif.minCoeff());
+
 			// plot the TIF
 			auto sz = m_Ztif.rows() * m_Ztif.cols();
 			emit update_tif_plot(
