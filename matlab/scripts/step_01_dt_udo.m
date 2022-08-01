@@ -55,7 +55,7 @@ subplot(247);
 ShowSurfaceMap(Xca, Yca, Zremoval_ca, 3, true, 1e9, 'nm', 'Removed surface error');
 subplot(248);
 ShowSurfaceMap(Xca, Yca, Zresidual_ca, 3, true, 1e9, 'nm', 'Residual surface error');
-
+hold on; plot3(xp*1e3, yp*1e3, 100*ones(size(xp,2),1), 'b-', 'LineWidth', 1); hold off;
 
 %% save data
 save([data_dir mfilename '.mat'], ...

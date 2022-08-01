@@ -1,5 +1,5 @@
 clear;
-close all;
+% close all;
 clc;
 
 addpath('../../../5-functions/');
@@ -81,8 +81,8 @@ figure;
 %     i1...
 % );
 
-[px, py, xp, yp] = maze_path(round((r1+r0)*1e3), 0.5);
-
+[px, py, xp, yp] = maze_path(round(2*(r1+r0)*1e3), 0.25); % interval ×0.25
+% [px, py, xp, yp] = maze_path(round((r1+r0)*1e3), 0.5);
 px = px * 1e-3;
 py = py * 1e-3;
 xp = xp(1:end-1) * 1e-3;

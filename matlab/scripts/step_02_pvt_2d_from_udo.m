@@ -15,7 +15,7 @@ ax_max = 2; % Maximum acceleration in the x-direction
 vx_max = 250e-3; % Maximum velocity in the x-direction
 
 ay_max = 1;
-vy_max = 150e-3;
+vy_max = 3e-3; % 9e-3
 
 tau = 1/20;
 
