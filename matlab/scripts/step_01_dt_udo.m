@@ -12,11 +12,19 @@ Xtif = Xtif1;
 Ytif = Ytif1;
 Ztif = Ztif1;
 
+% parameter of kinematics
+ax_max = 2; % Maximum acceleration in the x-direction
+vx_max = 250e-3; % Maximum velocity in the x-direction
+ay_max = 1;
+vy_max = 9e-3;
+
+% parameter of dwell time
 precision = 1e-3;
 precision_unit = 'nm';
-min_t = 10e-2;
 tif1Params.tif_mpp = median(diff(Xtif(1, :)));
 
+delta_p = xp(2) - xp(1);
+min_t = 2 * delta_p / min(vx_max, vy_max); % 10e-2;
 
 %% dwell time
 [t, Zremoval_ca, Zresidual_ca] = dwell_time_2d_rect_udo_rise(...
@@ -68,5 +76,6 @@ save([data_dir mfilename '.mat'], ...
     't', ...
     'px', ...
     'py', ...
-    'Xtif', 'Ytif', 'Ztif'...
+    'Xtif', 'Ytif', 'Ztif', ...
+    'ax_max', 'ay_max', 'vx_max', 'vy_max' ...
     );

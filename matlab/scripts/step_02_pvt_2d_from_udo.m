@@ -11,17 +11,35 @@ load([data_dir data_file]);
 cs_t = cumsum([0;t(:)]);
 
 %% parameters
-ax_max = 2; % Maximum acceleration in the x-direction
-vx_max = 250e-3; % Maximum velocity in the x-direction
-
-ay_max = 1;
-vy_max = 3e-3; % 9e-3
+% ax_max = 2; % Maximum acceleration in the x-direction
+% vx_max = 250e-3; % Maximum velocity in the x-direction
+% 
+% ay_max = 1;
+% vy_max = 3e-3; % 9e-3
 
 tau = 1/20;
 
 %% calculate pvt for x and y seperately
 [vx, ax, cx] = pvt_scheduler(px, cs_t, ax_max, vx_max, false);
 [vy, ay, cy] = pvt_scheduler(py, cs_t, ay_max, vy_max, false);
+
+% %%
+% pxx = zeros(size(px,1), size(px,2)) * NaN;
+% pyy = zeros(size(py,1), size(py,2)) * NaN;
+% vxx = zeros(size(vx,1), size(vx,2)) * NaN;
+% vyy = zeros(size(vy,1), size(vy,2)) * NaN;
+% for i= 1: length(px) - 1
+% pxx(i) = calculate_pvt_p(cs_t(i), cx(i, :));
+% pyy(i) = calculate_pvt_p(cs_t(i), cy(i, :));
+% vxx(i) = calculate_pvt_v(cs_t(i), cx(i, :));
+% vyy(i) = calculate_pvt_v(cs_t(i), cy(i, :));
+% end
+% max(vxx)
+% max(vyy)
+% figure;
+% plot(px, py, 'o'); hold on;
+% plot(pxx, pyy, '-'); hold off;
+% % return;
 
 %% simulation
 px_s = [];
