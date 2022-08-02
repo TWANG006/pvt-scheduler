@@ -60,7 +60,7 @@ Room=NotVisited*ones(xn,yn);
 currentP=sub2ind(size(tempPath),2,4);
 S=[sub2ind(size(tempPath),2,2) sub2ind(size(tempPath),2,3) currentP];
 Room(S)=Visited;
-offset=[-1, xn, 1, -yn];
+offset=[-1, xn, 1, -xn];
 while (~isempty(currentP))
     moves = currentP+offset;
     if (~isempty(Room(moves)==NotVisited))&&(~isempty(tempPath(moves)==1))
