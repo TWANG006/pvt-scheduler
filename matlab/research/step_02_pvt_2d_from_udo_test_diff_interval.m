@@ -2,57 +2,12 @@ clear;
 % close all;
 clc;
 addpath(genpath('../functions'));
-
+addpath(genpath('../scripts')); % feedrate_simulator_maze_path_per_segment.m
 %% generate a very simple 5-point 2d path
 data_dir = '../../data/sim_data/';
 data_file = 'step_01_dt_udo_test1.mat';
 load([data_dir data_file]);
 
-%%
-i_num = size(px,2);
-xp1 = [];
-yp1 = [];
-px1 = [];
-py1 = [];
-t1 = [];
-nx = 5;
-
-t = [0; t];
-for i = 2 : i_num
-    px1 = [px1, linspace(px(i-1), px(i), nx)];
-    py1 = [py1, linspace(py(i-1), py(i), nx)];
-    t1 = [t1, linspace(t(i-1), t(i), nx)];
-end
-
-
-xp1 = []; % dwell points
-yp1 = [];
-for i = 1: size(px1,2) - 1
-    if py1(i) == py1(i+1)
-        xp1(i) = (px1(i) + px1(i+1))/2;
-        yp1(i) = py1(i);
-    end
-    if px1(i) == px1(i+1)
-        xp1(i) = px1(i);
-        yp1(i) = (py1(i) + py1(i+1))/2;
-    end   
-end
-
-
-figure;
-plot(px, py, 'bo-'); 
-hold on
-plot(px1, py1, 'r*'); 
-hold off;
-axis equal;
-
-px = px1;
-py = py1;
-xp = xp1;
-yp = yp1;
-t = t1(2:end);
-
-%%
 cs_t = cumsum([0;t(:)]);
 
 %% parameters
@@ -209,7 +164,7 @@ ShowSurfaceMap(Xca, Yca, Zresidual_ca, 3, true, 1e9, 'nm', 'Residual surface err
 hold on; plot3(px_s*1e3, py_s*1e3, 100*ones(size(px_s,1),1), 'b-', 'LineWidth', 1); hold off;
 
 %% save data
-save([data_dir mfilename '.mat'], ...
+save([data_dir mfilename '_' num2str(n_inter) '.mat'], ...
     'X', 'Y', 'Z', ...
     'Xca', 'Yca', 'Zca',  ...
     'Zremoval_ca', 'Zresidual_ca',  ...

@@ -4,7 +4,7 @@ close all;
 %% load data.
 
 data_dir = '../../data/sim_data/';
-data_file = 'step_02_pvt_2d_from_udo_test_diff_interval_1.mat';
+data_file = 'step_02_pvt_2d_from_udo_test_diff_interval_2.mat';
 load([data_dir data_file], 'px', 'py','px_s','py_s');
 
 subplot(1,2,1);

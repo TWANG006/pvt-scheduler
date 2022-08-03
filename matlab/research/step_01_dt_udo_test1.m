@@ -1,7 +1,11 @@
 clear;
-% close all;
+close all;
 clc;
 addpath('../functions/');
+
+%% input parameters
+
+n_inter = 5; % number of interpolations. (n_inter = 2, if the path is not to be denser)
 
 %% load data
 data_dir = '../../data/sim_data/';
@@ -22,10 +26,56 @@ vy_max = 9e-3;
 precision = 1e-3;
 precision_unit = 'nm';
 tif1Params.tif_mpp = median(diff(Xtif(1, :)));
+%% Interpolate path points & dwell points
+figure;
+subplot(1,2,1)
+plot(px, py, 'bo-'); 
+hold on
+plot(xp, yp, 'r*'); 
+hold off;
+axis equal;
+legend('path points','dwell points');
 
+i_num = size(px,2);
+xp1 = [];% dwell points
+yp1 = [];
+px1 = [];% path points
+py1 = [];
+
+for i = 2 : i_num
+    px02px1 = linspace(px(i-1), px(i), n_inter);
+    py02py1 = linspace(py(i-1), py(i), n_inter);
+    px1 = [px1, px02px1(1:end-1)]; 
+    py1 = [py1, py02py1(1:end-1)];
+end
+
+for i = 1: size(px1,2) - 1
+    if py1(i) == py1(i+1)
+        xp1(i) = (px1(i) + px1(i+1))/2; 
+        yp1(i) = py1(i);
+    end
+    if px1(i) == px1(i+1)
+        xp1(i) = px1(i);
+        yp1(i) = (py1(i) + py1(i+1))/2;
+    end   
+end
+
+px = px1;
+py = py1;
+xp = xp1;
+yp = yp1;
+
+subplot(1,2,2)
+plot(px, py, 'bo-'); 
+hold on
+plot(xp, yp, 'r*'); 
+hold off;
+axis equal;
+legend('path points','dwell points');
+
+%%
 delta_p = xp(2) - xp(1);
 min_t = 2 * delta_p / min(vx_max, vy_max); % 10e-2;
-
 %% dwell time
 [t, Zremoval_ca, Zresidual_ca] = dwell_time_2d_rect_udo_rise(...
     Xca, ...
@@ -77,5 +127,6 @@ save([data_dir mfilename '.mat'], ...
     'px', ...
     'py', ...
     'Xtif', 'Ytif', 'Ztif', ...
-    'ax_max', 'ay_max', 'vx_max', 'vy_max' ...
+    'ax_max', 'ay_max', 'vx_max', 'vy_max', ...
+    'n_inter' ...
     );
