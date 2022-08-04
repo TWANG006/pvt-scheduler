@@ -1,0 +1,90 @@
+clear;
+close all;
+clc;
+
+
+%% generate a very simple 5-point 2d path
+px = [1e-3, 2e-3, 3.5e-3, 5e-3, 1e-3];
+py = [1e-3, 2e-3, 2.5e-3, 1.8e-3, 1e-3];
+pt = [0, 0.1, 0.12, 0.23, 0.3] * 5;
+t = diff(pt);
+
+
+%% parameters
+ax_max = 2;
+vx_max = 250e-3;
+
+ay_max = 1;
+vy_max = 150e-3;
+
+tau = 1/60;
+
+
+%% calculate pvt for x and y seperately
+vx = velocities_with_const_acc_scheduler(px, t, vx_max, ax_max);
+vy = velocities_with_const_acc_scheduler(py, t, vy_max, ay_max);
+
+% calculated positions
+sx = velocities_with_const_acc_calculate_s(vx, t, ax_max);
+sy = velocities_with_const_acc_calculate_s(vy, t, ay_max);
+
+p_sx = cumsum([px(1) sx]);
+p_sy = cumsum([py(1) sy]);
+
+
+return;
+
+
+%% simulation
+px_s = [];
+ax_s = [];
+vx_s = [];
+
+py_s = [];
+ay_s = [];
+vy_s = [];
+
+for n = 1: length(pt) - 1
+    % 1. generate t's for each segment
+    if n == 1
+        t0 = pt(n);
+    else
+        t0 = pt(n) + tau;
+    end
+    t1 = pt(n + 1);
+    t02t1 = linspace(t0, t1, ceil((t1 - t0) / tau));
+    
+    px_s = [px_s; calculate_pvt_p(t02t1, cx(n, :))];
+    vx_s = [vx_s; calculate_pvt_v(t02t1, cx(n, :))];
+    ax_s = [ax_s; calculate_pvt_a(t02t1, cx(n, :))];
+    
+    py_s = [py_s; calculate_pvt_p(t02t1, cy(n, :))];
+    vy_s = [vy_s; calculate_pvt_v(t02t1, cy(n, :))];
+    ay_s = [ay_s; calculate_pvt_a(t02t1, cy(n, :))];
+end
+
+
+%% plot
+figure;
+subplot(1, 4, 1);
+plot(px(1: end-1), py(1: end-1), 'o', 'MarkerSize', 10, 'MarkerFaceColor', 'r'); hold on;
+xlim([0 6e-3]);
+ylim([0 4e-3]);
+plot(px_s, py_s, 'b-', 'LineWidth', 2); hold off;
+title('Trajectory');
+axis square;
+
+subplot(1, 4, 2);
+plot(px_s + py_s, 'LineWidth', 2);
+title('Positions');
+axis square;
+
+subplot(1, 4, 3);
+plot(vx_s + vy_s, 'LineWidth', 2);
+title('Velicities');
+axis square;
+
+subplot(1, 4, 4);
+plot(ax_s + ay_s, 'LineWidth', 2);
+title('Accelerations');
+axis square;
