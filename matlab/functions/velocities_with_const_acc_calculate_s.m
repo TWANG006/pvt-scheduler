@@ -11,9 +11,13 @@ function [s, sa, sc] = velocities_with_const_acc_calculate_s(...
 %   sc: displacements for the constant-velocity parts
 %    s: s = sa + sc, is the whole displacements
 
+% determine acc or dcc
+a = ones(size(t)) * amax;
+a(v(2: end) - v(1: end - 1) < 0) = -amax;
+
 % calculate t1 & s1
-ta = (v(2: end) - v(1: end - 1)) / amax;
-sa = (v(2: end).^2 - v(1: end - 1).^2) / (2 * amax);
+ta = (v(2: end) - v(1: end - 1)) ./ a;
+sa = (v(2: end).^2 - v(1: end - 1).^2) ./ (2 * amax);
 
 % calculate t2 & s2
 tc = t - ta;
