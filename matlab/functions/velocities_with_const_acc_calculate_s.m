@@ -17,7 +17,7 @@ a(v(2: end) - v(1: end - 1) < 0) = -amax;
 
 % calculate t1 & s1
 ta = (v(2: end) - v(1: end - 1)) ./ a;
-sa = (v(2: end).^2 - v(1: end - 1).^2) ./ (2 * amax);
+sa = (v(2: end).^2 - v(1: end - 1).^2) ./ (2 * a);
 
 % calculate t2 & s2
 tc = t - ta;
