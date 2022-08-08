@@ -7,7 +7,7 @@ data_dir = '../../data/sim_data/';
 %% generate a very simple 5-point 2d path
 px = [1e-3, 2e-3, 3.5e-3, 5e-3, 1e-3];
 py = [1e-3, 2e-3, 2.5e-3, 1.8e-3, 1e-3];
-t = [0, 0.1, 0.12, 0.23, 0.3] * 10;
+t = [0, 0.1, 0.12, 0.23, 0.3] * 5;
 
 
 %% parameters
@@ -56,30 +56,53 @@ end
 
 %% plot
 figure;
-subplot(1, 4, 1);
+subplot(2, 4, 1);
 plot(px(1: end-1), py(1: end-1), 'o', 'MarkerSize', 10, 'MarkerFaceColor', 'r'); hold on;
-xlim([0 6e-3]);
-ylim([0 4e-3]);
+% xlim([0 6e-3]);
+% ylim([0 4e-3]);
 plot(px_s, py_s, 'b-', 'LineWidth', 2); hold off;
 title('Trajectory');
 axis square;
 
-subplot(1, 4, 2);
-plot(px_s + py_s, 'LineWidth', 2);
-title('Positions');
+subplot(2, 4, 2);
+plot(px_s, 'LineWidth', 2);
+title('Positions x');
 axis square;
 
-subplot(1, 4, 3);
-plot(vx_s + vy_s, 'LineWidth', 2);
-title('Velicities');
+subplot(2, 4, 3);
+plot(vx_s, 'LineWidth', 2); hold on;
+plot(ones(size(vx_s)) * vx_max, 'r-', 'LineWidth', 2); hold on;
+plot(-ones(size(vx_s)) * vx_max,'r-', 'LineWidth', 2); hold off;
+title('Velicities x');
 axis square;
 
-subplot(1, 4, 4);
-plot(ax_s + ay_s, 'LineWidth', 2);
-title('Accelerations');
+subplot(2, 4, 4);
+plot(ax_s, 'LineWidth', 2); hold on;
+plot(ones(size(ax_s)) * ax_max, 'r-', 'LineWidth', 2); hold on;
+plot(-ones(size(ax_s)) * ax_max,'r-', 'LineWidth', 2); hold off;
+title('Accelerations x');
 axis square;
 
+subplot(2, 4, 6);
+plot(py_s, 'LineWidth', 2);
+title('Positions y');
+axis square;
 
+subplot(2, 4, 7);
+plot(vy_s, 'LineWidth', 2); hold on;
+plot(ones(size(vy_s)) * vy_max, 'r-', 'LineWidth', 2); hold on;
+plot(-ones(size(vy_s)) * vy_max,'r-', 'LineWidth', 2); hold off;
+title('Velicities y');
+axis square;
+
+subplot(2, 4, 8);
+plot(ay_s, 'LineWidth', 2); hold on;
+plot(ones(size(ay_s)) * ay_max, 'r-', 'LineWidth', 2); hold on;
+plot(-ones(size(ay_s)) * ay_max,'r-', 'LineWidth', 2); hold off;
+title('Accelerations y');
+axis square;
+
+return;
 %%
 h5create([data_dir mfilename '.h5'], '/px', size(px));
 h5write([data_dir mfilename '.h5'], '/px', px);
