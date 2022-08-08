@@ -1,6 +1,6 @@
-function v = velocities_with_const_acc_scheduler(...
+function [v, t] = velocities_with_const_acc_scheduler(...
     p,    ... points on the tool path
-    t,    ... dwell time to travel each two tool path points
+    dt,    ... dwell time to travel each two tool path points
     vmax, ... max feedrate of the stage
     amax  ... max acceleration of the stage
 )
@@ -24,29 +24,16 @@ function v = velocities_with_const_acc_scheduler(...
 
 %% 1. calculate the intervals between each two consecutive tool path points
 s = diff(p);
-% ds = 0 * s;
 v = 0 * p;
-% t1 = 0 * t;
-% t2 = 0 * t;
+t = 0 * dt;
+
 
 %% 2. call the calculate_feedrate function
-for k = 1: length(t)
+for k = 1: length(dt)
     % calculate the velocities
-    v(k + 1) = calculate_velocity(...
+    [v(k + 1), t(k)] = calculate_velocity(...
         s(k), ...
-        t(k), ...
-        v(k), ...
-        amax  ...
-    );       
-end
-
-v(1) = v(2); % update the initial velocity
-
-% calculate again using the updated v0
-for k = 1: length(t)    
-    v(k + 1) = calculate_velocity(...
-        s(k), ...
-        t(k), ...
+        dt(k), ...
         v(k), ...
         amax  ...
     );       
@@ -61,7 +48,7 @@ v(v < -vmax) = -vmax;
 end
 
 
-function v = calculate_velocity(...
+function [v, t] = calculate_velocity(...
     sk, ... displacement
     tk, ... time
     v0,... initial velocity
@@ -70,39 +57,44 @@ function v = calculate_velocity(...
 
 % it is acceleration
 if sk / tk > v0
-    v = vk1(v0, a, tk, sk);    
+    [v, t] = vk1(v0, a, tk, sk);    
 % it is decceleration
 elseif sk / tk < v0
-    v = vk2(v0, a, tk, sk);
+    [v, t] = vk2(v0, a, tk, sk);
 % it is constant velocity
 else
-    v = v0;    
+    v = v0;
+    t = tk;
 end
 
 end
 
 
-function v = vk1(v0, a, tk, sk)
+function [v, t] = vk1(v0, a, tk, sk)
 
 delta = (v0 + a * tk).^2 - (v0.^2 + 2 * a * sk);
 
 if delta >= 0
     v = v0 + a * tk - sqrt(delta);
+    t = tk;
 else
     v = vk3(v0, a, sk);
+    t = (v - v0) / a;
 end
 
 end
 
 
-function v = vk2(v0, a, tk, sk)
+function [v, t] = vk2(v0, a, tk, sk)
 
 delta = (v0 - a * tk).^2 - (v0.^2 - 2 * a * sk);
 
 if delta >= 0
     v = v0 - a * tk + sqrt(delta);
+    t = tk;
 else
     v = vk3(v0, -a, sk);
+    t = (v - v0) / a;
 end
 
 end
