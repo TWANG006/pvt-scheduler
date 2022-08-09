@@ -76,9 +76,12 @@ for n = 1: length(p) - 1
         pi2p1 = p(n) + sa + vi2v1 .* (ti2t1 - ta(n));
         ai2a1 = 0;
         
-        v02v1 = [v02vi(:); vi; vi2v1(:)];
-        p02p1 = [p02pi(:); pi; pi2p1(:)];
-        a02a1 = [a02ai(:); ai; ai2a1(:)];       
+%         v02v1 = [v02vi(:); vi; vi2v1(:)];
+%         p02p1 = [p02pi(:); pi; pi2p1(:)];
+%         a02a1 = [a02ai(:); ai; ai2a1(:)]; 
+        v02v1 = [v02vi(:); vi2v1(:)];
+        p02p1 = [p02pi(:); pi2p1(:)];
+        a02a1 = [a02ai(:); ai2a1(:)];
     end
     
     ps = [ps; p02p1(:)];
