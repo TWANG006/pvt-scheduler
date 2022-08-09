@@ -40,7 +40,6 @@ for n = 1: length(p) - 1
     end
     t1 = t(n + 1);
     t02t1 = linspace(t0, t1, ceil((t1 - t0) / tau))';
-    ts = [ts; t02t1(:)];
     
     % first id where t02t1(id) > ta(n)
     i = find(t02t1 >= ta(n), 1);    
@@ -77,6 +76,7 @@ for n = 1: length(p) - 1
     ps = [ps; p02p1(:)];
     vs = [vs; v02v1(:)];
     as = [as; a02a1(:)];
+    ts = [ts; t02t1(:)];
     
 end
 
