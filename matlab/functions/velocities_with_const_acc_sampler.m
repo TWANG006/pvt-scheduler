@@ -61,12 +61,12 @@ for n = 1: length(p) - 1
         % calculation
         v02vi = v(n) + an(n) * (t02ti(:) - t(n));
         p02pi = p(n) + 0.5 * (v02vi + v(n)) .* (t02ti - t(n));
-        a02ai = an(n);
+        a02ai = an(n) * ones(size(v02vi));
         sa = (v(n + 1).^2 - v(n).^2) / (2 * an(n));
         
         vi2v1 = v(n + 1) * ones(length(ti2t1), 1);
         pi2p1 = p(n) + sa + vi2v1 .* (ti2t1 - ta(n));
-        ai2a1 = 0;
+        ai2a1 = 0 * ones(size(vi2v1));
         
         v02v1 = [v02vi(:); vi2v1(:)];
         p02p1 = [p02pi(:); pi2p1(:)];

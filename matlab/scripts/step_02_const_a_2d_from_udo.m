@@ -143,7 +143,7 @@ subplot(247);
 ShowSurfaceMap(Xca, Yca, Zremoval_ca, 3, true, 1e9, 'nm', 'Removed surface error');
 subplot(248);
 ShowSurfaceMap(Xca, Yca, Zresidual_ca, 3, true, 1e9, 'nm', 'Residual surface error'); 
-hold on; plot3(px_s*1e3, py_s*1e3, 100*ones(size(px_s,1),1), 'b-', 'LineWidth', 1); hold off;
+hold on; plot3(px_s*1e3, py_s*1e3, 100*ones(size(px_s)), 'b-', 'LineWidth', 1); hold off;
 
 
 %% save data
