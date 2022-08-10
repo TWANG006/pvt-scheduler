@@ -11,18 +11,13 @@ pt = [0, 0.1, 0.12, 0.23, 0.3] * 5;
 t = diff(pt);
 
 %% parameters
-% ax_max = 2;
-% vx_max = 250e-3;
-% 
-% ay_max = 1;
-% vy_max = 150e-3;
-
-ax_max = 4e-1;
+ax_max = 2;
 vx_max = 250e-3;
-ay_max = 2e-1;
+
+ay_max = 1;
 vy_max = 150e-3;
 
-tau = 1/8000;
+tau = 1/20;
 
 %% calculate pvt for x and y seperately
 vx = velocities_with_const_acc_scheduler(px, t, vx_max, ax_max);
@@ -33,9 +28,6 @@ vy = velocities_with_const_acc_scheduler(py, t, vy_max, ay_max);
 % sy = velocities_with_const_acc_calculate_s(vy, t, ay_max);
 [sx, sx_a, sx_c, tx_a, tx_c, ax] = velocities_with_const_acc_calculate_s_t(vx, t, ax_max);
 [sy, sy_a, sy_c, ty_a, ty_c, ay] = velocities_with_const_acc_calculate_s_t(vy, t, ay_max);
-
-p_sx = cumsum([px(1) sx]);
-p_sy = cumsum([py(1) sy]);
 
 %% simulation
 px_s = px(1);
