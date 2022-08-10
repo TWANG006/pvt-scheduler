@@ -11,13 +11,18 @@ pt = [0, 0.1, 0.12, 0.23, 0.3] * 5;
 t = diff(pt);
 
 %% parameters
-ax_max = 2;
-vx_max = 250e-3;
+% ax_max = 2;
+% vx_max = 250e-3;
+% 
+% ay_max = 1;
+% vy_max = 150e-3;
 
-ay_max = 1;
+ax_max = 4e-1;
+vx_max = 250e-3;
+ay_max = 2e-1;
 vy_max = 150e-3;
 
-tau = 1/20;
+tau = 1/8000;
 
 %% calculate pvt for x and y seperately
 vx = velocities_with_const_acc_scheduler(px, t, vx_max, ax_max);
@@ -35,11 +40,11 @@ p_sy = cumsum([py(1) sy]);
 %% simulation
 px_s = px(1);
 vx_s = vx(1);
-ax_s = ax(1);
+ax_s = 0;% ax(1);
 
 py_s = py(1);
 vy_s = vy(1);
-ay_s = ay(1);
+ay_s = 0;% ay(1);
 
 for n = 1: length(t)
     % 1. generate t's for each segment
@@ -57,9 +62,9 @@ for n = 1: length(t)
         vx(n), ... v_(k-1)
         vx(n+1) ... v_k
         );
-    if n < length(t)
-        ax_t02t1(end) = ax(n+1); % ax_t02t1(end) is the start of the next part.
-    end
+%     if n < length(t)
+%         ax_t02t1(end) = ax(n+1); % ax_t02t1(end) is the start of the next part.
+%     end
     px_s = [px_s, px_t02t1];
     vx_s = [vx_s, vx_t02t1];
     ax_s = [ax_s, ax_t02t1];
@@ -74,9 +79,9 @@ for n = 1: length(t)
         vy(n), ... v_(k-1)
         vy(n+1) ... v_k
         );
-    if n < length(t)
-        ay_t02t1(end) = ay(n+1); % ay_t02t1(end) is the start of the next part.
-    end
+%     if n < length(t)
+%         ay_t02t1(end) = ay(n+1); % ay_t02t1(end) is the start of the next part.
+%     end
     py_s = [py_s, py_t02t1];
     vy_s = [vy_s, vy_t02t1];
     ay_s = [ay_s, ay_t02t1];
