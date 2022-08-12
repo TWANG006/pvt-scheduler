@@ -57,23 +57,24 @@ tmp_Z = remove_polynomials(X, Y, Z, 1);
 
 range_z = 0.5 * (nanmax(tmp_Z(:)) - nanmin(tmp_Z(:)));
 
+delta_s = 0 * ones(size(px_s));
+delta_v = 0 * ones(size(px_s));
+delta_t = 0 * ones(size(px_s));
+
 figure;
 for i = 1: size(px_s)-1
-    %         [Zn, xdg, ydg] = feedrate_simulator_raster_path_per_segment(...
-    %             X, ...
-    %             Y, ...
-    %             y{m, 1}(1), ...
-    %             p{m, 1}(n), p{m, 1}(n + 1), ...
-    %             v{m, 1}(n), v{m, 1}(n + 1), ...
-    %             F ...
-    %         );
-    [Zn, xdg, ydg] = feedrate_simulator_maze_path_per_segment(...
+    delta_s(i) = sqrt((px_s(i + 1) - px_s(i))^2 + (py_s(i + 1) - py_s(i))^2);
+    delta_v(i) = sqrt((0.5 * (vx_s(i) + vx_s(i + 1)))^2 + (0.5 * (vy_s(i) + vy_s(i + 1)))^2);
+    delta_t(i) = delta_s(i) / delta_v(i);
+    
+    [Zn, xdg, ydg] = feedrate_simulator_per_segment(...
         Xca, ...
         Yca, ...
         px_s(i), px_s(i + 1), ...
         py_s(i), py_s(i + 1), ...
         vx_s(i), vx_s(i + 1), ...
         vy_s(i), vy_s(i + 1), ...
+        delta_t(i), ...
         F ...
         );
     Zremoval = Zremoval + Zn;
@@ -99,6 +100,7 @@ for i = 1: size(px_s)-1
     %         hold off;
     
     %         subplot(212);
+    subplot('position',[0.1,0.26,0.42,0.47]);
     surf(X*1e3, Y*1e3, Zresidual*1e9, 'EdgeColor', 'none');
     view([0 0 1]);
     colormap(viridis);
@@ -113,10 +115,60 @@ for i = 1: size(px_s)-1
     title(['Residual height, RMS = ' num2str(round(rms_residual, 2)) ' nm']);
     set(gca,'XLim',[min_x*1e3 max_x*1e3],'YLim',[min_y*1e3 max_y*1e3])
     hold on;
-    plot3(1e3* (x_tif + xdg), 1e3 * (y_tif + ydg), z_tif,'-','color',[0.686 0.404 0.239],'linewidth',2);
+    plot3(1e3* (x_tif + xdg), 1e3 * (y_tif + ydg), z_tif,'-','color',[0 0.949 0.949],'linewidth',2);
     plot3(1e3* (0.02*x_tif + xdg), 1e3 * (0.02*y_tif + ydg), 0.02*z_tif,'-','color',[0.686 0.404 0.239],'linewidth',4);%center of circle
     plot3(px_s*1e3, py_s*1e3, 1000*ones(size(px_s,1),1), 'b-', 'LineWidth', 1); % maze path
     hold off;
+    
+    % velocity x
+    subplot('position',[0.62,0.78,0.35,0.14]);
+    vx_s_mm = vx_s * 1e3; 
+    plot(1:size(vx_s_mm,1),vx_s_mm,'-','color',[0.686 0.404 0.239],'linewidth',1);
+    hold on; 
+    plot(i,vx_s_mm(i),'r*','linewidth',3);
+    hold off;
+    ylabel('v [mm/s]');
+    vx_s_mm(i)=round(vx_s_mm(i)*1000)/1000; 
+    title(strcat('velocity x =',num2str(vx_s_mm(i)),' mm/s'));
+    xlim([0,i]);
+    
+    % velocity y
+    subplot('position',[0.62,0.56,0.35,0.14]);
+    vy_s_mm = vy_s * 1e3;
+    plot(1:size(vy_s_mm,1),vy_s_mm,'-','color',[0.294 0.545 0.749],'linewidth',1);
+    hold on; 
+    plot(i,vy_s_mm(i),'b*','linewidth',3);
+    hold off;
+    ylabel('v [mm/s]');
+    vy_s_mm(i)=round(vy_s_mm(i)*1000)/1000; 
+    title(strcat('velocity y =',num2str(vy_s_mm(i)),' mm/s'));
+    xlim([0,i]);
+    
+     % acceleration x
+    subplot('position',[0.62,0.34,0.35,0.14]);
+    ax_s_mm = ax_s * 1e3; 
+    plot(1:size(ax_s_mm,1),ax_s_mm,'-','color',[0.686 0.404 0.239],'linewidth',1);
+    hold on; 
+    plot(i,ax_s_mm(i),'r*','linewidth',3);
+    hold off;
+    ylabel('acc [mm/s^2]');
+    ax_s_mm(i)=round(ax_s_mm(i)*1000)/1000; 
+    title(strcat('acceleration x =',num2str(ax_s_mm(i)),' mm/s^2'));
+    xlim([0,i]);
+    
+    % acceleration y
+    subplot('position',[0.62,0.12,0.35,0.14]);
+    ay_s_mm = ay_s * 1e3; 
+    plot(1:size(ay_s_mm,1),ay_s_mm,'-','color',[0.294 0.545 0.749],'linewidth',1);
+    hold on; 
+    plot(i,ay_s_mm(i),'b*','linewidth',3);
+    hold off;
+    ylabel('acc [mm/s^2]');
+    ay_s_mm(i)=round(ay_s_mm(i)*1000)/1000; 
+    title(strcat('acceleration y =',num2str(ay_s_mm(i)),' mm/s^2'));
+    xlim([0,i]);
+    xlabel('Index of feed-rate points');
+    
     
     set(gcf,'position',[200, 200, 720,480]);
     

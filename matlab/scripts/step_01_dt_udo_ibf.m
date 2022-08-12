@@ -3,6 +3,11 @@ clear;
 clc;
 addpath('../functions/');
 addpath('../../../Slope-based-dwell-time/matlab/functions/'); % import rms_std
+
+%% set tool path
+
+name_path = 'path_1';
+
 %% load data
 surfDir = '../../data/';
 surfFile = 'step_01_multilayer_no1_data.mat';
@@ -18,29 +23,31 @@ load([dataDir pathFile]);
 % adjust the maze path
 surf_mpp = median(diff(X_P(1, :)));
 
-%% path 1
-% % dwell points
-% dwell_x = dp_x * surf_mpp;
-% dwell_y = dp_y * surf_mpp;
-% dwell_x = dwell_x + min(min(X_P));
-% dwell_y = dwell_y + min(min(Y_P));
-% % path points
-% path_x = xp * surf_mpp;
-% path_y = yp * surf_mpp;
-% path_x = path_x + min(min(X_P));
-% path_y = path_y + min(min(Y_P));
-
-%% path 2
-% dwell points
-dwell_x = xp * surf_mpp;
-dwell_y = yp * surf_mpp;
-dwell_x = dwell_x + min(min(X_P));
-dwell_y = dwell_y + min(min(Y_P));
-% path points
-path_x = dp_x * surf_mpp;
-path_y = dp_y * surf_mpp;
-path_x = path_x + min(min(X_P));
-path_y = path_y + min(min(Y_P));
+%% tool path
+if name_path == 'path_1'
+    % dwell points
+    dwell_x = dp_x * surf_mpp;
+    dwell_y = dp_y * surf_mpp;
+    dwell_x = dwell_x + min(min(X_P));
+    dwell_y = dwell_y + min(min(Y_P));
+    % path points
+    path_x = xp * surf_mpp;
+    path_y = yp * surf_mpp;
+    path_x = path_x + min(min(X_P));
+    path_y = path_y + min(min(Y_P));
+end
+if name_path == 'path_2'
+    % dwell points
+    dwell_x = xp * surf_mpp;
+    dwell_y = yp * surf_mpp;
+    dwell_x = dwell_x + min(min(X_P));
+    dwell_y = dwell_y + min(min(Y_P));
+    % path points
+    path_x = dp_x * surf_mpp;
+    path_y = dp_y * surf_mpp;
+    path_x = path_x + min(min(X_P));
+    path_y = path_y + min(min(Y_P));
+end
 
 % Smooth the corners of the maze path
 dwell_x1 = dwell_x;
@@ -112,7 +119,7 @@ ShowSurfaceMap(Xca, Yca, Zresidual_ca, 3, true, 1e9, 'nm', 'Residual surface err
 
 
 %% save data
-save([outDir mfilename '.mat'], ...
+save([outDir mfilename '_' name_path '.mat'], ...
     'Xca', 'Yca', 'Zca',  ...
     'Zremoval_ca', ...
     'Zresidual_ca',  ...
@@ -120,5 +127,6 @@ save([outDir mfilename '.mat'], ...
     'path_x', 'path_y',  ...
     't', ...
     'surf_mpp', ...
-    'Xtif', 'Ytif', 'Ztif'...
+    'Xtif', 'Ytif', 'Ztif', ...
+    'name_path' ...
     );

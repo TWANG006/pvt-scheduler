@@ -5,16 +5,17 @@ addpath(genpath('../functions'));
 tic
 %% generate a very simple 5-point 2d path
 dataDir = '../../data/sim_data/';
-dataFile = 'step_01_dt_udo_ibf.mat';
+dataFile = 'step_01_dt_udo_ibf_path_2.mat';
 load([dataDir dataFile]);
 
-% path 1
-px = path_x;
-py = path_y;
-
-% % path2
-% px = [path_x, path_x(end)];
-% py = [path_y, path_y(end)]; 
+if name_path == 'path_1'
+    px = path_x;
+    py = path_y;
+end
+if name_path == 'path_2'
+    px = [path_x, path_x(end)];
+    py = [path_y, path_y(end)]; 
+end
 
 % figure;
 % plot(px,py,'o','linewidth',2);  
@@ -123,7 +124,7 @@ F = griddedInterpolant(...
 Zremoval_ca = 0 * Zca;
 
 for i = 1: size(px_s)-1
-    [Zn, xdg, ydg] = feedrate_simulator_maze_path_per_segment(...
+    [Zn, xdg, ydg] = feedrate_simulator_per_segment(...
             Xca, ...
             Yca, ...
             px_s(i), px_s(i + 1), ...
