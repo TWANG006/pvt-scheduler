@@ -82,28 +82,26 @@ for i = 1: size(px_s)-1
     Zresidual = Z - Zremoval;
     Zresidual = remove_polynomials(X, Y, Zresidual, 1);
     
-    %         subplot(211);
-    %         surf(X*1e3, Y*1e3, Zremoval*1e9, 'EdgeColor', 'none');
-    %         colormap(viridis);
-    %         view([0 0 1]);
-    %         axis image xy;
-    %         h = colorbar;
-    %         set(get(h,'title'),'string','[nm]');
-    %         xlabel('[mm]');
-    %         ylabel('[mm]');
-    %         zlabel('[nm]');
-    %         rms_removal = nanstd(Zremoval(:)*1e9, 1);
-    %         title(['Removed height, RMS = ' num2str(round(rms_removal, 2)) ' nm']);
-    %         set(gca,'XLim',[min_x*1e3 max_x*1e3],'YLim',[min_y*1e3 max_y*1e3])
-    %         hold on;
-    %
-    %         plot3(1e3* (x_tif + xdg), 1e3 * (y_tif + ydg), z_tif,'-','color',[0.686 0.404 0.239],'linewidth',2);
-    %         hold off;
     
-    %         subplot(212);
     i_vm = 50; % fast-forward magnification of video
     if ( rem(i, i_vm) == 0) || (i == size(px_s, 1) - 1 )
-        subplot('position',[0.1,0.26,0.42,0.47]);
+        % tool-path map
+        subplot('position',[0.1,0.54,0.33,0.27]);
+        plot(px_s*1e3, py_s*1e3, 'b-', 'LineWidth', 0.2); % tool path
+        axis image xy;
+        xlabel('[mm]');
+        ylabel('[mm]');
+        dt_s = i / (60 * 20);
+        dt_min = round(dt_s  * 100) / 100; 
+        title({['Position X = ' num2str(round(px_s(i)* 1e3, 3)) ' mm,' '  Y = ' num2str(round(py_s(i)* 1e3, 3)) ' mm'];['Total dwell time = ',num2str(dt_min ),' min']});
+        set(gca,'XLim',[min_x*1e3 max_x*1e3],'YLim',[min_y*1e3 max_y*1e3])
+        hold on;
+        plot3(1e3* (x_tif + xdg), 1e3 * (y_tif + ydg), z_tif,'-','color',[0.737 0.027 0.635],'linewidth',2);
+        plot3(1e3* (0.02*x_tif + xdg), 1e3 * (0.02*y_tif + ydg), 0.02*z_tif,'-','color',[0.737 0.027 0.635],'linewidth',4);%center of circle
+        hold off;
+        
+        % residual map
+        subplot('position',[0.1,0.16,0.42,0.37]);
         surf(X*1e3, Y*1e3, Zresidual*1e9, 'EdgeColor', 'none');
         view([0 0 1]);
         colormap(jet); % viridis
@@ -117,61 +115,28 @@ for i = 1: size(px_s)-1
         rms_residual = nanstd(Zresidual(:)*1e9, 1);
         dt_s = i / (60 * 20);
         dt_min = round(dt_s  * 100) / 100; 
-        title({['Residual height, RMS = ' num2str(round(rms_residual, 2)) ' nm'];['Total dwell time=',num2str(dt_min ),'min']});
+        title({['Residual height, RMS = ' num2str(round(rms_residual, 2)) ' nm'];['Total dwell time = ',num2str(dt_min ),' min']});
         set(gca,'XLim',[min_x*1e3 max_x*1e3],'YLim',[min_y*1e3 max_y*1e3])
         hold on;
         plot3(1e3* (x_tif + xdg), 1e3 * (y_tif + ydg), z_tif,'-','color',[0.737 0.027 0.635],'linewidth',2);
         plot3(1e3* (0.02*x_tif + xdg), 1e3 * (0.02*y_tif + ydg), 0.02*z_tif,'-','color',[0.737 0.027 0.635],'linewidth',4);%center of circle
-        plot3(px_s*1e3, py_s*1e3, 1000*ones(size(px_s,1),1), 'b-', 'LineWidth', 0.2); % tool path
         hold off;
 
         % velocity x
         subplot('position',[0.62,0.78,0.35,0.14]);
-        vx_s_mm = vx_s * 1e3; 
-        plot(1:size(vx_s_mm,1),vx_s_mm,'-','color',[0.686 0.404 0.239],'linewidth',1);
-        hold on; 
-        plot(i,vx_s_mm(i),'r*','linewidth',3);
-        hold off;
-        ylabel('v [mm/s]');
-        vx_s_mm(i)=round(vx_s_mm(i)*1000)/1000; 
-        title(strcat('velocity x =',num2str(vx_s_mm(i)),' mm/s'));
-        xlim([0,i]);
+        ShowAccelerationMap(i, vx_s, [0.686 0.404 0.239], 'r*', 1e3, 'mm/s', 'Velocity x');
 
         % velocity y
         subplot('position',[0.62,0.56,0.35,0.14]);
-        vy_s_mm = vy_s * 1e3;
-        plot(1:size(vy_s_mm,1),vy_s_mm,'-','color',[0.294 0.545 0.749],'linewidth',1);
-        hold on; 
-        plot(i,vy_s_mm(i),'b*','linewidth',3);
-        hold off;
-        ylabel('v [mm/s]');
-        vy_s_mm(i)=round(vy_s_mm(i)*1000)/1000; 
-        title(strcat('velocity y =',num2str(vy_s_mm(i)),' mm/s'));
-        xlim([0,i]);
+        ShowAccelerationMap(i, vy_s, [0.686 0.404 0.239], 'r*', 1e3, 'mm/s', 'Velocity y');
 
-         % acceleration x
+        % acceleration x
         subplot('position',[0.62,0.34,0.35,0.14]);
-        ax_s_mm = ax_s * 1e3; 
-        plot(1:size(ax_s_mm,1),ax_s_mm,'-','color',[0.686 0.404 0.239],'linewidth',1);
-        hold on; 
-        plot(i,ax_s_mm(i),'r*','linewidth',3);
-        hold off;
-        ylabel('acc [mm/s^2]');
-        ax_s_mm(i)=round(ax_s_mm(i)*1000)/1000; 
-        title(strcat('acceleration x =',num2str(ax_s_mm(i)),' mm/s^2'));
-        xlim([0,i]);
-
+        ShowAccelerationMap(i, ax_s, [0.294 0.545 0.749], 'b*', 1e3, 'mm/s^2', 'Acceleration x');
+        
         % acceleration y
         subplot('position',[0.62,0.12,0.35,0.14]);
-        ay_s_mm = ay_s * 1e3; 
-        plot(1:size(ay_s_mm,1),ay_s_mm,'-','color',[0.294 0.545 0.749],'linewidth',1);
-        hold on; 
-        plot(i,ay_s_mm(i),'b*','linewidth',3);
-        hold off;
-        ylabel('acc [mm/s^2]');
-        ay_s_mm(i)=round(ay_s_mm(i)*1000)/1000; 
-        title(strcat('acceleration y =',num2str(ay_s_mm(i)),' mm/s^2'));
-        xlim([0,i]);
+        ShowAccelerationMap(i, ay_s, [0.294 0.545 0.749], 'b*', 1e3, 'mm/s^2', 'Acceleration y');
         xlabel('Index of feed-rate points');
 
         set(gcf,'position',[200, 200, 720,480]);
@@ -183,3 +148,26 @@ for i = 1: size(px_s)-1
 end
 
 close(writerObj);
+
+
+
+function h = ShowAccelerationMap(i, ax, color_line, color_point, unit, unitStr, title_str)
+
+if nargin == 2
+    color_line = [0.686 0.404 0.239];
+    color_point = 'r*';
+    unit = 1e3;
+    unitStr = 'mm';
+    title_str = 'Params';
+end
+ax_mm = ax * unit;
+plot(1:size(ax_mm,1),ax_mm,'-','color',color_line,'linewidth',1);
+hold on;
+plot(i,ax_mm(i),color_point,'linewidth',3);
+hold off;
+% ylabel('acc [mm/s^2]');
+ylabel([ title_str(1:3) ' [' unitStr ']' ]);
+ax_mm(i)=round(ax_mm(i)*1000)/1000;
+title([title_str ' = ',num2str(ax_mm(i)),' ' unitStr]);
+xlim([0,i]);
+end
