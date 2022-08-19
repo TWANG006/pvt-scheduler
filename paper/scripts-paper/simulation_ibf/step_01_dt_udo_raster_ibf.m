@@ -1,12 +1,12 @@
 clear;
 % close all;
 clc;
-addpath('../../../functions/');
-addpath('../../../../Slope-based-dwell-time/matlab/functions/'); % import rms_std
+addpath('../functions/');
+addpath('../../../Slope-based-dwell-time/matlab/functions/'); % import rms_std
 
 %% load data
 surfDir = '../../../data/paper_data/';
-surfFile = 'step_00_rect_map_rap_ibf_tif_5mm.mat';
+surfFile = 'step_00_rect_map_raster_ibf_tif_5mm';
 outDir = '../../../data/paper_data/';
 
 load([surfDir surfFile]);

@@ -6,7 +6,7 @@ addpath('../../../../Slope-based-dwell-time/matlab/functions/'); % import rms_st
 
 %% load data
 surfDir = '../../../data/paper_data/';
-surfFile = 'step_00_rect_map_rap_ibf_tif_5mm.mat';
+surfFile = 'step_00_rect_map_maze_ibf_tif_5mm.mat';
 outDir = '../../../data/paper_data/';
 
 load([surfDir surfFile]);
