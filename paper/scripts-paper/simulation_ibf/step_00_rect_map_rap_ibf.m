@@ -41,14 +41,21 @@ pathFile = 'XYPoint7a.mat';
 load([pathDir pathFile]);
 
 % dwell points
+xp = xp - min(xp);
+yp = yp - min(yp);
+
 dwell_x = 0.5 * (xp(1 : end-1) + xp(2 : end));
 dwell_y = 0.5 * (yp(1 : end-1) + yp(2 : end));
 dwell_x = [dwell_x, xp(end)];
 dwell_y = [dwell_y, yp(end)];
 
+dwell_x = dwell_x + min(min(X_P));
+dwell_y = dwell_y + min(min(Y_P));
+
 % path points
 path_x = xp;
 path_y = yp;
+
 
 % display
 fsfig('');

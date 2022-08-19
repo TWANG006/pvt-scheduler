@@ -50,7 +50,9 @@ ShowSurfaceMap(Xca, Yca, Zca, 3, true, 1e9, 'nm', 'Clear Aperture');
 subplot(247);
 ShowSurfaceMap(Xca, Yca, Zremoval_ca, 3, true, 1e9, 'nm', 'Removed surface error');
 subplot(248);
+% figure;
 ShowSurfaceMap(Xca, Yca, Zresidual_ca, 3, true, 1e9, 'nm', 'Residual surface error');
+hold on; plot3(dwell_x * 1e3, dwell_y * 1e3, 100 * ones(size(dwell_x)), 'b-', 'LineWidth', 1); hold off;
 
 %% save data
 save([outDir mfilename '.mat'], ...
