@@ -1,5 +1,5 @@
 clear;
-close all;
+% close all;
 clc;
 
 addpath('../../../functions/');
@@ -53,14 +53,16 @@ dwell_x = dwell_x + min(min(X_P));
 dwell_y = dwell_y + min(min(Y_P));
 
 % path points
-path_x = xp;
-path_y = yp;
+path_x = xp + min(min(X_P));
+path_y = yp + min(min(Y_P));
 
 
 % display
 fsfig('');
 plot(dwell_x, dwell_y, 'r-*');axis xy tight equal;
 
+fsfig('');
+plot(path_x, path_y, 'g-*');axis xy tight equal;
 %% Save the cleaned data
 outFile = [outDir mfilename '_tif_' ...
     num2str(r*1e3) 'mm' '.mat'];

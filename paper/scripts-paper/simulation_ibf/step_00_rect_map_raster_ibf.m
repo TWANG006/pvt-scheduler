@@ -1,5 +1,5 @@
 clear;
-close all;
+% close all;
 clc;
 
 addpath('../../../functions/');
@@ -64,6 +64,8 @@ path_y = yp;
 fsfig('');
 plot(dwell_x, dwell_y, 'r-*');axis xy tight equal;
 
+fsfig('');
+plot(path_x, path_y, 'g-*');axis xy tight equal;
 %% Save the cleaned data
 outFile = [outDir mfilename '_tif_' ...
     num2str(r*1e3) 'mm' '.mat'];
