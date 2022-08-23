@@ -16,7 +16,8 @@ Z = Zca;
 
 %% 2. calculate the delta t
 % direct assignment
-tau = 1/20;  % ms， 1/60
+tau = 1/20;
+i_vm = 50; % fast-forward magnification of video
 
 % fsfig('velocity map');
 % subplot(121);
@@ -51,7 +52,7 @@ min_y = nanmin(Y(:)) - 2 * r_tif;
 max_y = nanmax(Y(:)) + 2 * r_tif;
 
 writerObj=VideoWriter('pvt_sim_test.avi');%make a movie
-writerObj.FrameRate = 1/tau; %60
+writerObj.FrameRate = 1/tau; 
 open(writerObj);
 
 tmp_Z = remove_polynomials(X, Y, Z, 1);
@@ -82,8 +83,7 @@ for i = 1: size(px_s)-1
     Zresidual = Z - Zremoval;
     Zresidual = remove_polynomials(X, Y, Zresidual, 1);
     
-    
-    i_vm = 50; % fast-forward magnification of video
+      
     if ( rem(i, i_vm) == 0) || (i == size(px_s, 1) - 1 )
         % tool-path map
         subplot('position',[0.1,0.54,0.33,0.27]);
@@ -91,7 +91,7 @@ for i = 1: size(px_s)-1
         axis image xy;
         xlabel('[mm]');
         ylabel('[mm]');
-        dt_s = i / (60 * 20);
+        dt_s = i / (60 * (1/tau));
         dt_min = round(dt_s  * 100) / 100; 
         title({['Position X = ' num2str(round(px_s(i)* 1e3, 3)) ' mm,' '  Y = ' num2str(round(py_s(i)* 1e3, 3)) ' mm'];['Total dwell time = ',num2str(dt_min ),' min']});
         set(gca,'XLim',[min_x*1e3 max_x*1e3],'YLim',[min_y*1e3 max_y*1e3])
@@ -113,7 +113,7 @@ for i = 1: size(px_s)-1
         zlabel('[nm]');
         caxis([-range_z*1e9 range_z*1e9]);
         rms_residual = nanstd(Zresidual(:)*1e9, 1);
-        dt_s = i / (60 * 20);
+        dt_s = i / (60 * (1/tau));
         dt_min = round(dt_s  * 100) / 100; 
         title({['Residual height, RMS = ' num2str(round(rms_residual, 2)) ' nm'];['Total dwell time = ',num2str(dt_min ),' min']});
         set(gca,'XLim',[min_x*1e3 max_x*1e3],'YLim',[min_y*1e3 max_y*1e3])
@@ -149,9 +149,10 @@ end
 
 close(writerObj);
 
+% ShowZresidualMap(X, Y, Zresidual, color_line, color_point, 1e9, unitStr, title_str)
 
 
-function h = ShowAccelerationMap(i, ax, color_line, color_point, unit, unitStr, title_str)
+function ShowAccelerationMap(i, ax, color_line, color_point, unit, unitStr, title_str)
 
 if nargin == 2
     color_line = [0.686 0.404 0.239];
