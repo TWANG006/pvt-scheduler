@@ -10,7 +10,7 @@ authors:
     given-names: Lei
   - family-names: Idir
     given-names: Mourad
-title: "PVT-based velocity scheduler for computer contrlled optical surfacing "
+title: "PVT-based velocity scheduler for computer contrplled optical surfacing "
 url: https://github.com/TWANG006/pvt-simulator.git
 version: 1.0.20220803
 date-released: 2022-08-23
