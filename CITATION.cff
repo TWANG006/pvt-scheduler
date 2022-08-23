@@ -4,6 +4,13 @@ authors:
   - family-names: Wang; Ke; Huang; Mourad;
     given-names: Tianyi; Xiaolong; Lei; Idir
     orcid: https://orcid.org/0000-0001-6880-8194
+  - family-names: Ke
+    given-names: Xiaolong
+  - family-names: Huang
+    given-names: Lei
+  - family-names: Idir
+    given-names: Mourad
 title: "PVT-based velocity scheduler for computer contrlled optical surfacing "
+url: https://github.com/TWANG006/pvt-simulator.git
 version: 1.0.20220803
 date-released: 2022-08-23
