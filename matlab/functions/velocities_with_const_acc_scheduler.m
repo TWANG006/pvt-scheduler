@@ -94,7 +94,7 @@ if delta >= 0
     t = tk;
 else
     v = vk3(v0, -a, sk);
-    t = (v - v0) / a;
+    t = (v - v0) / (-a);
 end
 
 end
