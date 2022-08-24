@@ -2,7 +2,7 @@ clear;
 close all;
 clc;
 
-load([mfilename '_old.mat']);
+load(mfilename);
 
 %% plot v & dt points
 figure;
