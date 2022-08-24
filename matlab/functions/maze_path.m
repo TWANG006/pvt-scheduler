@@ -1,4 +1,4 @@
-function [Dx, Dy, xp, yp] = maze_path(rou, dx)
+function [xp, yp, xdp, ydp] = maze_path(rou, dx)
 
 % input parameters.
 % rou=10;
@@ -80,36 +80,42 @@ end
 %% plot
 PATHX=X(S(1:2:end));
 PATHY=Y(S(1:2:end));
-Dx=PATHX; % 
-Dy=PATHY;
+xp=PATHX; % 
+yp=PATHY;
 % Dx=Dx+l/2;Dy=Dy+w/2; % Set the origin at the lower left corner. Comment this code if need to set it in the center.
+id = (xp(1: end - 1) == xp(2: end)) & (yp(1: end - 1) == yp(2: end));
+xp(id) = [];
+yp(id) = [];
 
-xp = []; % dwell points
-yp = [];
-for i = 1: size(Dx,2) - 1
-    if Dy(i) == Dy(i+1)
-        xp(i) = (Dx(i) + Dx(i+1))/2;
-        yp(i) = Dy(i);
-    end
-    if Dx(i) == Dx(i+1)
-        xp(i) = Dx(i);
-        yp(i) = (Dy(i) + Dy(i+1))/2;
-    end   
-end
+xdp = 0.5 * (xp(2: end) + xp(1: end - 1));
+ydp = 0.5 * (yp(2: end) + yp(1: end - 1));
 
-if Dx(1) == Dx(size(Dx,2))
-    xp = [xp, Dx(1)];
-    yp = [yp, (Dy(1)+Dy(size(Dy,2)))/2];
-end
-if Dy(1) == Dy(size(Dy,2))
-    xp = [xp, (Dx(1)+Dx(size(Dx,2)))/2];
-    yp = [yp, Dy(1)];
-end
+% xdp = []; % dwell points
+% ydp = [];
+% for i = 1: size(xp,2) - 1
+%     if yp(i) == yp(i+1)
+%         xdp(i) = (xp(i) + xp(i+1))/2;
+%         ydp(i) = yp(i);
+%     end
+%     if xp(i) == xp(i+1)
+%         xdp(i) = xp(i);
+%         ydp(i) = (yp(i) + yp(i+1))/2;
+%     end   
+% end
+% 
+% if xp(1) == xp(size(xp,2))
+%     xdp = [xdp, xp(1)];
+%     ydp = [ydp, (yp(1)+yp(size(yp,2)))/2];
+% end
+% if yp(1) == yp(size(yp,2))
+%     xdp = [xdp, (xp(1)+xp(size(xp,2)))/2];
+%     ydp = [ydp, yp(1)];
+% end
 
 
-plot(Dx,Dy,'*-','linewidth',2);  
+plot(xp,yp,'*-','linewidth',2);  
 hold on
-plot(xp,yp,'o','linewidth',2);  
+plot(xdp, ydp,'o','linewidth',2);  
 hold off;
 axis equal;
 set(gca,'xcolor', 'none');

@@ -176,7 +176,7 @@ save([data_dir mfilename '.mat'], ...
     'ax_s', 'ay_s' ...
     );
 
-
+return;
 %% write to hdf5
 h5create([data_dir mfilename '.h5'], '/X', size(Xca'));
 h5write([data_dir mfilename '.h5'], '/X', Xca');

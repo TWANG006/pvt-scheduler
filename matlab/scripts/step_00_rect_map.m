@@ -85,8 +85,8 @@ figure;
 % [px, py, xp, yp] = maze_path(round((r1+r0)*1e3), 0.5);
 px = px * 1e-3;
 py = py * 1e-3;
-xp = xp(1:end-1) * 1e-3;
-yp = yp(1:end-1) * 1e-3;
+xp = xp * 1e-3;
+yp = yp * 1e-3;
 
 % display
 fsfig('');
