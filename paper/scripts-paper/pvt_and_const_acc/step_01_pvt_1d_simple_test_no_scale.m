@@ -55,17 +55,17 @@ pa = [ax_s(1), pa];
 
 %% plot - axis x: time
 % figure;
-figure('Position', [100, 300, 400, 360]);
+figure('Position', [100, 300, 400, 460]);
 subplot(3, 1, 1);
+plot(t_s, px_s, 'b', 'linestyle', '-', 'LineWidth', 2); hold on;
 plot(t, px, 'ro', 'MarkerSize', 5, 'MarkerFaceColor', 'r'); hold on;
-plot(t_s, ones(size(px_s)) * px(end), 'r:', 'LineWidth', 1); hold on;
-plot(t_s, px_s, '-', 'LineWidth', 2); hold off;
+plot(t_s, ones(size(px_s)) * px(end), 'r:', 'LineWidth', 1); hold off;
 % title('Position');
 ylim([-1000 25000]);
 set(gca,'xtick', []); set(gca,'ytick', []);
 
 subplot(3, 1, 2);
-plot(t_s, vx_s, 'b', 'LineWidth', 2); hold on;
+plot(t_s, vx_s, 'color', [0.929, 0.694, 0.125], 'LineWidth', 2); hold on;
 plot(t, vx, 'ro', 'MarkerSize', 5, 'MarkerFaceColor', 'r'); hold on;
 plot(t_s, ones(size(vx_s)) * vx_max, 'r--', 'LineWidth', 1); hold on;
 plot(t_s, ones(size(vx_s)) * 0, 'r:', 'LineWidth', 1); hold on;
