@@ -22,7 +22,7 @@ Y = Y - nanmean(Y(:));
 Z = RemoveSurface1(X, Y, Z);
 Z = Z - nanmin(Z(:));
 
-Zca = imresize(Z, 2/3); % 1/5
+Zca = imresize(Z, 1/5); % 1/5
 [Xca, Yca] = meshgrid(0:size(Zca,2)-1, 0:size(Zca,1)-1); 
 surf_mpp = median(diff(X(1, :)));
 Xca = Xca * surf_mpp;
@@ -87,33 +87,55 @@ tif1Params.mu_xy = [0, 0];
 % display
 fsfig('');
 ShowSurfaceMap(Xtif1, Ytif1, Ztif1);
-figure;
 
-%% generate tool path
-% minX = min(min(X));    maxX = max(max(X));
-% minY = min(min(Y));    maxY = max(max(Y));
-% 
-% % genereate dwell positions for tif 1
-% i1 = round(r1*2*pi/18*1e3, 1)*1e-3;
-% [Xp1, Yp1, xp1, yp1] = Raster_Tool_Path(...
-%     (minX - r1),...
-%     (maxX + r1),...
-%     i1,...
-%     (minY - r1),...
-%     (maxY + r1),...
-%     i1...
-% );
+%% generate tool path - raster path
+minX = min(min(Xca));    maxX = max(max(Xca));
+minY = min(min(Yca));    maxY = max(max(Yca));
+% genereate dwell positions for tif 1
+i1 = round(r1*2*pi/18*1e3, 1)*1e-3;
+[Xp, Yp, xp, yp] = Raster_Tool_Path(...
+    (minX - r1),...
+    (maxX + r1),...
+    i1,...
+    (minY - r1),...
+    (maxY + r1),...
+    i1...
+);
 
-[px, py, xp, yp] = maze_path(round(2*(r1+r0)*1e3), 0.25); % interval ×0.25
-% [px, py, xp, yp] = maze_path(round((r1+r0)*1e3), 0.5);
-px = px * 1e-3;
-py = py * 1e-3;
-xp = xp(1:end-1) * 1e-3;
-yp = yp(1:end-1) * 1e-3;
+% dwell points
+dwell_x = 0.5 * (xp(1 : end-1) + xp(2 : end));
+dwell_y = 0.5 * (yp(1 : end-1) + yp(2 : end));
+% dwell_x = [dwell_x; xp(end)];
+% dwell_y = [dwell_y; yp(end)];
+
+% path points
+path_x = xp;
+path_y = yp;
+
+dwell_x = dwell_x';
+dwell_y = dwell_y';
+path_x = path_x';
+path_y = path_y';
 
 % display
 fsfig('');
-plot(xp, yp, 'r-*');axis xy tight equal;
+plot(dwell_x, dwell_y, 'r-o');axis xy tight equal;
+hold on;
+plot(path_x, path_y, 'b-*');
+hold off;
+
+%% generate tool path - maze path
+% figure;
+% [px, py, xp, yp] = maze_path(round(2*(r1+r0)*1e3), 0.25); % interval ×0.25
+% % [px, py, xp, yp] = maze_path(round((r1+r0)*1e3), 0.5);
+% px = px * 1e-3;
+% py = py * 1e-3;
+% xp = xp(1:end-1) * 1e-3;
+% yp = yp(1:end-1) * 1e-3;
+% 
+% % display
+% fsfig('');
+% plot(xp, yp, 'r-*');axis xy tight equal;
 
 %% Save the cleaned data
 outFile = [outDir mfilename '_square_' num2str(round((max(Xca(:)) - min(Xca(:)))*1e3))  'mm_tif_' ...
@@ -123,5 +145,5 @@ save(outFile, ...
     'X', 'Y', 'Z', ...
     'Xca', 'Yca', 'Zca', ...
     'Xtif1', 'Ytif1', 'Ztif1', 'tif1Params', ...
-    'xp', 'yp', 'px', 'py' ...
+    'dwell_x', 'dwell_y', 'path_x', 'path_y' ...
 );
