@@ -17,7 +17,10 @@ load([surfDir surfFile]);
 figure;
 set(gcf,'position',[600,300,680,150]);
 % ShowSurfaceMap(Xca, Yca, Zca, 3, true, 1e9, 'nm', ''); 
-s = surf(Xca* 1e3, Yca* 1e3, Zca* 1e3); 
+p1 = plot(dwell_x * 1e3, dwell_y * 1e3,  'b-', 'LineWidth', 1.2); 
+
+hold on; 
+s = pcolor(Xca* 1e3, Yca* 1e3, Zca* 1e3); 
 s.EdgeColor = 'none';
 view(0,90);
 colormap jet;
@@ -25,8 +28,7 @@ grid off;
 set(gca,'xcolor', 'none');
 set(gca,'ycolor', 'none');
 set(0,'defaultfigurecolor','w');
-hold on; 
-p1 = plot3(dwell_x * 1e3, dwell_y * 1e3, 100 * ones(size(dwell_x)), 'b-', 'LineWidth', 1.1); 
-alpha(s, 0.5);
-alpha(p1, 1.0);
+
+alpha(s, 0.3);
+% alpha(p1, 0.1);
 hold off;

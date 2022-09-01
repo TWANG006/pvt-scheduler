@@ -2,7 +2,7 @@ clear;
 % close all;
 clc;
 
-addpath('../../../functions/');
+addpath('../../../matlab/functions/');
 
 %% dirs and files
 % initial surface error dir
