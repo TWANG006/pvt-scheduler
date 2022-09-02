@@ -58,11 +58,16 @@ path_y = yp + min(min(Y_P));
 
 
 % display
-fsfig('');
-plot(dwell_x, dwell_y, 'r-*');axis xy tight equal;
+% fsfig('');
+% plot(dwell_x, dwell_y, 'r-');axis xy tight equal;
+% fsfig('');
+% plot(path_x, path_y, 'b-');axis xy tight equal;
 
 fsfig('');
-plot(path_x, path_y, 'g-*');axis xy tight equal;
+plot(dwell_x, dwell_y, 'ro');axis xy tight equal;
+hold on;
+plot(path_x, path_y, 'b-*');axis xy tight equal;
+hold off;
 %% Save the cleaned data
 outFile = [outDir mfilename '_tif_' ...
     num2str(r*1e3) 'mm' '.mat'];
