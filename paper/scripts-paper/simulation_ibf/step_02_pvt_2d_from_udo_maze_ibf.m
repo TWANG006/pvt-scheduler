@@ -11,10 +11,11 @@ load([dataDir dataFile]);
 px = path_x;
 py = path_y;
 
-figure;
-plot(px,py,'o','linewidth',2);  
+% figure;
+% plot(px,py,'o','linewidth',2);  
 
-cs_t = cumsum(t);
+% cs_t = cumsum(t);
+cs_t = cumsum([0; t]);
 %% parameters
 ax_max = 2; % Maximum acceleration in the x-direction
 vx_max = 250e-3; % Maximum velocity in the x-direction
@@ -140,6 +141,7 @@ ShowSurfaceMap(Xca, Yca, Zremoval_ca, 3, true, 1e9, 'nm', 'Removed surface error
 subplot(248);
 % figure;
 ShowSurfaceMap(Xca, Yca, Zresidual_ca, 3, true, 1e9, 'nm', 'Residual surface error'); 
+set(0,'defaultfigurecolor','w');
 hold on; plot3(px_s*1e3, py_s*1e3, 100*ones(size(px_s,1),1), 'b-', 'LineWidth', 1); hold off;
 
 %% save data
@@ -148,7 +150,7 @@ save([dataDir mfilename '.mat'], ...
     'Zremoval_ca', 'Zresidual_ca',  ...
     'dwell_x', 'dwell_y', 't', ...
     'path_x', 'path_y',  ...
-    'cs_t', ...
+    'cs_t', 'ts', ...
     'Xtif', 'Ytif', 'Ztif',...
     'px_s', 'py_s', ...
     'vx_s', 'vy_s', ...
