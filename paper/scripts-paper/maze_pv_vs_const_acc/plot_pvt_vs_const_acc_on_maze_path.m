@@ -88,6 +88,7 @@ title('Velicities in the{\it x} direction', 'FontWeight', 'normal');
 ylabel('[ mm ]');
 set(gca, 'XTick', []);
 set(gca, 'FontSize', 12);
+axis tight;
 
 subplot(2,1,2);
 plot(n, const_vy_s(n), 'b-','LineWidth', 2);
@@ -98,6 +99,7 @@ title('Velicities in the{\it y} direction', 'FontWeight', 'normal');
 xlabel('# Points');
 ylabel('[ mm ]');
 set(gca, 'FontSize', 12);
+axis tight
 % 
 % subplot(3, 2, 5);
 % plot(const_vy_s, 'b-','LineWidth', 1);
