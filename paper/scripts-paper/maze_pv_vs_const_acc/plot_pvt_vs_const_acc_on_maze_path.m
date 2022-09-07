@@ -82,10 +82,10 @@ subplot(2,1,1);
 plot(n, const_vx_s(n), 'b-','LineWidth', 2);
 hold on;
 plot(n, pvt_vx_s(n), 'r-','LineWidth', 2);
-legend('Constant-acceleration', 'PVT'); 
+legend('Constant-acceleration', 'PVT', 'Location', 'south'); 
 title('Velicities in the{\it x} direction', 'FontWeight', 'normal');
 % xlabel('# Points');
-ylabel('[ mm ]');
+ylabel('[ mm/s ]');
 set(gca, 'XTick', []);
 set(gca, 'FontSize', 12);
 axis tight;
@@ -94,11 +94,12 @@ subplot(2,1,2);
 plot(n, const_vy_s(n), 'b-','LineWidth', 2);
 hold on;
 plot(n, pvt_vy_s(n), 'r-','LineWidth', 2);
-legend('Constant-acceleration', 'PVT'); 
+legend('Constant-acceleration', 'PVT', 'Location', 'southeast'); 
 title('Velicities in the{\it y} direction', 'FontWeight', 'normal');
 xlabel('# Points');
-ylabel('[ mm ]');
+ylabel('[ mm/s ]');
 set(gca, 'FontSize', 12);
+set(gca, 'XTick', []);
 axis tight
 % 
 % subplot(3, 2, 5);
