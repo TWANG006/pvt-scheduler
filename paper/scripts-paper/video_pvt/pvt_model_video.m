@@ -5,7 +5,7 @@ addpath('../../../matlab/functions/');
 % addpath('../../../Slope-based-dwell-time/matlab/functions/'); % import viridis
 %% l. load data
 i_vm = 1; % fast-forward magnification of video, 50
-run_path = 'rap'; % 'raster', 'maze', 'rap'
+run_path = 'maze'; % 'raster', 'maze', 'rap'
 
 data_dir = '../../../data/paper_data/';
 
@@ -71,16 +71,8 @@ tmp_Z = remove_polynomials(X, Y, Z, 1);
 
 range_z = 0.5 * (nanmax(tmp_Z(:)) - nanmin(tmp_Z(:)));
 
-delta_s = 0 * ones(size(px_s));
-delta_v = 0 * ones(size(px_s));
-delta_t = 0 * ones(size(px_s));
-
 figure;
-for i = 1: size(px_s)-1
-    delta_s(i) = sqrt((px_s(i + 1) - px_s(i))^2 + (py_s(i + 1) - py_s(i))^2);
-    delta_v(i) = sqrt((0.5 * (vx_s(i) + vx_s(i + 1)))^2 + (0.5 * (vy_s(i) + vy_s(i + 1)))^2);
-    delta_t(i) = delta_s(i) / delta_v(i);
-    
+for i = 1: size(px_s)-1    
     [Zn, xdg, ydg] = feedrate_simulator_per_segment(...
         Xca, ...
         Yca, ...
@@ -88,7 +80,7 @@ for i = 1: size(px_s)-1
         py_s(i), py_s(i + 1), ...
         vx_s(i), vx_s(i + 1), ...
         vy_s(i), vy_s(i + 1), ...
-        delta_t(i), ...
+        ts(i+1) - ts(i), ...
         F ...
         );
     Zremoval = Zremoval + Zn;
@@ -103,9 +95,8 @@ for i = 1: size(px_s)-1
         axis image xy;
         xlabel('[mm]');
         ylabel('[mm]');
-        dt_s = i / (60 * (1/tau));
-        dt_min = round(dt_s  * 100) / 100; 
-        title({['Position X = ' num2str(round(px_s(i)* 1e3, 3)) ' mm,' '  Y = ' num2str(round(py_s(i)* 1e3, 3)) ' mm'];['Total dwell time = ',num2str(dt_min ),' min']});
+        dt_minute = round(ts(i) / 60  * 100) / 100;
+        title({['Position X = ' num2str(round(px_s(i)* 1e3, 3)) ' mm,' '  Y = ' num2str(round(py_s(i)* 1e3, 3)) ' mm'];['Total dwell time = ',num2str(dt_minute ),' min']});
         set(gca,'XLim',[min_x*1e3 max_x*1e3],'YLim',[min_y*1e3 max_y*1e3])
         hold on;
         plot3(1e3* (x_tif + xdg), 1e3 * (y_tif + ydg), z_tif,'-','color',[0.737 0.027 0.635],'linewidth',2);
@@ -125,9 +116,8 @@ for i = 1: size(px_s)-1
         zlabel('[nm]');
         caxis([-range_z*1e9 range_z*1e9]);
         rms_residual = nanstd(Zresidual(:)*1e9, 1);
-        dt_s = i / (60 * (1/tau));
-        dt_min = round(dt_s  * 100) / 100; 
-        title({['Residual height, RMS = ' num2str(round(rms_residual, 2)) ' nm'];['Total dwell time = ',num2str(dt_min ),' min']});
+        dt_minute = round(ts(i) / 60  * 100) / 100;
+        title({['Residual height, RMS = ' num2str(round(rms_residual, 2)) ' nm'];['Total dwell time = ',num2str(dt_minute ),' min']});
         set(gca,'XLim',[min_x*1e3 max_x*1e3],'YLim',[min_y*1e3 max_y*1e3])
         hold on;
         plot3(1e3* (x_tif + xdg), 1e3 * (y_tif + ydg), z_tif,'-','color',[0.737 0.027 0.635],'linewidth',2);
