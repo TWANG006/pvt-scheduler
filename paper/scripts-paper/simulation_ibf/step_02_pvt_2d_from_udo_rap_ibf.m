@@ -28,32 +28,31 @@ tau = 1/20;
 [vy, ay, cy] = pvt_scheduler(py, cs_t, ay_max, vy_max, true);
 
 %% simulation
-px_s = [];
-ax_s = [];
-vx_s = [];
+num_tau = fix(sum(t) / tau);
 
-py_s = [];
-ay_s = [];
-vy_s = [];
-ts = [];
+px_s = zeros(num_tau + 1, 1);
+ax_s = zeros(num_tau + 1, 1);
+vx_s = zeros(num_tau + 1, 1);
+
+py_s = zeros(num_tau + 1, 1);
+ay_s = zeros(num_tau + 1, 1);
+vy_s = zeros(num_tau + 1, 1);
+ts = 0: tau: num_tau * tau;
+
+curr_id = 1;
 for n = 1: length(cs_t) - 1
-    % 1. generate t's for each segment
-    if n == 1
-        t0 = cs_t(n);
-    else
-        t0 = cs_t(n) + tau;
-    end
-    t1 = cs_t(n + 1);
-    t02t1 = linspace(t0, t1, ceil((t1 - t0) / tau));
-    ts = [ts; t02t1(:)];
     
-    px_s = [px_s; calculate_pvt_p(t02t1, cx(n, :))];
-    vx_s = [vx_s; calculate_pvt_v(t02t1, cx(n, :))];
-    ax_s = [ax_s; calculate_pvt_a(t02t1, cx(n, :))];
+    t02t1 = ts(ts >= cs_t(i) & ts <= cs_t(i + 1));
     
-    py_s = [py_s; calculate_pvt_p(t02t1, cy(n, :))];
-    vy_s = [vy_s; calculate_pvt_v(t02t1, cy(n, :))];
-    ay_s = [ay_s; calculate_pvt_a(t02t1, cy(n, :))];
+    px_s(curr_id: curr_id + numel(t02t1)) = calculate_pvt_p(t02t1, cx(n, :));
+    vx_s(curr_id: curr_id + numel(t02t1)) = calculate_pvt_v(t02t1, cx(n, :));
+    ax_s(curr_id: curr_id + numel(t02t1)) = calculate_pvt_a(t02t1, cx(n, :));
+    
+    py_s(curr_id: curr_id + numel(t02t1)) = calculate_pvt_p(t02t1, cy(n, :));
+    vy_s(curr_id: curr_id + numel(t02t1)) = calculate_pvt_v(t02t1, cy(n, :));
+    ay_s(curr_id: curr_id + numel(t02t1)) = calculate_pvt_a(t02t1, cy(n, :));
+	
+	curr_id = curr_id + numel(t02t1) + 1;
 end
 
 %% plot
