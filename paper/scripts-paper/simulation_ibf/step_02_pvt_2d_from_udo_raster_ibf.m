@@ -28,32 +28,31 @@ tau = 1/20;
 [vy, ay, cy] = pvt_scheduler(py, cs_t, ay_max, vy_max, true);
 
 %% simulation
-px_s = [];
-ax_s = [];
-vx_s = [];
+num_tau = fix(sum(t) / tau);
 
-py_s = [];
-ay_s = [];
-vy_s = [];
-ts = [];
+px_s = zeros(num_tau + 1, 1);
+ax_s = zeros(num_tau + 1, 1);
+vx_s = zeros(num_tau + 1, 1);
+
+py_s = zeros(num_tau + 1, 1);
+ay_s = zeros(num_tau + 1, 1);
+vy_s = zeros(num_tau + 1, 1);
+ts = 0: tau: num_tau * tau;
+
+curr_id = 1;
+
 for n = 1: length(cs_t) - 1
-    % 1. generate t's for each segment
-    if n == 1
-        t0 = cs_t(n);
-    else
-        t0 = cs_t(n) + tau;
-    end
-    t1 = cs_t(n + 1);
-    t02t1 = linspace(t0, t1, ceil((t1 - t0) / tau));
-    ts = [ts; t02t1(:)];
+    t02t1 = ts(ts >= cs_t(n) & ts <= cs_t(n + 1));
     
-    px_s = [px_s; calculate_pvt_p(t02t1, cx(n, :))];
-    vx_s = [vx_s; calculate_pvt_v(t02t1, cx(n, :))];
-    ax_s = [ax_s; calculate_pvt_a(t02t1, cx(n, :))];
+    px_s(curr_id: curr_id + numel(t02t1) - 1) = calculate_pvt_p(t02t1, cx(n, :));
+    vx_s(curr_id: curr_id + numel(t02t1) - 1) = calculate_pvt_v(t02t1, cx(n, :));
+    ax_s(curr_id: curr_id + numel(t02t1) - 1) = calculate_pvt_a(t02t1, cx(n, :));
     
-    py_s = [py_s; calculate_pvt_p(t02t1, cy(n, :))];
-    vy_s = [vy_s; calculate_pvt_v(t02t1, cy(n, :))];
-    ay_s = [ay_s; calculate_pvt_a(t02t1, cy(n, :))];
+    py_s(curr_id: curr_id + numel(t02t1) - 1) = calculate_pvt_p(t02t1, cy(n, :));
+    vy_s(curr_id: curr_id + numel(t02t1) - 1) = calculate_pvt_v(t02t1, cy(n, :));
+    ay_s(curr_id: curr_id + numel(t02t1) - 1) = calculate_pvt_a(t02t1, cy(n, :));
+	
+	curr_id = curr_id + numel(t02t1);
 end
 
 %% plot
@@ -96,47 +95,6 @@ plot(ay_s, 'LineWidth', 2);
 title('Accelerations y');
 axis square;
 
-%% write to hdf5
-xp = dwell_x;
-yp = dwell_y;
-
-h5create([data_dir mfilename '.h5'], '/X', size(Xca'));
-h5write([data_dir mfilename '.h5'], '/X', Xca');
-h5create([data_dir mfilename '.h5'], '/Y', size(Yca'));
-h5write([data_dir mfilename '.h5'], '/Y', Yca');
-h5create([data_dir mfilename '.h5'], '/Z', size(Zca'));
-h5write([data_dir mfilename '.h5'], '/Z', Zca');
-
-h5create([data_dir mfilename '.h5'], '/Xtif', size(Xtif'));
-h5write([data_dir mfilename '.h5'], '/Xtif', Xtif');
-h5create([data_dir mfilename '.h5'], '/Ytif', size(Ytif'));
-h5write([data_dir mfilename '.h5'], '/Ytif', Ytif');
-h5create([data_dir mfilename '.h5'], '/Ztif', size(Ztif'));
-h5write([data_dir mfilename '.h5'], '/Ztif', Ztif');
-
-h5create([data_dir mfilename '.h5'], '/Cx', size(cx'));
-h5write([data_dir mfilename '.h5'], '/Cx', cx');
-h5create([data_dir mfilename '.h5'], '/Cy', size(cy'));
-h5write([data_dir mfilename '.h5'], '/Cy', cy');
-h5create([data_dir mfilename '.h5'], '/px', size(px'));
-h5write([data_dir mfilename '.h5'], '/px', px');
-h5create([data_dir mfilename '.h5'], '/py', size(py'));
-h5write([data_dir mfilename '.h5'], '/py', py');
-h5create([data_dir mfilename '.h5'], '/vx', size(vx'));
-h5write([data_dir mfilename '.h5'], '/vx', vx');
-h5create([data_dir mfilename '.h5'], '/vy', size(vy'));
-h5write([data_dir mfilename '.h5'], '/vy', vy');
-h5create([data_dir mfilename '.h5'], '/dpx', size(xp'));
-h5write([data_dir mfilename '.h5'], '/dpx', xp');
-h5create([data_dir mfilename '.h5'], '/dpy', size(yp'));
-h5write([data_dir mfilename '.h5'], '/dpy', yp');
-h5create([data_dir mfilename '.h5'], '/dt', size(t'));
-h5write([data_dir mfilename '.h5'], '/dt', t');
-h5create([data_dir mfilename '.h5'], '/t', size(cs_t'));
-h5write([data_dir mfilename '.h5'], '/t', cs_t');
-
-toc
-return;
 %% residual error
 
 F = griddedInterpolant(...
@@ -189,11 +147,48 @@ save([data_dir mfilename '.mat'], ...
     'Zremoval_ca', 'Zresidual_ca',  ...
     'dwell_x', 'dwell_y', 't', ...
     'path_x', 'path_y',  ...
-    'cs_t', ...
+    'cs_t', 'ts', ...
     'Xtif', 'Ytif', 'Ztif',...
     'px_s', 'py_s', ...
     'vx_s', 'vy_s', ...
     'ax_s', 'ay_s' ...
     );
-
 toc
+%% write to hdf5
+xp = dwell_x;
+yp = dwell_y;
+
+h5create([data_dir mfilename '.h5'], '/X', size(Xca'));
+h5write([data_dir mfilename '.h5'], '/X', Xca');
+h5create([data_dir mfilename '.h5'], '/Y', size(Yca'));
+h5write([data_dir mfilename '.h5'], '/Y', Yca');
+h5create([data_dir mfilename '.h5'], '/Z', size(Zca'));
+h5write([data_dir mfilename '.h5'], '/Z', Zca');
+
+h5create([data_dir mfilename '.h5'], '/Xtif', size(Xtif'));
+h5write([data_dir mfilename '.h5'], '/Xtif', Xtif');
+h5create([data_dir mfilename '.h5'], '/Ytif', size(Ytif'));
+h5write([data_dir mfilename '.h5'], '/Ytif', Ytif');
+h5create([data_dir mfilename '.h5'], '/Ztif', size(Ztif'));
+h5write([data_dir mfilename '.h5'], '/Ztif', Ztif');
+
+h5create([data_dir mfilename '.h5'], '/Cx', size(cx'));
+h5write([data_dir mfilename '.h5'], '/Cx', cx');
+h5create([data_dir mfilename '.h5'], '/Cy', size(cy'));
+h5write([data_dir mfilename '.h5'], '/Cy', cy');
+h5create([data_dir mfilename '.h5'], '/px', size(px'));
+h5write([data_dir mfilename '.h5'], '/px', px');
+h5create([data_dir mfilename '.h5'], '/py', size(py'));
+h5write([data_dir mfilename '.h5'], '/py', py');
+h5create([data_dir mfilename '.h5'], '/vx', size(vx'));
+h5write([data_dir mfilename '.h5'], '/vx', vx');
+h5create([data_dir mfilename '.h5'], '/vy', size(vy'));
+h5write([data_dir mfilename '.h5'], '/vy', vy');
+h5create([data_dir mfilename '.h5'], '/dpx', size(xp'));
+h5write([data_dir mfilename '.h5'], '/dpx', xp');
+h5create([data_dir mfilename '.h5'], '/dpy', size(yp'));
+h5write([data_dir mfilename '.h5'], '/dpy', yp');
+h5create([data_dir mfilename '.h5'], '/dt', size(t'));
+h5write([data_dir mfilename '.h5'], '/dt', t');
+h5create([data_dir mfilename '.h5'], '/t', size(cs_t'));
+h5write([data_dir mfilename '.h5'], '/t', cs_t');
