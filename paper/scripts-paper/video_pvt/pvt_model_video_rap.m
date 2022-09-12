@@ -22,6 +22,14 @@ ax_s(ax_s > 2000e-3) = 2000e-3;
 ay_s(ay_s > 1000e-3) = 1000e-3;
 
 
+px_s = px_s(1: end - 6);
+py_s = py_s(1: end - 6);
+vx_s = vx_s(1: end - 6);
+vy_s = vy_s(1: end - 6);
+ax_s = ax_s(1: end - 6);
+ay_s = ay_s(1: end - 6);
+
+
 %% 2. calculate the delta t
 % direct assignment
 tau = 1/20;

@@ -19,6 +19,13 @@ Z = Zca;
 vy_s = vy_s * 0;
 ay_s = ay_s * 0;
 
+px_s = px_s(1: end - 4);
+py_s = py_s(1: end - 4);
+vx_s = vx_s(1: end - 4);
+vy_s = vy_s(1: end - 4);
+ax_s = ax_s(1: end - 4);
+ay_s = ay_s(1: end - 4);
+
 
 %% 2. calculate the delta t
 % direct assignment
