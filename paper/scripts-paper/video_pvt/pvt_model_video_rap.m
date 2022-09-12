@@ -16,6 +16,10 @@ pvt_t = cs_t;
 X = Xca;
 Y = Yca;
 Z = Zca;
+vx_s(vx_s > 250e-3) = 250e-3;
+vy_s(vy_s > 150e-3) = 150e-3;
+ax_s(ax_s > 2000e-3) = 2000e-3;
+ay_s(ay_s > 1000e-3) = 1000e-3;
 
 
 %% 2. calculate the delta t
