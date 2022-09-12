@@ -11,15 +11,15 @@ data_dir = '../../../data/paper_data/';
 
 if strcmp(run_path, 'raster')
     load([data_dir 'step_02_pvt_2d_from_udo_raster_ibf.mat']);
-    video_name = ['pvt_sim_raster_x' int2str(i_vm) '.avi'];
+    video_name = ['pvt_sim_raster_x' int2str(i_vm) '.mp4'];
 end
 if strcmp(run_path, 'maze')
     load([data_dir 'step_02_pvt_2d_from_udo_maze_ibf.mat']);
-    video_name = ['pvt_sim_maze_x' int2str(i_vm) '.avi'];
+    video_name = ['pvt_sim_maze_x' int2str(i_vm) '.mp4'];
 end
 if strcmp(run_path, 'rap')
     load([data_dir 'step_02_pvt_2d_from_udo_rap_ibf.mat']);
-    video_name = ['pvt_sim_rap_x' int2str(i_vm) '.avi'];
+    video_name = ['pvt_sim_rap_x' int2str(i_vm) '.mp4'];
 end
 
 pvt_t = cs_t;
@@ -63,7 +63,7 @@ max_x = nanmax(X(:)) + 2 * r_tif;
 min_y = nanmin(Y(:)) - 2 * r_tif;
 max_y = nanmax(Y(:)) + 2 * r_tif;
 
-writerObj=VideoWriter(video_name);%make a movie
+writerObj=VideoWriter(video_name, 'MPEG-4');%make a movie
 writerObj.FrameRate = 1/tau; 
 open(writerObj);
 
