@@ -9,23 +9,14 @@ run_path = 'maze'; % 'raster', 'maze', 'rap'
 
 data_dir = '../../../data/paper_data/';
 
-if strcmp(run_path, 'raster')
-    load([data_dir 'step_02_pvt_2d_from_udo_raster_ibf.mat']);
-    video_name = ['pvt_sim_raster_x' int2str(i_vm) '.mp4'];
-end
-if strcmp(run_path, 'maze')
-    load([data_dir 'step_02_pvt_2d_from_udo_maze_ibf.mat']);
-    video_name = ['pvt_sim_maze_x' int2str(i_vm) '.mp4'];
-end
-if strcmp(run_path, 'rap')
-    load([data_dir 'step_02_pvt_2d_from_udo_rap_ibf.mat']);
-    video_name = ['pvt_sim_rap_x' int2str(i_vm) '.mp4'];
-end
+load([data_dir 'step_02_pvt_2d_from_udo_maze_ibf.mat']);
+video_name = ['pvt_sim_maze_x' int2str(i_vm) '.mp4'];
 
 pvt_t = cs_t;
 X = Xca;
 Y = Yca;
 Z = Zca;
+
 
 %% 2. calculate the delta t
 % direct assignment
