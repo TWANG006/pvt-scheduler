@@ -9,6 +9,13 @@ $$3a_{i}t_{i-1}^2+2b_{i}t_{i-1}+c_{i}=v_{i-1}~~~~~~~~~~$$
 $$3a_{i}t_{i}^2+2b_{i}t_{i}+c_{i}=v_{i}~~~~~~~~~~~~~~~~~~~~$$
 where $a_{i}$, $b_{i}$, $c_{i}$, $d_{i}$ are the polynomial coefficients, $p_{i}$, $v_{i}$ are positions and velocities at the $i$-th point. In optical fabrication, we always know the **Time** and **Positions** and need to calculate the **Velocities**. This is solved under the PVT framework in this repository. 
 
+## Examples
+### Position mode (dwell time-based simulation)
+![Position-mode result](/images/residual_error_in_position_model.png)
+### PVT mode (PVT-based simulation)
+![PVT-mode result](/images/residual_error_in_pvt_model.png)
+
+
 ## MATLAB module
 MATLAB module is provided as a fast simulator when the problem size is small. It is easy to use and the simulation animation can be saved as a video. But this takes unreasonablly long time as the problem size grows.
 
