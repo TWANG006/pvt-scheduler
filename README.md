@@ -1,4 +1,4 @@
-# pvt-simulator
+# pvt-scheduler
 High-performance optical fabrication simulation based on the Position-Velocity-Time (PVT) motion control model.
 
 ## Introduction
