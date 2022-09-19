@@ -45,5 +45,9 @@ C++ module is necessary if the number of dwell points is large and the demanded 
 2. Mac OS: TODO with CMake
 3. Linux: TODO with CMake
 
+## Collaborators
+<!-- readme: collaborators -start -->
+<!-- readme: collaborators -end -->
+
 ## References
 TODO
