@@ -88,4 +88,4 @@ C++ module is necessary if the number of dwell points is large and the demanded 
 <!-- readme: collaborators -end -->
 
 ## References
-TODO
+Tianyi Wang, Xiaolong Ke, Lei Huang, Vipender Negi, Heejoo Choi, Weslin Pullen, Daewook Kim, Yi Zhu, Mourad Idir, "Computer-controlled finishing with a novel position-velocity-time modulated velocity scheduler", (2022), to be submitted to Journal of Manufacturing Processes.
