@@ -69,6 +69,13 @@ C++ module is necessary if the number of dwell points is large and the demanded 
             <br />
             <sub><b>Xiaolong Ke</b></sub>
         </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/GHVipender">
+            <img src="https://avatars.githubusercontent.com/u/96809270?v=4" width="100;" alt="GHVipender"/>
+            <br />
+            <sub><b>GHVipender</b></sub>
+        </a>
     </td></tr>
 </table>
 <!-- readme: collaborators -end -->
