@@ -126,17 +126,17 @@ end
 %% display the simulation results
 figure;
 subplot(241);
-ShowSurfaceMap(X, Y, Z, 3, true, 1e9, 'nm', 'initial surface error');
+show_surface_map(X, Y, Z, 3, true, 1e9, 'nm', 'initial surface error');
 subplot(242);
-ShowSurfaceMap(Xtif, Ytif, Ztif, 0, false, 1e9, 'nm', 'TIF');
+show_surface_map(Xtif, Ytif, Ztif, 0, false, 1e9, 'nm', 'TIF');
 subplot(245);
-ShowDwellTime(xp, yp, t, false, 0, 'jet', 'Dwell Time');  
+show_dwell_time(xp, yp, t, false, 0, 'jet', 'Dwell Time');  
 subplot(246);
-ShowSurfaceMap(Xca, Yca, Zca, 3, true, 1e9, 'nm', 'Clear Aperture');
+show_surface_map(Xca, Yca, Zca, 3, true, 1e9, 'nm', 'Clear Aperture');
 subplot(247);
-ShowSurfaceMap(Xca, Yca, Zremoval_ca, 3, true, 1e9, 'nm', 'Removed surface error');
+show_surface_map(Xca, Yca, Zremoval_ca, 3, true, 1e9, 'nm', 'Removed surface error');
 subplot(248);
-ShowSurfaceMap(Xca, Yca, Zresidual_ca, 3, true, 1e9, 'nm', 'Residual surface error'); 
+show_surface_map(Xca, Yca, Zresidual_ca, 3, true, 1e9, 'nm', 'Residual surface error'); 
 hold on; plot3(px_s*1e3, py_s*1e3, 100*ones(size(px_s,1),1), 'b-', 'LineWidth', 1); hold off;
 
 

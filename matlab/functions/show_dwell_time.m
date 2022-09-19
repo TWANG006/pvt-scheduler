@@ -1,4 +1,4 @@
-function ShowDwellTime(x, y, t, is2d, color_range, colorMap, titleStr)
+function show_dwell_time(x, y, t, is2d, color_range, colorMap, titleStr)
 % Purpose:
 %   Display the dwell time map defiend by x, y, and t with title
 %

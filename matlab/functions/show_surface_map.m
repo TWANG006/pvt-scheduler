@@ -1,4 +1,4 @@
-function h = ShowSurfaceMap(X, Y, Z, color_range, isRemoved, unit, unitStr, title_str)
+function h = show_surface_map(X, Y, Z, color_range, isRemoved, unit, unitStr, title_str)
 % Function:
 %   ShowSurfaceMap(X, Y, Z, title_str)
 %
@@ -34,7 +34,7 @@ ratio = (max(X(:)) - min(X(:))) / (max(Y(:)) - min(Y(:)));
 
 % display the map
 %1.show in pcolor.
-surf(X_mm, Y_mm, Z_nm, 'EdgeColor', 'none');
+h = surf(X_mm, Y_mm, Z_nm, 'EdgeColor', 'none');
 % h.EdgeColor = 'none';
 view([0 90]);
 % axis xy image; 
