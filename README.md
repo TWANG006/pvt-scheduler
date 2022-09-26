@@ -88,6 +88,6 @@ C++ module is necessary if the number of dwell points is large and the demanded 
 <!-- readme: collaborators -end -->
 
 ## References
-[1] Tianyi Wang, Xiaolong Ke, Lei Huang, Vipender Negi, Heejoo Choi, Weslin Pullen, Daewook Kim, Yi Zhu, Mourad Idir, "Computer-controlled finishing with a novel position-velocity-time modulated velocity scheduler", (2022), to be submitted to Journal of Manufacturing Processes.
+[1] Tianyi Wang, Xiaolong Ke, Lei Huang, Vipender Negi, Heejoo Choi, Weslin Pullen, Daewook Kim, Yi Zhu, Mourad Idir, "Computer-controlled finishing with a novel position-velocity-time modulated velocity scheduler", (2022), submitted to Journal of Manufacturing Processes.
 
 [2] Zhou, L., Xie, X., Dai, Y., Jiao, C., & Li, S. (2009). Realization of velocity mode in flat optics machining using ion beam. J. Mech. Eng, 45(7), 152-156.
